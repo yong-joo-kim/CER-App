@@ -52,9 +52,6 @@ footer b{font-variant-numeric:tabular-nums}
 .dlgbox h3{margin:0;font-size:16px}
 .pathbar{display:flex;gap:6px}.pathbar input{flex:1;min-width:0}
 .dlglist{border:1px solid var(--line);border-radius:8px;overflow:auto;min-height:220px;max-height:46vh;background:var(--bg)}
-.dlglist div{padding:7px 12px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dlglist div:hover{background:var(--card)}
-.dlglist .up{color:var(--pri);font-weight:600}
 .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:700;border:1px solid var(--line)}
 .badge.done{color:var(--ok);border-color:var(--ok)}.badge.stopped{color:var(--warn);border-color:var(--warn)}
 .sumhead{display:flex;gap:8px 16px;flex-wrap:wrap;align-items:center;margin-bottom:12px;color:var(--mut);font-size:13px}
@@ -74,6 +71,14 @@ footer b{font-variant-numeric:tabular-nums}
 .hb .lb{font-weight:600}
 details.raw{margin-top:16px}details.raw summary{cursor:pointer;color:var(--mut);font-size:13px}
 details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:13px}
+.dlglist{padding:4px 0}
+.trow{display:flex;align-items:center;gap:6px;padding:4px 8px;cursor:pointer;white-space:nowrap;border-bottom:0;font-size:14px}
+.trow:hover{background:var(--card)}
+.trow.sel{background:var(--pri);color:#fff}
+.trow .tg{width:18px;text-align:center;color:var(--mut);flex:none;user-select:none}
+.trow.sel .tg{color:#fff}
+.tkids[hidden]{display:none}
+.tmsg{padding:4px 8px;color:var(--mut);font-size:13px}
 </style></head><body>
 <header><h1>CER/WER 시험 프로그램</h1>
 <button class="tab on" data-t="t1">① 설정·실행</button><button class="tab" data-t="t2">② 실시간 결과</button><button class="tab" data-t="t3">③ 파일별 결과</button><button class="tab" data-t="t4">④ 상세</button><button class="tab" data-t="t5">⑤ 리포트</button></header>
@@ -324,22 +329,66 @@ function loadReport(){api('/api/report').then(function(r){if(r.error){$('rInfo')
    .then(function(v){renderSummary(v[0],v[1])})})}
 document.querySelectorAll('#t5 button[data-f]').forEach(function(b){b.onclick=function(){window.location='/api/report?file='+b.dataset.f}});
 $('bOpen').onclick=function(){post('/api/open_folder',{})};
-/* ---- 폴더 선택 창 ---- */
-var dlgTarget=null,dlgCur='';
-function browse(path){api('/api/browse?path='+encodeURIComponent(path||'')).then(function(r){
-  if(r.error){$('dlgInfo').textContent=r.error;return}
-  dlgCur=r.path;$('dlgPath').value=r.path;
-  $('dlgInfo').textContent=r.path?('이 폴더: .wav '+r.wav.toLocaleString()+'개 · .txt '+r.txt.toLocaleString()+'개 · 하위 폴더 '+r.dirs.length+'개'+(r.truncated?' (일부만 표시)':'')):'드라이브를 선택하세요';
-  var l=$('dlgList');l.textContent='';
-  function item(text,p,cls){var d=document.createElement('div');d.textContent=text;if(cls)d.className=cls;d.onclick=function(){browse(p)};l.appendChild(d)}
-  if(r.parent!==null)item(r.parent===''?'↑ 드라이브 목록':'↑ 상위 폴더',r.parent,'up');
-  r.dirs.forEach(function(d){item((r.path?'📁 ':'💽 ')+d.name,d.path)});
-  $('dlgOk').disabled=!r.path})}
-function openPick(id){dlgTarget=id;$('dlgTitle').textContent=({wavdir:'음성(.wav) 폴더 선택',txtdir:'정답 전사(.txt) 폴더 선택',outdir:'결과 저장 폴더 선택'})[id];
-  $('dlg').hidden=false;browse($(id).value.trim()||($('wavdir').value.trim()))}
+/* ---- 폴더 선택 창 (디렉터리 트리) ---- */
+var dlgTarget=null,dlgCur='',dlgRoots=[];
+function norm(p){return (p||'').replace(/[\\\/]+$/,'').toLowerCase()}
+function info(text){$('dlgInfo').textContent=text}
+function setSel(row,path){
+  document.querySelectorAll('#dlgList .trow.sel').forEach(function(r){r.classList.remove('sel')});
+  row.classList.add('sel');dlgCur=path;$('dlgPath').value=path;$('dlgOk').disabled=false;
+  info('확인 중...');
+  api('/api/browse?path='+encodeURIComponent(path)).then(function(r){
+    if(dlgCur!==path)return;
+    info(r.error?r.error:('선택한 폴더: .wav '+r.wav.toLocaleString()+'개 · .txt '+r.txt.toLocaleString()+'개 · 하위 폴더 '+r.dirs.length+'개'))})}
+function makeNode(entry,level){
+  var wrap=el('div','tn'),row=el('div','trow'),tg=el('span','tg','▸'),nm=el('span',null,(level===0?'💽 ':'📁 ')+entry.name),kids=el('div','tkids');
+  row.style.paddingLeft=(8+level*18)+'px';kids.hidden=true;row.title=entry.path;
+  row.appendChild(tg);row.appendChild(nm);wrap.appendChild(row);wrap.appendChild(kids);
+  wrap._path=entry.path;wrap._level=level;wrap._loaded=false;wrap._row=row;wrap._tg=tg;wrap._kids=kids;wrap._children=[];
+  tg.onclick=function(e){e.stopPropagation();toggle(wrap)};
+  row.onclick=function(){setSel(row,entry.path)};
+  row.ondblclick=function(){toggle(wrap)};
+  return wrap}
+function loadKids(wrap){
+  if(wrap._loaded)return Promise.resolve(wrap);
+  wrap._tg.textContent='…';
+  return api('/api/browse?path='+encodeURIComponent(wrap._path)).then(function(r){
+    wrap._loaded=true;wrap._kids.textContent='';
+    if(r.error){wrap._kids.appendChild(el('div','tmsg',r.error));wrap._tg.textContent='▸';return wrap}
+    r.dirs.forEach(function(d){var c=makeNode(d,wrap._level+1);wrap._children.push(c);wrap._kids.appendChild(c)});
+    if(!r.dirs.length){wrap._tg.textContent='·';wrap._leaf=true}
+    else if(r.truncated)wrap._kids.appendChild(el('div','tmsg','(폴더가 많아 일부만 표시됩니다)'));
+    return wrap})}
+function expand(wrap){return loadKids(wrap).then(function(){if(!wrap._leaf){wrap._kids.hidden=false;wrap._tg.textContent='▾'}return wrap})}
+function toggle(wrap){
+  if(wrap._leaf)return;
+  if(wrap._loaded&&!wrap._kids.hidden){wrap._kids.hidden=true;wrap._tg.textContent='▸';return}
+  expand(wrap)}
+function loadRoots(){
+  $('dlgList').textContent='';dlgRoots=[];
+  return api('/api/browse?path=').then(function(r){
+    (r.dirs||[]).forEach(function(d){var n=makeNode(d,0);dlgRoots.push(n);$('dlgList').appendChild(n)})})}
+function reveal(path){
+  // 경로의 상위 폴더들을 차례로 펼치고 마지막 폴더를 선택한다
+  var want=norm(path);if(!want)return Promise.resolve();
+  var root=dlgRoots.filter(function(n){return want===norm(n._path)||want.indexOf(norm(n._path)+'\\')===0})[0];
+  if(!root){info('이 경로를 찾을 수 없습니다. 드라이브부터 선택하세요.');return Promise.resolve()}
+  function step(node){
+    if(norm(node._path)===want){setSel(node._row,node._path);node._row.scrollIntoView({block:'center'});return Promise.resolve()}
+    return expand(node).then(function(){
+      var next=node._children.filter(function(c){var cp=norm(c._path);return want===cp||want.indexOf(cp+'\\')===0})[0];
+      if(!next){setSel(node._row,node._path);node._row.scrollIntoView({block:'center'});info('경로의 일부만 찾았습니다: '+node._path);return}
+      return step(next)})}
+  return step(root)}
+function openPick(id){
+  dlgTarget=id;dlgCur='';$('dlgOk').disabled=true;
+  $('dlgTitle').textContent=({wavdir:'음성(.wav) 폴더 선택',txtdir:'정답 전사(.txt) 폴더 선택',outdir:'결과 저장 폴더 선택'})[id];
+  $('dlgPath').value='';info('폴더 목록을 불러오는 중...');$('dlg').hidden=false;
+  var start=$(id).value.trim()||$('wavdir').value.trim();
+  loadRoots().then(function(){info(start?'':'드라이브를 펼쳐 폴더를 선택하세요.');return start?reveal(start):null})}
 document.querySelectorAll('[data-pick]').forEach(function(b){b.onclick=function(){openPick(b.dataset.pick)}});
-$('dlgGo').onclick=function(){browse($('dlgPath').value.trim())};
-$('dlgPath').addEventListener('keydown',function(e){if(e.key==='Enter')browse($('dlgPath').value.trim())});
+$('dlgGo').onclick=function(){reveal($('dlgPath').value.trim())};
+$('dlgPath').addEventListener('keydown',function(e){if(e.key==='Enter')reveal($('dlgPath').value.trim())});
 $('dlgOk').onclick=function(){if(dlgCur){$(dlgTarget).value=dlgCur}$('dlg').hidden=true};
 $('dlgCancel').onclick=function(){$('dlg').hidden=true};
 document.addEventListener('keydown',function(e){if(e.key==='Escape')$('dlg').hidden=true});
