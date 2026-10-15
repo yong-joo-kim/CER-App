@@ -107,3 +107,4 @@ FR-01,02→inputs / FR-03→config / FR-04,05→stt_client / FR-06,07→normaliz
 - 시안 파일: `docs/03_design/ui/mockup.html` (브라우저로 열기)
 - 앞선 7장(GUI/tkinter) 서술은 본 13장으로 대체한다
 - 입력 경로: 설정 `wav_dir`(음성), `txt_dir`(정답 전사, 비우면 `wav_dir`). 기존 `input_dir`는 `wav_dir`로 자동 인식
+- 결과 폴더: `<결과 저장 폴더>/<YYYYMMDD_HHMM>/`(같은 분 충돌 시 `_HHMMSS`, 번호). 이어서 하기는 `find_resume_dir`로 같은 `wav_dir`의 최근 시험 폴더를 선택. 이전 시험은 `/api/runs`로 목록, `/api/view`로 읽기 전용 열기

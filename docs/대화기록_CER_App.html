@@ -31,7 +31,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 @media print{body{background:#fff}.m{break-inside:avoid}}
 </style></head><body><div class="wrap">
 <h1 class="t">CER App 대화 기록</h1>
-<p class="sub">Claude Code와 나눈 대화(사용자 입력 / Claude 응답) · 총 150개 메시지 · 표와 코드는 원문 형식을 유지했습니다 · 도구 실행 로그와 시스템 알림은 제외했고 API 키 값은 가렸습니다</p>
+<p class="sub">Claude Code와 나눈 대화(사용자 입력 / Claude 응답) · 총 159개 메시지 · 표와 코드는 원문 형식을 유지했습니다 · 도구 실행 로그와 시스템 알림은 제외했고 API 키 값은 가렸습니다</p>
 <article class="m user"><header><b>나</b><span>2026-10-14 13:49</span><i>#1</i></header><div class="b"><p class="u">음성인식 장비의 CER WER 을 측정하는 테스트 프로그램을 만든다. 입력은 시험용 음석녹음 WAVE 파일과 음성을 전사한 텍스트 파일 쌍으로 이루어진 다수의 파일을 특정 디렉토리에 저장하고, 실행을 시키면 음성인식 실시간 측정을 진행한다. 진행시에도 CER WER 대략적인 누적 점수를 시계열 그래프상으로 실시간으로 볼수 있게 화면을 구성한다. 음성인식 시험용 파일로 시험을 종료한 경우 최종 결과는 막대 그래프로 CER WER 시험 데이터 갯수를 볼 수 있는 화면을 구성한다. 음성인식 장비는 내부 망에있는 장비로 연동 Spec을 참조하여 음성녹취 Wave 파일의 음성을 연동 spec에 따라서 API를 사용하여 음성인식을 요청하고 음성인식 결과를 수신하여 전사된 원본 음성텍스트과 비교하여 시험 결과에 반영한다. 필요한 디렉토리 만들어주고 연동 spec 문서 저장 위치 알려줘.<br>개발 단계별 절차를 준수하여 분석과 계획수립부터 구현 검증 Git 배포까지 문서화 포함하여 PM,요구분석,UI시안,구현,검증,자동시험,버전관리,배포 등 기능별 에이전트 구성하여 하네스 방식으로 자동 개발하도록 Plan 만들어줘.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 13:51</span><i>#2</i></header><div class="b"><p>Plan 승인됨. 디렉토리와 하네스 골격을 생성합니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 13:51</span><i>#3</i></header><div class="b"><p>디렉토리 구조 생성과 <code>git init</code>은 완료됐습니다. (exit code 255는 <code>git init</code>의 출력 처리 때문에 나온 것으로, 디렉토리와 파일은 정상 생성됨.)</p>
 <h2>연동 Spec 문서 저장 위치</h2>
 <p><strong><code>D:\2. Team Source\CER App\docs\spec\</code></strong> — 연동 Spec(PDF/DOCX/MD 등)을 이 폴더에 넣어 주세요.</p>
@@ -1711,5 +1711,106 @@ python -m app.main
 <li>화면 조작은 브라우저에서 직접 눌러 확인하지 못했습니다. 서버 동작과 코드 문법 검사까지만 확인했습니다.</li>
 <li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
 <li>매뉴얼(아티팩트 버전 7, 같은 링크)과 현장 배포 파일(<code>dist\CER_App_portable.zip</code>)을 갱신했습니다. GitHub에는 아직 올리지 않았습니다.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:03</span><i>#150</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:03</span><i>#150</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:03</span><i>#151</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+<ul>
+<li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App (<code>main</code>)</li>
+<li><strong>커밋:</strong> <code>d948d76</code>, 7개 파일 변경</li>
+</ul>
+<p><strong>포함된 내용</strong><br />
+- ⑥ 시험결과 요약 탭 (제출용 요약 카드, 1-CER/1-WER 막대 그래프, 텍스트 복사)<br />
+- 시험 중 동시 접속 수 변경과 남은 시간 재계산, 예상 소요 시간의 동시 접속 반영<br />
+- 이전 시험 결과 열기 (읽기 전용으로 파일별 결과·상세·리포트 재확인)<br />
+- 매뉴얼 원본, 단위 테스트 27건, 대화 기록 HTML 갱신</p>
+<p><strong>확인한 것</strong><br />
+- 커밋 내용에서 API 키 패턴은 0건이었고, 설정 파일·시험 데이터·결과 폴더·빌드 zip 같은 민감 파일은 올라가지 않았습니다.<br />
+- 단위 테스트 27건이 통과한 상태에서 올렸습니다.</p>
+<p>현장 배포 파일(<code>dist\CER_App_portable.zip</code>)은 이전과 같이 저장소에 올리지 않았고, 최신 버전이 <code>dist</code> 폴더에 빌드되어 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:12</span><i>#152</i></header><div class="b"><p class="u">시험결과가 저장 또는 이전 시험 결과 열기가 오류인지 기능 미동작, state.json이 없다고 함<br>설정화면에 결과저장폴더 지정과 동작이 정상인지 확인해</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:14</span><i>#153</i></header><div class="b"><p>원인을 확인했고, 저장 기능은 정상이었습니다. "state.jsonl이 없다"는 오류는 <strong>결과 저장 폴더 자체를 골랐을 때</strong> 나오던 안내 부족 문제여서 함께 고쳤습니다.</p>
+<h2>원인</h2>
+<p>시험 결과는 결과 저장 폴더 <strong>바로 아래가 아니라 시험마다 만들어지는 하위 폴더</strong>에 저장됩니다.</p>
+<pre><code>D:\2. Team Source\CER App\data\results        ← 결과 저장 폴더 (설정에서 지정)
+ └ last_run  또는  20261015_104007            ← 시험마다 만들어지는 폴더 (여기에 state.jsonl)
+</code></pre>
+<p>"이전 시험 결과 열기"에서 <code>data\results</code>를 골랐기 때문에 그 폴더에는 <code>state.jsonl</code>이 없어 오류가 났습니다. 지금 <code>data\results</code>에도 <code>last_run</code> 폴더 안에만 <code>state.jsonl</code>이 있습니다.</p>
+<h2>저장 기능 점검 결과</h2>
+<p>실서버로 직접 시험했습니다(임시 결과 폴더를 지정하고 3건 처리 후 중지).<br />
+| 확인 항목 | 결과 |<br />
+|---|---|<br />
+| 설정한 결과 저장 폴더 아래에 시험 폴더 생성 | 정상 |<br />
+| 인식 결과, <code>detail.csv</code>, <code>state.jsonl</code>, <code>summary.json</code> 저장 | 정상 |<br />
+| 중지 시 완료된 3건 기준으로 CER 집계(1.59%) | 정상 |<br />
+| 저장 폴더(상위)를 골라 열기 | 시험이 하나면 자동으로 열림 |<br />
+| 시험이 여러 개일 때 | 목록을 보여주고 선택하게 함 |<br />
+| 시험 결과가 없는 폴더 | 원인을 알려주는 안내 표시 |</p>
+<h2>수정 내용</h2>
+<ul>
+<li><strong>이전 시험 목록 표시:</strong> ① 탭의 "이전 시험 결과 열기"에 결과 저장 폴더 안의 시험이 실행 시각, 완료 건수, CER과 함께 목록으로 표시됩니다. 눌러서 바로 열 수 있고 <strong>[목록 새로고침]</strong> 버튼이 있습니다.</li>
+<li><strong>결과 저장 폴더를 골라도 열림:</strong> 안에 시험이 하나면 자동으로 열리고, 여러 개면 목록에서 고르게 합니다.</li>
+<li><strong>오류 안내 개선:</strong> 시험 결과를 못 찾으면 "시험 결과는 결과 저장 폴더 아래의 시험별 폴더에 있습니다"라고 알려줍니다.</li>
+<li><strong>저장 위치 표시:</strong> 시험이 끝나면 ① 탭 메시지와 ② 탭에 실제 저장 위치를 보여줍니다. 입력칸 이름도 "결과 저장 폴더 (시험마다 이 안에 하위 폴더가 만들어집니다)"로 바꿨습니다.</li>
+<li>매뉴얼(버전 9, 같은 링크)과 현장 배포 파일을 갱신했고, 단위 테스트 28건이 통과했습니다.</li>
+</ul>
+<h2>알아둘 점</h2>
+<ul>
+<li>이 화면 조작은 브라우저에서 직접 눌러 확인하지 못했습니다. 서버 동작은 위 시험으로 확인했고 화면 코드는 문법 검사까지만 했습니다.</li>
+<li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
+<li>이 점검 중 만든 임시 결과 폴더는 삭제했고, 설정 파일은 원래 값으로 복원했습니다.</li>
+<li>GitHub에는 아직 올리지 않았습니다. 필요하면 말씀해 주세요.</li>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:23</span><i>#154</i></header><div class="b"><p class="u">저장폴더는 지정하면 하위디렉토리를 년월일시분으로 자동생성해야 나중에 이전 시험결과 열기가 편리할것 같다</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:23</span><i>#155</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:23</span><i>#156</i></header><div class="b"><p>알겠습니다, 멈췄습니다.</p>
+<p>방금까지는 코드 변경 없이 현재 상태만 읽어 확인했습니다. 저장 폴더 자동 생성 관련 수정은 아직 아무것도 적용하지 않았습니다.</p>
+<p>이전 요청의 결과는 그대로입니다. 이전 시험 목록 표시와 오류 안내 개선은 반영되어 있고, 현장 배포 파일과 매뉴얼(버전 9)도 최신입니다. GitHub에는 아직 올리지 않았습니다.</p>
+<p>어떻게 진행할지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:24</span><i>#157</i></header><div class="b"><p class="u">저장폴더 하위디렉토리 년월일시분 자동생성하고 관련된 기능과 메뉴얼, 배포파일 등에  적용해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:26</span><i>#158</i></header><div class="b"><p>결과 저장 폴더 아래에 시험마다 년월일시분 하위 폴더가 항상 자동으로 만들어지도록 바꾸고, 관련 기능·매뉴얼·배포 파일에 모두 반영했습니다. 단위 테스트 30건이 통과했고, 실서버로 폴더 생성과 이어서 하기까지 확인했습니다.</p>
+<h2>동작</h2>
+<pre><code>결과 저장 폴더 (설정에서 지정)
+ ├ 20261015_1030      ← 2026년 10월 15일 10시 30분에 시작한 시험
+ ├ 20261015_1355
+ └ 20261016_0910
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>폴더 이름</td>
+<td><code>YYYYMMDD_HHMM</code> (년월일시분). 시험을 시작할 때마다 자동 생성</td>
+</tr>
+<tr>
+<td>같은 분에 다시 시작</td>
+<td>초를 붙여 구분(<code>20261015_103045</code>), 그래도 겹치면 번호를 붙임</td>
+</tr>
+<tr>
+<td>이전 시험 열기</td>
+<td>목록이 폴더 이름순이 아니라 최근 순으로 표시되고 실행 시각, 완료 건수, CER이 함께 보임</td>
+</tr>
+</tbody>
+</table></div>
+<h2>이어서 하기 방식 변경</h2>
+<ul>
+<li>이전에는 <code>last_run</code>이라는 고정 폴더를 썼고, 이 때문에 시각 폴더가 만들어지지 않았습니다. 이제 <strong>같은 음성 폴더로 실행한 가장 최근 시험 폴더</strong>에 이어서 저장합니다.</li>
+<li>어느 폴더에 이어가는지가 체크박스 아래에 표시됩니다. 예: <code>이어서 하기: … "20261015_1030" 폴더에 이어서 저장합니다</code>.</li>
+<li>이어갈 시험이 없거나 입력 폴더가 다르면 새 년월일시분 폴더를 만들어 처음부터 시작합니다.</li>
+<li>기존에 만든 <code>last_run</code> 폴더는 이전 시험 목록에서 그대로 열 수 있습니다.</li>
+</ul>
+<h2>확인한 것 (실서버)</h2>
+<ul>
+<li>1차 실행에서 <code>20261015_1325</code> 형식으로 지정한 저장 폴더 바로 아래에 만들어졌습니다.</li>
+<li>이어서 하기로 다시 실행하면 같은 폴더에 이어서 저장되었고 누적 완료 건수가 2건에서 3건으로 늘었으며, 폴더가 새로 생기지 않았습니다.</li>
+</ul>
+<h2>함께 처리한 것</h2>
+<ul>
+<li>설정 화면의 결과 저장 폴더 설명에 "년월일시분 하위 폴더가 자동으로 만들어집니다"를 표기했습니다.</li>
+<li>요구사항(FR-15)과 설계서를 갱신했습니다.</li>
+<li>매뉴얼(아티팩트 버전 10, 같은 링크)에서 <code>last_run</code> 설명을 모두 새 방식으로 바꿨습니다.</li>
+<li>현장 배포 파일(<code>dist\CER_App_portable.zip</code>)을 다시 빌드했습니다. API 키 설정과 시험 데이터가 없음을 확인했습니다.</li>
+</ul>
+<h2>알아둘 점</h2>
+<ul>
+<li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
+<li>입력 폴더를 바꿔 이어서 하기를 켜면 이전 시험을 이어가지 않고 새 폴더가 만들어집니다. 의도한 동작입니다.</li>
+<li>화면 조작은 브라우저에서 직접 확인하지 못했습니다. 서버 동작과 화면 코드 문법까지 확인했습니다.</li>
+<li>GitHub에는 아직 올리지 않았습니다. 필요하면 말씀해 주세요.</li>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:27</span><i>#159</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article>
 </div></body></html>

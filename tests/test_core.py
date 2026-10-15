@@ -1,4 +1,5 @@
 import json
+import os
 import tempfile
 import threading
 import time
@@ -400,6 +401,61 @@ class ViewPastRunTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(ValueError):
                 runner.Run.from_folder(d, config.load(Path("none.json")))
+
+
+class ListRunsTest(unittest.TestCase):
+    def test_list_and_base_folder(self):
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            for n in ("20260101_100000", "last_run"):
+                (d / n).mkdir()
+                (d / n / "state.jsonl").write_text("{}\n", encoding="utf-8")
+            (d / "empty").mkdir()
+            (d / "last_run" / "summary.json").write_text(
+                json.dumps({"state": "stopped", "done": 5, "total": 9, "cer_pct": 3.2,
+                            "generated_at": "2026-01-01 10:00:00"}), encoding="utf-8")
+            runs = runner.list_runs(d)
+            self.assertEqual({r["name"] for r in runs}, {"20260101_100000", "last_run"})
+            lr = next(r for r in runs if r["name"] == "last_run")
+            self.assertEqual((lr["state"], lr["done"], lr["total"], lr["cer"]), ("stopped", 5, 9, 3.2))
+            self.assertEqual(runner.list_runs(d / "empty"), [])
+            self.assertEqual([r["name"] for r in runner.list_runs(d / "last_run")], ["last_run"])
+
+
+class OutDirTest(unittest.TestCase):
+    def test_timestamp_subfolder_and_collision(self):
+        from datetime import datetime
+        with tempfile.TemporaryDirectory() as d:
+            cfg = {"output_dir": d, "resume": False, "wav_dir": "X"}
+            now = datetime(2026, 10, 15, 10, 30, 45)
+            p1 = runner.new_out_dir(cfg, now)
+            self.assertEqual(p1, Path(d) / "20261015_1030")
+            p1.mkdir()
+            p2 = runner.new_out_dir(cfg, now)                    # 같은 분
+            self.assertEqual(p2, Path(d) / "20261015_103045")
+            p2.mkdir()
+            p3 = runner.new_out_dir(cfg, now)                    # 같은 초
+            self.assertEqual(p3, Path(d) / "20261015_103045_2")
+
+    def test_resume_uses_latest_run_of_same_input(self):
+        from datetime import datetime
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            old = d / "20260101_0900"
+            new = d / "20260102_0900"
+            other = d / "20260103_0900"
+            for p, wav, mt in ((old, "A", 1000), (new, "A", 2000), (other, "B", 3000)):
+                p.mkdir()
+                (p / "state.jsonl").write_text("{}\n", encoding="utf-8")
+                (p / "summary.json").write_text(json.dumps({"config": {"wav_dir": wav}}), encoding="utf-8")
+                os.utime(p / "state.jsonl", (mt, mt))
+            cfg = {"output_dir": str(d), "resume": True, "wav_dir": "a"}
+            self.assertEqual(runner.new_out_dir(cfg), new)       # 입력(A)이 같은 가장 최근 시험
+            cfg["wav_dir"] = "C"
+            got = runner.new_out_dir(cfg, datetime(2026, 5, 5, 8, 7))
+            self.assertEqual(got, d / "20260505_0807")           # 이어갈 시험이 없으면 새 폴더
+            cfg.update(resume=False, wav_dir="A")
+            self.assertNotIn(runner.new_out_dir(cfg, datetime(2026, 5, 5, 8, 7)), (old, new, other))
 
 
 class ConfigTest(unittest.TestCase):

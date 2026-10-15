@@ -179,6 +179,10 @@ class Handler(BaseHTTPRequestHandler):
             if self.client_address[0] not in ("127.0.0.1", "::1", "::ffff:127.0.0.1"):
                 return self._json({"error": "이 PC에서만 폴더를 선택할 수 있습니다"}, 403)
             self._json(list_dir(q.get("path", [""])[0]))
+        elif p == "/api/runs":
+            base = q.get("base", [""])[0] or APP.cfg["output_dir"]
+            tgt = runner.find_resume_dir(APP.cfg["output_dir"], APP.cfg)
+            self._json({"runs": runner.list_runs(base), "resume_target": tgt.name if tgt else None})
         elif p == "/api/detail":
             d = run.detail(q.get("name", [""])[0], q.get("model", [""])[0]) if run else None
             self._json(d or {"error": "결과 없음"}, 200 if d else 404)
@@ -247,6 +251,16 @@ class Handler(BaseHTTPRequestHandler):
             folder = (b.get("folder") or "").strip()
             if not folder:
                 return self._json({"ok": False, "message": "결과 폴더를 선택하세요"})
+            if not (Path(folder) / "state.jsonl").exists():
+                runs = runner.list_runs(folder)          # 결과 저장 폴더 자체를 고른 경우: 안의 시험 폴더를 찾는다
+                if len(runs) == 1:
+                    folder = runs[0]["path"]
+                elif len(runs) > 1:
+                    return self._json({"ok": False, "runs": runs,
+                                       "message": "이 폴더 안에 시험 결과가 %d개 있습니다. 아래 목록에서 선택하세요." % len(runs)})
+                else:
+                    return self._json({"ok": False, "runs": [],
+                                       "message": "이 폴더에서 시험 결과를 찾지 못했습니다. 시험 결과는 결과 저장 폴더 아래의 시험별 폴더(예: 20261015_104007, last_run)에 있습니다."})
             try:
                 APP.run = runner.Run.from_folder(folder, APP.cfg)
             except (ValueError, OSError) as ex:

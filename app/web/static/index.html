@@ -94,6 +94,11 @@ details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:
 .capsep{border:0;border-top:1px solid var(--line);margin:16px 0}
 .viewbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--warn);color:#fff;padding:8px 16px;font-size:14px}
 .viewbar .b{padding:4px 12px}
+.runlist{display:grid;gap:6px;margin-top:10px}
+.runitem{display:flex;gap:12px;flex-wrap:wrap;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;background:var(--bg);font-size:14px}
+.runitem:hover{border-color:var(--pri)}
+.runitem b{min-width:150px}
+.runitem span{color:var(--mut);font-variant-numeric:tabular-nums}
 </style></head><body>
 <header><h1>CER/WER 시험 프로그램</h1>
 <button class="tab on" data-t="t1">① 설정·실행</button><button class="tab" data-t="t2">② 실시간 결과</button><button class="tab" data-t="t3">③ 파일별 결과</button><button class="tab" data-t="t4">④ 상세</button><button class="tab" data-t="t5">⑤ 리포트</button><button class="tab" data-t="t6">⑥ 시험결과 요약</button></header>
@@ -110,20 +115,24 @@ details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:
  <div class="card"><h2>입력</h2><div class="grid">
   <div><label>음성(.wav) 폴더 (하위 한 단계까지 탐색)</label><div class="pick"><input id="wavdir"><button class="b" type="button" data-pick="wavdir">폴더 선택</button></div></div>
   <div><label>정답 전사(.txt) 폴더 (비우면 음성 폴더와 동일)</label><div class="pick"><input id="txtdir" placeholder="비우면 wav 폴더와 같은 위치"><button class="b" type="button" data-pick="txtdir">폴더 선택</button></div></div>
-  <div><label>결과 저장 폴더</label><div class="pick"><input id="outdir"><button class="b" type="button" data-pick="outdir">폴더 선택</button></div></div></div>
+  <div><label>결과 저장 폴더 (시험마다 년월일시분 하위 폴더가 자동으로 만들어집니다. 예: 20261015_1030)</label><div class="pick"><input id="outdir"><button class="b" type="button" data-pick="outdir">폴더 선택</button></div></div></div>
   <div class="row"><button class="b" id="bScan">파일 검색</button><span id="scanMsg" class="note" style="margin:0"></span></div></div>
  <div class="card"><h2>시험 옵션</h2>
   <div class="row"><label><input type="checkbox" id="sent"> 문장 단위 시험 (평균 7초 내외)</label>
   <label><input type="checkbox" id="lat"> 응답 속도 측정 (30초 이상 제외)</label>
   <label><input type="checkbox" id="nopace"> 실시간 페이싱 해제</label>
   <label><input type="checkbox" id="resume"> 이어서 하기</label></div>
-  <div class="row"><label>동시 접속 <select id="conc" style="width:80px"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option><option>16</option></select></label><span class="note" style="margin:0" id="optNote"></span></div></div>
- <div class="card"><h2>이전 시험 결과 열기</h2><div class="pick"><input id="viewdir" placeholder="data\\results 아래의 시험 결과 폴더 (예: 20261015_104007)"><button class="b" type="button" data-pick="viewdir">폴더 선택</button><button class="b p" type="button" id="bView">열기</button></div><div id="viewMsg" class="note">읽기 전용으로 열어 ③ 파일별 결과, ④ 상세(정답·인식 결과), ⑤ 리포트, ⑥ 시험결과 요약을 다시 볼 수 있습니다. 서버 연결은 필요 없습니다.</div></div>
+  <div class="row"><label>동시 접속 <select id="conc" style="width:80px"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option><option>16</option></select></label><span class="note" style="margin:0" id="optNote"></span></div>
+  <div id="resumeNote" class="note" style="margin:8px 0 0"></div></div>
+ <div class="card"><h2>이전 시험 결과 열기</h2><div class="pick"><input id="viewdir" placeholder="data\\results 아래의 시험 결과 폴더 (예: 20261015_104007)"><button class="b" type="button" data-pick="viewdir">폴더 선택</button><button class="b p" type="button" id="bView">열기</button></div><div id="runList" class="runlist"></div>
+<div class="row" style="margin-top:6px"><button class="b" type="button" id="bRuns">목록 새로고침</button><span id="runsHint" class="note" style="margin:0"></span></div>
+<div id="viewMsg" class="note">읽기 전용으로 열어 ③ 파일별 결과, ④ 상세(정답·인식 결과), ⑤ 리포트, ⑥ 시험결과 요약을 다시 볼 수 있습니다. 서버 연결은 필요 없습니다.</div></div>
  <div class="row"><button class="b p" id="bRun">실행</button><button class="b" id="bPause">일시정지</button><button class="b" id="bStop" disabled>중지</button><span id="runMsg" class="note" style="margin:0"></span></div>
 </section>
 <section id="t2">
  <div id="stopBanner" class="card warn" style="display:none"></div>
  <div class="row" style="margin:0 0 12px"><label>동시 접속 <select id="conc2" style="width:80px" disabled><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option><option>16</option></select></label><span id="conc2Msg" class="note" style="margin:0">시험 중에도 바꿀 수 있습니다. 새로 시작하는 파일부터 적용되고 남은 시간이 다시 계산됩니다.</span></div>
+ <div id="outLoc" class="note" style="margin:0 0 12px"></div>
  <div class="kpis">
   <div class="kpi"><small>누적 CER</small><b id="kCer">-</b></div>
   <div class="kpi"><small id="kWinL">최근 구간 CER</small><b id="kWin">-</b></div>
@@ -228,12 +237,36 @@ function readCfg(){return {server:{scheme:$('scheme').value,host:$('host').value
 function saveCfg(){return api('/api/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(readCfg())}).then(function(c){$('apikey').value='';fillCfg(c);return c})}
 $('bHealth').onclick=function(){saveCfg().then(function(){$('healthMsg').textContent='확인 중...';return post('/api/health',{})}).then(function(r){
   $('healthMsg').textContent=(r.ok?'● 정상 ':'● 실패 ')+r.message;$('healthMsg').className='note '+(r.ok?'okc':'badc')})};
-$('bView').onclick=function(){
-  var f=$('viewdir').value.trim();$('viewMsg').textContent='여는 중...';$('viewMsg').className='note';
+function fmtRun(r){return (r.state==='stopped'?'중지됨':r.state==='done'?'완료':'')}
+var resumeTarget=null;
+function showResume(){
+  var n=$('resumeNote');
+  if(!$('resume').checked){n.textContent='';return}
+  n.textContent=resumeTarget?('이어서 하기: 같은 입력으로 실행한 가장 최근 시험 "'+resumeTarget+'" 폴더에 이어서 저장합니다. 완료된 파일은 건너뜁니다.'):'이어서 하기: 이어갈 이전 시험이 없어 새 시험 폴더(년월일시분)를 만듭니다.'}
+function renderRuns(runs){
+  var box=$('runList');box.textContent='';
+  (runs||[]).forEach(function(r){
+    var d=el('div','runitem');d.appendChild(el('b',null,r.name));
+    d.appendChild(el('span',null,r.generated_at));
+    if(r.done!=null)d.appendChild(el('span',null,r.done.toLocaleString()+'/'+(r.total||0).toLocaleString()+'건 '+fmtRun(r)));
+    if(r.cer!=null)d.appendChild(el('span',null,'CER '+r.cer.toFixed(2)+'%'));
+    d.onclick=function(){$('viewdir').value=r.path;openRun(r.path)};
+    box.appendChild(d)});
+  $('runsHint').textContent=(runs&&runs.length)?('시험 결과 '+runs.length+'개 · 눌러서 열기'):'이 폴더에서 시험 결과를 찾지 못했습니다.'}
+function loadRuns(){
+  var base=$('viewdir').value.trim()||$('outdir').value.trim();
+  api('/api/runs?base='+encodeURIComponent(base)).then(function(r){renderRuns(r.runs);resumeTarget=r.resume_target||null;showResume()})}
+$('resume').addEventListener('change',function(){saveCfg().then(loadRuns)});
+function openRun(f){
+  $('viewMsg').textContent='여는 중...';$('viewMsg').className='note';
   saveCfg().then(function(){return post('/api/view',{folder:f})}).then(function(r){
-    if(!r.ok){$('viewMsg').textContent=r.message;$('viewMsg').className='note badc';return}
-    $('viewMsg').textContent='열었습니다: '+r.done.toLocaleString()+'건. ③ 파일별 결과에서 확인하세요.';$('viewMsg').className='note okc';
-    refresh();loadView(true);show('t3')})};
+    if(!r.ok){$('viewMsg').textContent=r.message;$('viewMsg').className='note badc';if(r.runs)renderRuns(r.runs);return}
+    $('viewMsg').textContent='열었습니다: '+r.done.toLocaleString()+'건 · '+r.view.folder+' · ③ 파일별 결과에서 확인하세요.';$('viewMsg').className='note okc';
+    refresh();loadView(true);show('t3')})}
+$('bView').onclick=function(){openRun($('viewdir').value.trim()||$('outdir').value.trim())};
+$('bRuns').onclick=loadRuns;
+$('viewdir').addEventListener('change',loadRuns);$('outdir').addEventListener('change',loadRuns);
+
 $('bViewClose').onclick=function(){post('/api/view_close',{}).then(function(){last=null;$('viewBanner').hidden=true;refresh();loadView(true);$('capBody').textContent='실행 결과가 없습니다. 시험을 실행하면 여기에 요약이 표시됩니다.'})};
 var lastScan=null;
 function showScan(){
@@ -277,8 +310,9 @@ function refresh(){api('/api/status').then(function(s){last=s;
   if(s.view){vb.hidden=false;$('viewText').textContent='이전 시험 보기 (읽기 전용) · 실행 '+s.view.generated_at+' · '+s.view.folder;$('bRun').disabled=false}
   else{vb.hidden=true}
   if(s.state==='stopping'){$('runMsg').textContent='중지하는 중... 진행 중이던 전송을 마무리하고 있습니다.';$('runMsg').className='note warn'}
-  else if(s.state==='stopped'){$('runMsg').textContent='중지됨 — 완료된 '+(s.ok||0).toLocaleString()+'건의 결과로 집계했습니다.';$('runMsg').className='note'}
-  else if(s.state==='done'){$('runMsg').textContent='시험 완료';$('runMsg').className='note okc'}
+  else if(s.state==='stopped'){$('runMsg').textContent='중지됨 — 완료된 '+(s.ok||0).toLocaleString()+'건의 결과로 집계했습니다. 결과 위치: '+(s.out_dir||'');$('runMsg').className='note'}
+  else if(s.state==='done'){$('runMsg').textContent='시험 완료 — 결과 위치: '+(s.out_dir||'');$('runMsg').className='note okc'}
+  $('outLoc').textContent=(s.total&&s.out_dir)?('결과 저장 위치: '+s.out_dir):'';
   var sb=$('stopBanner');
   if(s.state==='stopped'){sb.style.display='';sb.textContent='중지됨 — 전체 '+(s.total||0).toLocaleString()+'건 중 완료 '+(s.ok||0).toLocaleString()+'건(실패 '+(s.failed||0)+'건) 기준 결과입니다. 누적 CER '+pct(s.cer)+' / WER '+pct(s.wer)+'. 미실행 '+Math.max(0,(s.total||0)-(s.done||0)).toLocaleString()+'건은 "이어서 하기"로 계속할 수 있습니다.'}
   else{sb.style.display='none'}
@@ -488,5 +522,5 @@ $('dlgPath').addEventListener('keydown',function(e){if(e.key==='Enter')reveal($(
 $('dlgOk').onclick=function(){if(dlgCur){$(dlgTarget).value=dlgCur}$('dlg').hidden=true};
 $('dlgCancel').onclick=function(){$('dlg').hidden=true};
 document.addEventListener('keydown',function(e){if(e.key==='Escape')$('dlg').hidden=true});
-api('/api/config').then(fillCfg);refresh();setInterval(refresh,1000);
+api('/api/config').then(function(c){fillCfg(c);loadRuns()});refresh();setInterval(refresh,1000);
 </script></body></html>

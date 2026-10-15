@@ -471,8 +471,77 @@ class Run:
         return run
 
 
-def new_out_dir(cfg):
+def list_runs(base):
+    """base 폴더(와 그 바로 아래 폴더) 중 시험 결과(state.jsonl)가 있는 폴더 목록. 최근 것이 먼저."""
+    base = Path(base)
+    out = []
+    cands = []
+    if base.is_dir():
+        if (base / "state.jsonl").exists():
+            cands.append(base)
+        try:
+            cands += [p for p in base.iterdir() if p.is_dir() and (p / "state.jsonl").exists()]
+        except OSError:
+            pass
+    for p in cands:
+        try:
+            mt = (p / "state.jsonl").stat().st_mtime
+        except OSError:
+            continue
+        info = {"name": p.name, "path": str(p), "mtime": mt,
+                "generated_at": datetime.fromtimestamp(mt).strftime("%Y-%m-%d %H:%M:%S"),
+                "state": None, "done": None, "total": None, "cer": None}
+        smp = p / "summary.json"
+        if smp.exists():
+            try:
+                s = json.loads(smp.read_text(encoding="utf-8"))
+                info.update(generated_at=s.get("generated_at") or info["generated_at"], state=s.get("state"),
+                            done=s.get("done"), total=s.get("total"), cer=s.get("cer_pct"))
+            except ValueError:
+                pass
+        out.append(info)
+    out.sort(key=lambda x: x["mtime"], reverse=True)
+    return out
+
+
+def _norm_dir(p):
+    return str(p or "").replace("/", "\\").rstrip("\\").lower()
+
+
+def find_resume_dir(base, cfg):
+    """이어서 하기 대상: 결과 저장 폴더 안에서 같은 음성 폴더로 실행한 가장 최근 시험 폴더."""
+    base = Path(base)
+    want = _norm_dir(cfg.get("wav_dir"))
+    for r in list_runs(base):
+        p = Path(r["path"])
+        if p == base:
+            continue
+        smp = p / "summary.json"
+        if smp.exists():
+            try:
+                got = _norm_dir((json.loads(smp.read_text(encoding="utf-8")).get("config") or {}).get("wav_dir"))
+            except ValueError:
+                got = ""
+            if got and got != want:
+                continue
+        return p
+    return None
+
+
+def new_out_dir(cfg, now=None):
+    """시험 결과 폴더: 결과 저장 폴더 아래에 년월일시분(YYYYMMDD_HHMM) 하위 폴더를 만든다.
+    이어서 하기를 켜면 같은 입력의 가장 최근 시험 폴더를 이어서 사용한다."""
     base = Path(cfg["output_dir"])
     if cfg.get("resume"):
-        return base / "last_run"
-    return base / datetime.now().strftime("%Y%m%d_%H%M%S")
+        d = find_resume_dir(base, cfg)
+        if d is not None:
+            return d
+    now = now or datetime.now()
+    p = base / now.strftime("%Y%m%d_%H%M")
+    if p.exists():                                  # 같은 분에 다시 시작한 경우: 초, 번호를 덧붙여 구분
+        p = base / now.strftime("%Y%m%d_%H%M%S")
+        n = 2
+        while p.exists():
+            p = base / (now.strftime("%Y%m%d_%H%M%S") + f"_{n}")
+            n += 1
+    return p
