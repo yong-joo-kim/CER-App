@@ -34,6 +34,8 @@ def write_all(run):
         "mode": "sentence" if run.cfg.get("sentence_mode") else "continuous",
         "models": run.models,
         "concurrency": snap["concurrency"],
+        "concurrency_seen": snap["concurrency_seen"],
+        "files": snap["files"],
         "realtime_pacing": run.cfg.get("realtime_pacing", True),
         "total": snap["total"], "done": snap["done"], "failed": snap["failed"],
         "cer_pct": snap["cer"], "wer_pct": snap["wer"], "cer_counts_SIDN": snap["cer_counts"],
@@ -47,7 +49,8 @@ def write_all(run):
     lines = [
         "CER/WER 시험 요약" + (" (중지됨: 완료된 결과 기준)" if snap["state"] == "stopped" else ""),
         f"생성: {summary['generated_at']}   모드: {'문장 단위' if summary['mode'] == 'sentence' else '일반(장시간)'}",
-        f"모델: {', '.join(run.models)}   동시 접속: {snap['concurrency']}",
+        f"모델: {', '.join(run.models)}   동시 접속: {snap['concurrency']}"
+        + (f" (시험 중 {', '.join(map(str, snap['concurrency_seen']))} 사용)" if len(snap["concurrency_seen"]) > 1 else ""),
         f"파일: 전체 {snap['total']} / 완료 {snap['ok']} / 실패 {snap['failed']}"
         + (f" / 미실행 {max(0, snap['total'] - snap['done'])}" if snap["state"] == "stopped" else ""),
         f"전체(가중) CER {_pct(snap['cer'])}   WER {_pct(snap['wer'])}",

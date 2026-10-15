@@ -24,12 +24,20 @@ def percentile(sorted_vals, p):
     return sorted_vals[lo] + (sorted_vals[hi] - sorted_vals[lo]) * (k - lo)
 
 
+MAX_CONCURRENCY = 16
+
+
 class Run:
     """시험 1회의 상태. 스레드 안전."""
 
     def __init__(self, cfg, items, out_dir, transcribe_fn=None):
         self.cfg = cfg
         self.items = items
+        self.view_only = False       # 이전 시험을 읽기 전용으로 연 경우
+        self.view_info = None
+        self.files_count = None
+        self.txt_search_dirs = []
+        self._stem_cache = {}
         self.out_dir = Path(out_dir)
         self.transcribe = transcribe_fn or stt_client.transcribe
         self.stop_ev = threading.Event()
@@ -55,6 +63,16 @@ class Run:
         self.models = list(cfg.get("models") or ["model_v2"])
         self.thread = None
         self.audio_total_s = 0.0
+        self.audio_all_s = 0.0      # 시험 대상 전체 음성 길이(초)
+        self.excluded_files = 0     # 검색 단계에서 제외된 파일 수(정답 없음 등)
+        self.unique_audio_s = sum(i.duration_s for i in items)   # 파일 기준 음성 합계(모델 수와 무관)
+        self.done_audio_s = 0.0     # 처리가 끝난 음성 길이(초)
+        self.sum_proc = 0.0         # 완료 파일의 처리 시간 합(초)
+        self.sum_proc_dur = 0.0     # 위 파일들의 음성 길이 합(초)
+        self.limit = max(1, min(int(cfg.get("concurrency", 4)), MAX_CONCURRENCY))
+        self.conc_seen = {self.limit}
+        self.active = 0
+        self.cv = threading.Condition()
 
     # ---- 저장 경로 ----
     def result_path(self, name, model):
@@ -95,9 +113,9 @@ class Run:
                 self._accept(r, persist=False)
         pending = [(it, m) for it, m in jobs if (it.name, m) not in self.records]
         self.audio_total_s = sum(it.duration_s for it, _ in pending)
-        n = max(1, min(int(self.cfg.get("concurrency", 4)), 16))
+        self.audio_all_s = sum(it.duration_s for it, _ in jobs)
         try:
-            with ThreadPoolExecutor(max_workers=n) as ex:
+            with ThreadPoolExecutor(max_workers=MAX_CONCURRENCY) as ex:
                 futs = [ex.submit(self._one, it, m) for it, m in pending]
                 for f in futs:
                     f.result()
@@ -111,11 +129,41 @@ class Run:
             except Exception:
                 pass
 
+    def set_concurrency(self, n):
+        """실행 중 동시 접속 수 변경. 새로 시작하는 파일부터 적용된다."""
+        n = max(1, min(int(n), MAX_CONCURRENCY))
+        with self.cv:
+            self.limit = n
+            self.cfg["concurrency"] = n
+            self.conc_seen.add(n)
+            self.cv.notify_all()
+        return n
+
+    def _acquire(self):
+        with self.cv:
+            while self.active >= self.limit and not self.stop_ev.is_set():
+                self.cv.wait(0.2)
+            if self.stop_ev.is_set():
+                return False
+            self.active += 1
+            return True
+
+    def _release(self):
+        with self.cv:
+            self.active -= 1
+            self.cv.notify_all()
+
     def _one(self, it, model):
         while self.pause_ev.is_set() and not self.stop_ev.is_set():
             time.sleep(0.2)
-        if self.stop_ev.is_set():
+        if self.stop_ev.is_set() or not self._acquire():
             return
+        try:
+            self._process(it, model)
+        finally:
+            self._release()
+
+    def _process(self, it, model):
         rec = {"name": it.name, "model": model, "speaker": it.speaker,
                "duration_s": round(it.duration_s, 2), "status": "실패", "note": "",
                "cer": None, "wer": None, "cs": 0, "ci": 0, "cd": 0, "cn": 0,
@@ -126,6 +174,7 @@ class Run:
             ref_segs = normalize.normalize_ref(ref_raw, fill)
             attempts = 1 + int(self.cfg["retry"].get("count", 2))
             res, last_err = None, ""
+            t0 = time.perf_counter()
             for a in range(attempts):
                 try:
                     res = self.transcribe(it.wav, self.cfg, model, "tr_" + safe_name(it.name)[:40], stop=self.stop_ev)
@@ -139,6 +188,7 @@ class Run:
                     return  # 사용자 중지로 끊긴 건은 실패로 집계하지 않는다(미완료로 남김)
                 rec["note"] = last_err or "실패"
                 return self._accept(rec)
+            rec["proc_s"] = round(time.perf_counter() - t0, 3)
             hyp_n = normalize.normalize(res["transcript"], fill)
             p = self.result_path(it.name, model)
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -171,6 +221,10 @@ class Run:
         with self.lock:
             self.records[key] = rec
             self.order.append(key)
+            self.done_audio_s += float(rec.get("duration_s") or 0)
+            if rec.get("status") == "완료" and rec.get("proc_s"):
+                self.sum_proc += float(rec["proc_s"])
+                self.sum_proc_dur += float(rec.get("duration_s") or 0)
             if rec["status"] == "완료":
                 c = metrics.Score(rec["cs"], rec["ci"], rec["cd"], rec["cn"])
                 w = metrics.Score(rec["ws"], rec["wi"], rec["wd"], rec["wn"])
@@ -235,7 +289,12 @@ class Run:
             remaining = None
             ok_done = done - self.failed
             if self.total and done and self.state in ("running", "paused"):
-                remaining = elapsed / done * (self.total - done)
+                rem_audio = max(0.0, self.audio_all_s - self.done_audio_s)
+                if self.sum_proc_dur > 0:
+                    rate = self.sum_proc / self.sum_proc_dur   # 음성 1초당 처리에 걸린 시간
+                    remaining = rate * rem_audio / max(1, self.limit)
+                else:
+                    remaining = elapsed / done * (self.total - done)
             tr = self.trend
             if len(tr) > trend_points:
                 step = len(tr) / trend_points
@@ -267,7 +326,14 @@ class Run:
                              for k, v in self.by_speaker.items()},
                 "dist": dist, "trend": tr,
                 "elapsed_s": elapsed, "remaining_s": remaining,
-                "concurrency": int(self.cfg.get("concurrency", 4)),
+                "files": {"count": self.files_count if self.files_count is not None else len(self.items),
+                          "excluded": self.excluded_files,
+                          "audio_s": self.unique_audio_s},
+                "realtime_pacing": bool(self.cfg.get("realtime_pacing", True)),
+                "view": self.view_info if self.view_only else None,
+                "mode": "sentence" if self.cfg.get("sentence_mode") else "continuous",
+                "concurrency": self.limit,
+                "concurrency_seen": sorted(self.conc_seen),
                 "models": self.models, "out_dir": str(self.out_dir),
             }
 
@@ -293,27 +359,116 @@ class Run:
             rows.sort(key=lambda r: r["name"])
         return len(rows), rows[offset:offset + limit]
 
+    def resolve_txt(self, name):
+        """이전 시험을 열 때 정답 원본(.txt) 경로를 찾는다. 없으면 None."""
+        base = Path(name)
+        cands = []
+        for d in self.txt_search_dirs:
+            if d:
+                cands.append(Path(d) / (name + ".txt"))
+        for c in cands:
+            if c.exists():
+                return c
+        for d in self.txt_search_dirs:
+            if not d or not Path(d).is_dir():
+                continue
+            idx = self._stem_cache.get(d)
+            if idx is None:
+                idx = self._stem_cache[d] = inputs._txts_by_stem(Path(d), 1)
+            if base.name in idx:
+                return idx[base.name]
+        return None
+
     def detail(self, name, model):
         rec = self.records.get((name, model))
         if not rec:
             return None
         it = next((i for i in self.items if i.name == name), None)
+        txt = it.txt if it is not None else self.resolve_txt(name)
         fill = self.cfg.get("filler_words", [])
         ref_n = hyp_n = ""
         ops = []
-        if it is not None:
+        ref_missing = txt is None or not Path(txt).exists()
+        ref_segs = None
+        if not ref_missing:
             try:
-                ref_segs = normalize.normalize_ref(inputs.read_text(it.txt), fill)
+                ref_segs = normalize.normalize_ref(inputs.read_text(txt), fill)
                 ref_n = normalize.ref_text(ref_segs)
-                p = self.result_path(name, model)
-                if p.exists():
-                    hyp_n = normalize.normalize(p.read_text(encoding="utf-8"), fill)
-                    _, ops = metrics.score_lattice(normalize.lattice(ref_segs, "word"), normalize.to_words(hyp_n))
             except Exception:
-                pass
-        return {"record": rec, "ref": ref_n, "hyp": hyp_n,
+                ref_missing = True
+        p = self.result_path(name, model)
+        try:
+            if p.exists():
+                hyp_n = normalize.normalize(p.read_text(encoding="utf-8"), fill)
+                if ref_segs is not None:
+                    _, ops = metrics.score_lattice(normalize.lattice(ref_segs, "word"), normalize.to_words(hyp_n))
+        except Exception:
+            pass
+        return {"record": rec, "ref": ref_n, "hyp": hyp_n, "ref_missing": ref_missing,
                 "ops": [list(o) for o in ops],
-                "result_file": str(self.result_path(name, model))}
+                "result_file": str(p)}
+
+    @classmethod
+    def from_folder(cls, folder, fallback_cfg):
+        """이전 시험 결과 폴더를 읽기 전용으로 연다 (state.jsonl 기준)."""
+        import copy
+        folder = Path(folder)
+        sp = folder / "state.jsonl"
+        if not sp.exists():
+            raise ValueError("시험 결과 폴더가 아닙니다 (state.jsonl이 없습니다)")
+        summ = {}
+        smp = folder / "summary.json"
+        if smp.exists():
+            try:
+                summ = json.loads(smp.read_text(encoding="utf-8"))
+            except ValueError:
+                summ = {}
+        cfg = copy.deepcopy(fallback_cfg)
+        snap = summ.get("config") or {}
+        for k in ("wav_dir", "txt_dir", "models", "sentence_mode", "measure_latency", "realtime_pacing",
+                  "filler_words", "window_size", "latency_max_audio_s"):
+            if k in snap:
+                cfg[k] = snap[k]
+        cfg["resume"] = False
+        recs = {}
+        for line in sp.read_text(encoding="utf-8").splitlines():
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(r, dict) and "name" in r and "model" in r:
+                recs[(r["name"], r["model"])] = r
+        if not recs:
+            raise ValueError("이 폴더에는 시험 결과가 없습니다")
+        models = list(summ.get("models") or sorted({m for _, m in recs}))
+        cfg["models"] = models
+        cfg["concurrency"] = int(summ.get("concurrency") or fallback_cfg.get("concurrency", 4))
+        run = cls(cfg, [], folder)
+        run.view_only = True
+        for rec in recs.values():
+            run._accept(rec, persist=False)
+        run.total = int(summ.get("total") or len(recs))
+        st = summ.get("state")
+        run.state = st if st in ("done", "stopped") else "stopped"
+        run.started = 1.0
+        run.finished = 1.0 + float(summ.get("elapsed_s") or 0)
+        names = {n for n, _ in recs}
+        durs = {}
+        for (n, _), r in recs.items():
+            durs.setdefault(n, float(r.get("duration_s") or 0))
+        run.files_count = len(names)
+        run.unique_audio_s = sum(durs.values())
+        run.excluded_files = int((summ.get("files") or {}).get("excluded", 0))
+        run.conc_seen = set(summ.get("concurrency_seen") or [run.limit])
+        run.txt_search_dirs = [cfg.get("txt_dir") or cfg.get("wav_dir"), cfg.get("wav_dir"),
+                               fallback_cfg.get("txt_dir"), fallback_cfg.get("wav_dir")]
+        gen = summ.get("generated_at")
+        if not gen:
+            import time as _t
+            gen = _t.strftime("%Y-%m-%d %H:%M:%S", _t.localtime(sp.stat().st_mtime))
+        run.view_info = {"folder": str(folder), "generated_at": gen,
+                         "has_summary": smp.exists(), "txt_dir": cfg.get("txt_dir") or cfg.get("wav_dir")}
+        return run
 
 
 def new_out_dir(cfg):

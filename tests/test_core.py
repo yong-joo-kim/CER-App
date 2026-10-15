@@ -1,5 +1,6 @@
 import json
 import tempfile
+import threading
 import time
 import unittest
 import wave
@@ -295,6 +296,110 @@ class PauseClockTest(unittest.TestCase):
         c = run.snapshot()
         self.assertGreater(c["elapsed_s"], b["elapsed_s"])
         self.assertLess(c["elapsed_s"], b["elapsed_s"] + 1.0)   # 정지한 시간은 더해지지 않음
+
+
+class DynamicConcurrencyTest(unittest.TestCase):
+    def test_limit_changes_while_running_and_eta_follows(self):
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "in").mkdir()
+            for i in range(24):
+                make_wav(d / "in" / f"f{i:02d}.wav", 1.0)
+                (d / "in" / f"f{i:02d}.txt").write_text("가", encoding="utf-8")
+            lock = threading.Lock()
+            state = {"cur": 0, "max": 0}
+
+            def fake(wav, cfg, model, tr_id, on_progress=None, stop=None):
+                with lock:
+                    state["cur"] += 1
+                    state["max"] = max(state["max"], state["cur"])
+                time.sleep(0.15)
+                with lock:
+                    state["cur"] -= 1
+                return {"transcript": "가", "messages": [], "latency": None}
+
+            cfg = config.load(d / "none.json")
+            cfg.update(concurrency=1, sentence_mode=False)
+            items, _ = inputs.scan(d / "in")
+            run = runner.Run(cfg, items, d / "out", transcribe_fn=fake)
+            run.start()
+            time.sleep(0.8)                          # 동시 1로 몇 건 처리
+            self.assertEqual(state["max"], 1)
+            eta1 = run.snapshot()["remaining_s"]
+            self.assertIsNotNone(eta1)
+            run.set_concurrency(4)
+            time.sleep(0.3)
+            snap = run.snapshot()
+            self.assertEqual(snap["concurrency"], 4)
+            self.assertIsNotNone(snap["remaining_s"])
+            self.assertLess(snap["remaining_s"], eta1)   # 동시 접속을 늘리면 남은 시간이 줄어듦
+            run.thread.join(20)
+            self.assertGreaterEqual(state["max"], 3)    # 실제로 동시에 여러 건 처리
+            s2 = run.snapshot()
+            self.assertEqual((s2["done"], s2["failed"]), (24, 0))
+            self.assertEqual(s2["concurrency_seen"], [1, 4])
+
+
+class ViewPastRunTest(unittest.TestCase):
+    def _make_run(self, d):
+        (d / "in").mkdir()
+        refs = {"a": "가나다라", "b": "마바사아", "c": "자차카타"}
+        for n, ref in refs.items():
+            make_wav(d / "in" / f"{n}.wav", 1.0)
+            (d / "in" / f"{n}.txt").write_text(ref, encoding="utf-8")
+        hyp = {"a": "가나다라", "b": "마바사자", "c": "자차카타"}
+
+        def fake(wav, cfg, model, tr_id, on_progress=None, stop=None):
+            return {"transcript": hyp[Path(wav).stem], "messages": [], "latency": 0.2}
+
+        cfg = config.load(d / "none.json")
+        cfg.update(concurrency=2, sentence_mode=True, measure_latency=True,
+                   wav_dir=str(d / "in"), txt_dir="")
+        items, _ = inputs.scan(d / "in")
+        run = runner.Run(cfg, items, d / "out", transcribe_fn=fake)
+        run.excluded_files = 2
+        run.start()
+        run.thread.join(10)
+        return run, cfg
+
+    def test_open_past_run_read_only(self):
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            run, cfg = self._make_run(d)
+            orig = run.snapshot()
+            before = (d / "out" / "summary.txt").read_bytes()
+            v = runner.Run.from_folder(d / "out", config.load(d / "none.json"))
+            s = v.snapshot()
+            self.assertTrue(v.view_only)
+            self.assertEqual((s["done"], s["failed"], s["total"]), (3, 0, 3))
+            self.assertAlmostEqual(s["cer"], orig["cer"])
+            self.assertEqual(s["files"]["count"], 3)
+            self.assertEqual(s["files"]["excluded"], 2)
+            self.assertIsNotNone(s["view"])
+            total, rows = v.query(sort="cer", asc=False)
+            self.assertEqual(total, 3)
+            self.assertEqual(rows[0]["name"], "b")                  # CER 가장 높은 파일이 맨 위
+            det = v.detail("b", "model_v2")
+            self.assertFalse(det["ref_missing"])
+            self.assertTrue(det["ops"])                              # 정답·인식 비교 가능
+            self.assertEqual((d / "out" / "summary.txt").read_bytes(), before)  # 읽기 전용: 파일 변경 없음
+
+    def test_missing_reference_shows_hypothesis_only(self):
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            run, cfg = self._make_run(d)
+            for f in (d / "in").glob("*.txt"):
+                f.unlink()                                           # 정답 원본이 없어진 경우
+            v = runner.Run.from_folder(d / "out", config.load(d / "none.json"))
+            det = v.detail("b", "model_v2")
+            self.assertTrue(det["ref_missing"])
+            self.assertEqual(det["hyp"], "마바사자")                  # 인식 결과는 표시
+            self.assertEqual(det["ops"], [])
+
+    def test_not_a_result_folder(self):
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(ValueError):
+                runner.Run.from_folder(d, config.load(Path("none.json")))
 
 
 class ConfigTest(unittest.TestCase):

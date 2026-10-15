@@ -79,9 +79,25 @@ details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:
 .trow.sel .tg{color:#fff}
 .tkids[hidden]{display:none}
 .tmsg{padding:4px 8px;color:var(--mut);font-size:13px}
+.cap{max-width:760px;margin:0 auto}
+.cap h2{font-size:20px;margin:0 0 6px}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:10px 18px;margin:16px 0 8px;font-size:17px}
+.kv dt{color:var(--mut);white-space:nowrap}
+.kv dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
+.kv dd small{font-weight:400;color:var(--mut);font-size:13.5px}
+.kv .em{font-size:20px}
+.cb{display:grid;grid-template-columns:70px 1fr 96px;gap:12px;align-items:center;margin:12px 0;font-size:16px}
+.cb .track{height:28px;background:var(--bg);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.cb .fill{height:100%;background:var(--pri)}
+.cb .fill.w{background:var(--ok)}
+.cb b{text-align:right;font-variant-numeric:tabular-nums}
+.capsep{border:0;border-top:1px solid var(--line);margin:16px 0}
+.viewbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--warn);color:#fff;padding:8px 16px;font-size:14px}
+.viewbar .b{padding:4px 12px}
 </style></head><body>
 <header><h1>CER/WER 시험 프로그램</h1>
-<button class="tab on" data-t="t1">① 설정·실행</button><button class="tab" data-t="t2">② 실시간 결과</button><button class="tab" data-t="t3">③ 파일별 결과</button><button class="tab" data-t="t4">④ 상세</button><button class="tab" data-t="t5">⑤ 리포트</button></header>
+<button class="tab on" data-t="t1">① 설정·실행</button><button class="tab" data-t="t2">② 실시간 결과</button><button class="tab" data-t="t3">③ 파일별 결과</button><button class="tab" data-t="t4">④ 상세</button><button class="tab" data-t="t5">⑤ 리포트</button><button class="tab" data-t="t6">⑥ 시험결과 요약</button></header>
+<div id="viewBanner" class="viewbar" hidden><span id="viewText"></span><button class="b" type="button" id="bViewClose">닫기</button></div>
 <main>
 <section id="t1" class="on">
  <div class="card"><h2>서버·모델</h2><div class="grid">
@@ -101,11 +117,13 @@ details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:
   <label><input type="checkbox" id="lat"> 응답 속도 측정 (30초 이상 제외)</label>
   <label><input type="checkbox" id="nopace"> 실시간 페이싱 해제</label>
   <label><input type="checkbox" id="resume"> 이어서 하기</label></div>
-  <div class="row"><label>동시 접속 <select id="conc" style="width:80px"><option>1</option><option>2</option><option>4</option><option>8</option></select></label><span class="note" style="margin:0" id="optNote"></span></div></div>
+  <div class="row"><label>동시 접속 <select id="conc" style="width:80px"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option><option>16</option></select></label><span class="note" style="margin:0" id="optNote"></span></div></div>
+ <div class="card"><h2>이전 시험 결과 열기</h2><div class="pick"><input id="viewdir" placeholder="data\\results 아래의 시험 결과 폴더 (예: 20261015_104007)"><button class="b" type="button" data-pick="viewdir">폴더 선택</button><button class="b p" type="button" id="bView">열기</button></div><div id="viewMsg" class="note">읽기 전용으로 열어 ③ 파일별 결과, ④ 상세(정답·인식 결과), ⑤ 리포트, ⑥ 시험결과 요약을 다시 볼 수 있습니다. 서버 연결은 필요 없습니다.</div></div>
  <div class="row"><button class="b p" id="bRun">실행</button><button class="b" id="bPause">일시정지</button><button class="b" id="bStop" disabled>중지</button><span id="runMsg" class="note" style="margin:0"></span></div>
 </section>
 <section id="t2">
  <div id="stopBanner" class="card warn" style="display:none"></div>
+ <div class="row" style="margin:0 0 12px"><label>동시 접속 <select id="conc2" style="width:80px" disabled><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option><option>8</option><option>12</option><option>16</option></select></label><span id="conc2Msg" class="note" style="margin:0">시험 중에도 바꿀 수 있습니다. 새로 시작하는 파일부터 적용되고 남은 시간이 다시 계산됩니다.</span></div>
  <div class="kpis">
   <div class="kpi"><small>누적 CER</small><b id="kCer">-</b></div>
   <div class="kpi"><small id="kWinL">최근 구간 CER</small><b id="kWin">-</b></div>
@@ -140,6 +158,14 @@ details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:
   <div class="note">인식 결과 원문은 결과 폴더의 &lt;이름&gt;_result.txt 입니다. 실행 설정(API 키 제외)과 동시 접속 수가 summary에 기록됩니다.</div></div>
  <div class="card"><h2>요약 미리보기</h2><div id="rSum"><div class="note" style="margin:0">실행 결과가 없습니다.</div></div></div>
 </section>
+<section id="t6">
+ <div class="card cap" id="capCard">
+  <h2>음성인식 시험결과 요약</h2>
+  <div id="capHead" class="sumhead"></div>
+  <div id="capBody"><div class="note" style="margin:0">실행 결과가 없습니다. 시험을 실행하면 여기에 요약이 표시됩니다.</div></div>
+ </div>
+ <div class="row" style="max-width:760px;margin-inline:auto"><button class="b" id="bCopy" type="button">텍스트로 복사</button><span id="copyMsg" class="note" style="margin:0">제출용으로 캡처할 때는 위 카드를 그대로 캡처하세요.</span></div>
+</section>
 </main>
 <footer><span>완료 <b id="fDone">0</b> / <b id="fTotal">0</b></span><span>실패 <b id="fFail">0</b></span><span>누적 CER <b id="fCer">-</b></span><span>응답속도 평균 <b id="fLat">-</b></span><span>남은 <b id="fRem">-</b></span><span id="fState" style="margin-left:auto"></span></footer>
 <div id="dlg" class="dlg" hidden><div class="dlgbox" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
@@ -170,7 +196,8 @@ function show(t,noPush,state){
   if(!noPush)history.pushState(state||{t:t},'','#'+t);
   if(t==='t2')draw();
   if(t==='t3'){loadView(false);$('vs').scrollTop=savedScroll;render()}
-  if(t==='t5')loadReport();}
+  if(t==='t5')loadReport();
+  if(t==='t6')renderCap();}
 /* 브라우저 뒤로/앞으로 가기: 탭 이동과 상세 선택을 히스토리에 기록한다 */
 window.addEventListener('popstate',function(e){
   var st=e.state,t=(st&&st.t)||(location.hash||'#t1').slice(1);
@@ -201,9 +228,29 @@ function readCfg(){return {server:{scheme:$('scheme').value,host:$('host').value
 function saveCfg(){return api('/api/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(readCfg())}).then(function(c){$('apikey').value='';fillCfg(c);return c})}
 $('bHealth').onclick=function(){saveCfg().then(function(){$('healthMsg').textContent='확인 중...';return post('/api/health',{})}).then(function(r){
   $('healthMsg').textContent=(r.ok?'● 정상 ':'● 실패 ')+r.message;$('healthMsg').className='note '+(r.ok?'okc':'badc')})};
-$('bScan').onclick=function(){saveCfg().then(function(){$('scanMsg').textContent='검색 중...';return post('/api/scan',{wav_dir:$('wavdir').value.trim(),txt_dir:$('txtdir').value.trim()})}).then(function(r){
-  var h=r.audio_total_s/3600;$('scanMsg').textContent='.wav '+r.count.toLocaleString()+'건 (제외 '+r.warning_count+'건) · 음성 합계 '+dur(r.audio_total_s)+
-  ' · 예상 소요 '+dur(r.audio_total_s/Math.max(1,parseInt($('conc').value,10)))+'(페이싱 기준)'})};
+$('bView').onclick=function(){
+  var f=$('viewdir').value.trim();$('viewMsg').textContent='여는 중...';$('viewMsg').className='note';
+  saveCfg().then(function(){return post('/api/view',{folder:f})}).then(function(r){
+    if(!r.ok){$('viewMsg').textContent=r.message;$('viewMsg').className='note badc';return}
+    $('viewMsg').textContent='열었습니다: '+r.done.toLocaleString()+'건. ③ 파일별 결과에서 확인하세요.';$('viewMsg').className='note okc';
+    refresh();loadView(true);show('t3')})};
+$('bViewClose').onclick=function(){post('/api/view_close',{}).then(function(){last=null;$('viewBanner').hidden=true;refresh();loadView(true);$('capBody').textContent='실행 결과가 없습니다. 시험을 실행하면 여기에 요약이 표시됩니다.'})};
+var lastScan=null;
+function showScan(){
+  var r=lastScan;if(!r)return;
+  var c=Math.max(1,parseInt($('conc').value,10)||1),base='.wav '+r.count.toLocaleString()+'건 (제외 '+r.warning_count+'건) · 음성 합계 '+dur(r.audio_total_s);
+  if($('nopace').checked){$('scanMsg').textContent=base+' · 예상 소요: 실시간 페이싱 해제 시 음성 길이보다 짧아집니다(서버 처리 속도에 따라 달라짐, 동시 접속 '+c+')'}
+  else{$('scanMsg').textContent=base+' · 예상 소요 '+dur(r.audio_total_s/c)+' (동시 접속 '+c+', 음성을 실제 재생 속도로 보낼 때 기준)'}}
+$('bScan').onclick=function(){saveCfg().then(function(){$('scanMsg').textContent='검색 중...';return post('/api/scan',{wav_dir:$('wavdir').value.trim(),txt_dir:$('txtdir').value.trim()})}).then(function(r){lastScan=r;showScan()})};
+function applyConc(v){
+  post('/api/concurrency',{value:v}).then(function(r){
+    if(!r.ok){$('conc2Msg').textContent=r.message||'변경하지 못했습니다';return}
+    $('conc').value=String(r.value);$('conc2').value=String(r.value);
+    var warn=(last&&last.latency&&last.latency.on&&r.value>1)?' ※ 응답 속도 측정 중이라 서버 부하가 속도 값에 반영됩니다.':'';
+    $('conc2Msg').textContent='동시 접속 '+r.value+' 적용 — 새로 시작하는 파일부터 반영됩니다.'+warn;showScan();refresh()})}
+$('conc2').addEventListener('change',function(){applyConc(parseInt($('conc2').value,10))});
+$('conc').addEventListener('change',function(){showScan();if(last&&(last.state==='running'||last.state==='paused'))applyConc(parseInt($('conc').value,10))});
+['sent','lat','nopace'].forEach(function(i){$(i).addEventListener('change',showScan)});
 $('bRun').onclick=function(){saveCfg().then(function(){return post('/api/run',{})}).then(function(r){
   $('runMsg').textContent=r.ok?'시작: '+r.message:r.message;$('runMsg').className='note '+(r.ok?'okc':'badc');if(r.ok)show('t2')})};
 $('bStop').onclick=function(){
@@ -218,12 +265,17 @@ function refresh(){api('/api/status').then(function(s){last=s;
   $('kWer').textContent=pct(s.wer);$('kLat').textContent=L.on?sec(L.mean):'측정 안 함';
   $('kLatS').textContent=L.on?('p95 '+sec(L.p95)+' · 최대 '+sec(L.max)+' · 제외 '+L.excluded):'';
   $('kDone').textContent=(s.done||0).toLocaleString()+' / '+(s.total||0).toLocaleString();$('kFail').textContent='실패 '+(s.failed||0);
-  $('kEl').textContent=dur(s.elapsed_s);$('kRem').textContent=(s.state==='paused'?'일시정지 중 · ':'')+(s.remaining_s==null?'':'남은 '+dur(s.remaining_s));
+  $('kEl').textContent=dur(s.elapsed_s);$('kRem').textContent=(s.state==='paused'?'일시정지 중 · ':'')+(s.remaining_s==null?'':'남은 '+dur(s.remaining_s)+' (동시 접속 '+s.concurrency+' 기준)');
   $('prog').style.width=(s.total?Math.min(100,s.done/s.total*100):0)+'%';
   $('fDone').textContent=(s.done||0).toLocaleString();$('fTotal').textContent=(s.total||0).toLocaleString();$('fFail').textContent=s.failed||0;
   $('fCer').textContent=pct(s.cer);$('fLat').textContent=L.on?sec(L.mean):'-';$('fRem').textContent=s.remaining_s==null?'-':dur(s.remaining_s);
   $('fState').textContent='상태: '+(stateKo[s.state]||s.state);$('bPause').textContent=s.state==='paused'?'재개':'일시정지';
+  $('conc2').disabled=!(s.state==='running'||s.state==='paused');
+  if(s.concurrency&&document.activeElement!==$('conc2')){$('conc2').value=String(s.concurrency);if(run&&document.activeElement!==$('conc'))$('conc').value=String(s.concurrency)}
   $('bRun').disabled=run;$('bStop').disabled=!run||s.state==='stopping';$('bPause').disabled=!run||s.state==='stopping';
+  var vb=$('viewBanner');
+  if(s.view){vb.hidden=false;$('viewText').textContent='이전 시험 보기 (읽기 전용) · 실행 '+s.view.generated_at+' · '+s.view.folder;$('bRun').disabled=false}
+  else{vb.hidden=true}
   if(s.state==='stopping'){$('runMsg').textContent='중지하는 중... 진행 중이던 전송을 마무리하고 있습니다.';$('runMsg').className='note warn'}
   else if(s.state==='stopped'){$('runMsg').textContent='중지됨 — 완료된 '+(s.ok||0).toLocaleString()+'건의 결과로 집계했습니다.';$('runMsg').className='note'}
   else if(s.state==='done'){$('runMsg').textContent='시험 완료';$('runMsg').className='note okc'}
@@ -233,6 +285,7 @@ function refresh(){api('/api/status').then(function(s){last=s;
   if(s.dist){$('dist').textContent=Object.keys(s.dist).map(function(k){return k+':'+s.dist[k]+'건'}).join('  ')}
   if(s.speakers){$('spk').textContent=Object.keys(s.speakers).map(function(k){var v=s.speakers[k];return '화자 '+k+' CER '+pct(v.cer==null?null:v.cer*100)+' / WER '+pct(v.wer==null?null:v.wer*100)}).join('  ·  ')}
   if($('t2').classList.contains('on'))draw();
+  if($('t6').classList.contains('on'))renderCap();
   if($('t3').classList.contains('on')&&run)loadView(false);
 }).catch(function(){})}
 function draw(){var c=$('ch'),d=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;if(!w)return;
@@ -272,6 +325,8 @@ function openDetail(name,model,noPush){api('/api/detail?name='+encodeURIComponen
   show('t4',!!noPush,{t:'t4',n:name,m:model});$('dTitle').textContent='상세: '+name+' / '+model;
   if(d.error){$('dEmpty').style.display='';$('dBody').style.display='none';$('dEmpty').textContent=d.error;return}
   $('dEmpty').style.display='none';$('dBody').style.display='';
+  if(d.ref_missing){$('dRef').textContent='(정답 원본 파일을 찾을 수 없습니다. ① 탭에서 정답 폴더를 지정한 뒤 이전 시험을 다시 여세요.)';$('dHyp').textContent=d.hyp||'(인식 결과 파일 없음)';
+    var rc0=d.record;$('dInfo').textContent='CER '+pct(rc0.cer)+' · S/I/D/N '+rc0.cs+'/'+rc0.ci+'/'+rc0.cd+'/'+rc0.cn+' · WER '+pct(rc0.wer)+' · 응답속도 '+sec(rc0.latency)+' · 음성 '+rc0.duration_s+'s · 결과 파일 '+d.result_file;return}
   var r=[],h=[];d.ops.forEach(function(o){var op=o[0],a=o[1],b=o[2];
     if(op==='='){r.push(esc(a));h.push(esc(b))}
     else if(op==='S'){r.push('<span class="s">'+esc(a)+'</span>');h.push('<span class="s">'+esc(b)+'</span>')}
@@ -327,6 +382,47 @@ function loadReport(){api('/api/report').then(function(r){if(r.error){$('rInfo')
   Promise.all([fetch('/api/report?file=summary.json').then(function(x){return x.json()}),
                fetch('/api/report?file=summary.txt').then(function(x){return x.text()})])
    .then(function(v){renderSummary(v[0],v[1])})})}
+var capText='';
+function capRows(s){
+  var F=s.files||{},L=s.latency||{},seen=s.concurrency_seen||[s.concurrency],
+      conc=seen.length>1?('동시 접속 '+Math.min.apply(null,seen)+'~'+Math.max.apply(null,seen)+', 시험 중 변경'):('동시 접속 '+s.concurrency),
+      basis=s.realtime_pacing===false?'실시간 페이싱 해제':'음성을 실제 재생 속도로 보낼 때 기준',
+      ok=Math.max(0,(s.done||0)-(s.failed||0));
+  return [
+    ['음성파일 갯수','.wav '+(F.count||0).toLocaleString()+'건 (제외 '+(F.excluded||0)+'건)'],
+    ['음성의 합계시간',dur(F.audio_s)],
+    ['시험 소요시간',dur(s.elapsed_s)+' ('+conc+', '+basis+')'],
+    ['누적 CER',pct(s.cer)],
+    ['누적 WER',pct(s.wer)],
+    ['응답속도 평균',L.on&&L.mean!=null?sec(L.mean):'측정 안 함'],
+    ['완료/전체 건수',ok.toLocaleString()+'/'+(s.total||0).toLocaleString()]]}
+function renderCap(){
+  var s=last,head=$('capHead'),box=$('capBody');
+  if(!s||!s.total){return}
+  head.textContent='';box.textContent='';
+  var st=s.state,label=st==='done'?'시험 완료':st==='stopped'?'중지됨 (완료된 결과 기준)':st==='idle'?'대기':'진행 중 (중간 결과)';
+  head.appendChild(el('span','badge '+(st==='done'?'done':'stopped'),label));
+  head.appendChild(el('span',null,(s.mode==='sentence'?'문장 단위':'일반(장시간)')+' · '+(s.models||[]).join(', ')));
+  var dl=el('dl','kv'),rows=capRows(s),lines=[],padL=['음성파일 갯수   ','음성의 합계시간 ','시험 소요시간   ','누적 CER        ','누적 WER        ','응답속도 평균   ','완료/전체 건수  '];
+  rows.forEach(function(r,i){
+    var dt=el('dt',null,r[0]),dd=el('dd',(r[0]==='누적 CER'||r[0]==='누적 WER')?'em':'');
+    var m=r[1].match(/^(.*?)( \(.*\))$/);
+    if(r[0]==='시험 소요시간'&&m){dd.appendChild(document.createTextNode(m[1]));dd.appendChild(el('small',null,m[2]))}
+    else dd.textContent=r[1];
+    dl.appendChild(dt);dl.appendChild(dd);lines.push(padL[i]+': '+r[1])});
+  box.appendChild(dl);box.appendChild(el('hr','capsep'));
+  var okc=s.cer!=null,okw=s.wer!=null,c1=okc?Math.max(0,100-s.cer):null,w1=okw?Math.max(0,100-s.wer):null;
+  function bar(name,v,cls){var r=el('div','cb');r.appendChild(el('span',null,name));
+    var t=el('div','track'),f=el('div','fill'+(cls?' '+cls:''));f.style.width=(v==null?0:v)+'%';t.appendChild(f);r.appendChild(t);
+    r.appendChild(el('b',null,v==null?'-':v.toFixed(2)+'%'));return r}
+  box.appendChild(bar('1-CER',c1,''));box.appendChild(bar('1-WER',w1,'w'));
+  lines.push('1-CER : '+(c1==null?'-':c1.toFixed(2)+'%')+'     1-WER : '+(w1==null?'-':w1.toFixed(2)+'%'));
+  capText=lines.join('\n')}
+$('bCopy').onclick=function(){
+  function done(m){$('copyMsg').textContent=m;setTimeout(function(){$('copyMsg').textContent='제출용으로 캡처할 때는 위 카드를 그대로 캡처하세요.'},2500)}
+  if(!capText){done('복사할 결과가 없습니다');return}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(capText).then(function(){done('복사했습니다')},function(){done('복사하지 못했습니다. 화면을 캡처해 주세요')})}
+  else done('복사하지 못했습니다. 화면을 캡처해 주세요')};
 document.querySelectorAll('#t5 button[data-f]').forEach(function(b){b.onclick=function(){window.location='/api/report?file='+b.dataset.f}});
 $('bOpen').onclick=function(){post('/api/open_folder',{})};
 /* ---- 폴더 선택 창 (디렉터리 트리) ---- */
@@ -382,9 +478,9 @@ function reveal(path){
   return step(root)}
 function openPick(id){
   dlgTarget=id;dlgCur='';$('dlgOk').disabled=true;
-  $('dlgTitle').textContent=({wavdir:'음성(.wav) 폴더 선택',txtdir:'정답 전사(.txt) 폴더 선택',outdir:'결과 저장 폴더 선택'})[id];
+  $('dlgTitle').textContent=({wavdir:'음성(.wav) 폴더 선택',txtdir:'정답 전사(.txt) 폴더 선택',outdir:'결과 저장 폴더 선택',viewdir:'이전 시험 결과 폴더 선택'})[id];
   $('dlgPath').value='';info('폴더 목록을 불러오는 중...');$('dlg').hidden=false;
-  var start=$(id).value.trim()||$('wavdir').value.trim();
+  var start=$(id).value.trim()||(id==='viewdir'?$('outdir').value.trim():$('wavdir').value.trim());
   loadRoots().then(function(){info(start?'':'드라이브를 펼쳐 폴더를 선택하세요.');return start?reveal(start):null})}
 document.querySelectorAll('[data-pick]').forEach(function(b){b.onclick=function(){openPick(b.dataset.pick)}});
 $('dlgGo').onclick=function(){reveal($('dlgPath').value.trim())};

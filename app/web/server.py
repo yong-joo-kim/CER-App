@@ -42,6 +42,7 @@ class App:
         txt_dir = self.cfg["txt_dir"] if txt_dir is None else txt_dir
         items, warns = inputs.scan(wav_dir, depth=1, txt_folder=txt_dir or None)
         self.scan_cache = ((wav_dir, txt_dir), items)
+        self.scan_excluded = len(warns)
         total_s = sum(i.duration_s for i in items)
         return {"count": len(items), "warnings": warns[:50], "warning_count": len(warns),
                 "audio_total_s": total_s, "wav_dir": wav_dir, "txt_dir": txt_dir or wav_dir}
@@ -64,6 +65,7 @@ class App:
             if not cfg["sentence_mode"] or not cfg["measure_latency"] or not cfg["realtime_pacing"]:
                 pass  # 속도 측정 비활성: runner가 effective()로 판단
             self.run = runner.Run(cfg, items, runner.new_out_dir(cfg))
+            self.run.excluded_files = getattr(self, "scan_excluded", 0)
             self.run.start()
             return True, str(self.run.out_dir)
 
@@ -184,10 +186,13 @@ class Handler(BaseHTTPRequestHandler):
             if not run:
                 return self._json({"error": "실행 결과 없음"}, 404)
             fname = q.get("file", [""])[0]
-            report.write_all(run)
+            if not run.view_only:
+                report.write_all(run)          # 이전 시험(읽기 전용)은 파일을 다시 쓰지 않는다
             if fname not in ("detail.csv", "summary.json", "summary.txt"):
                 return self._json({"dir": str(run.out_dir),
                                    "files": ["detail.csv", "summary.json", "summary.txt"]})
+            if not (run.out_dir / fname).exists():
+                return self._json({"error": "이 시험 폴더에는 해당 리포트 파일이 없습니다"}, 404)
             data = (run.out_dir / fname).read_bytes()
             ctype = {"detail.csv": "text/csv", "summary.json": "application/json",
                      "summary.txt": "text/plain"}[fname]
@@ -221,6 +226,36 @@ class Handler(BaseHTTPRequestHandler):
         elif p == "/api/stop":
             if APP.run:
                 APP.run.stop()
+            self._json({"ok": True})
+        elif p == "/api/concurrency":
+            try:
+                n = int(b.get("value"))
+            except (TypeError, ValueError):
+                return self._json({"ok": False, "message": "동시 접속 수가 올바르지 않습니다"}, 400)
+            run = APP.run
+            if run and run.state in ("running", "paused"):
+                n = run.set_concurrency(n)
+            else:
+                n = max(1, min(n, runner.MAX_CONCURRENCY))
+            APP.cfg["concurrency"] = n
+            cfgmod.save(APP.cfg, APP.config_path)
+            self._json({"ok": True, "value": n})
+        elif p == "/api/view":
+            run = APP.run
+            if run and not run.view_only and run.snapshot()["state"] in ("running", "paused", "stopping"):
+                return self._json({"ok": False, "message": "시험이 진행 중입니다. 끝나거나 중지한 뒤 열어 주세요."})
+            folder = (b.get("folder") or "").strip()
+            if not folder:
+                return self._json({"ok": False, "message": "결과 폴더를 선택하세요"})
+            try:
+                APP.run = runner.Run.from_folder(folder, APP.cfg)
+            except (ValueError, OSError) as ex:
+                return self._json({"ok": False, "message": str(ex)})
+            snap = APP.run.snapshot()
+            self._json({"ok": True, "done": snap["done"], "total": snap["total"], "view": snap["view"]})
+        elif p == "/api/view_close":
+            if APP.run and APP.run.view_only:
+                APP.run = None
             self._json({"ok": True})
         elif p == "/api/pause":
             if APP.run:
