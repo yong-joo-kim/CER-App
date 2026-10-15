@@ -11,3 +11,5 @@ docs/spec/zieum_client_pcm_ws_py
 docs/spec/*.pdf
 data/input/*
 !data/input/README.md
+build/
+dist/
