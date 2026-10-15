@@ -60,6 +60,14 @@ def write_all(run):
     if lat["on"]:
         lines += [f"응답 속도(문장 단위, 30초 이상 제외): 평균 {_sec(lat['mean'])}  중앙 {_sec(lat['median'])}"
                   f"  p95 {_sec(lat['p95'])}  최대 {_sec(lat['max'])}  (측정 {lat['count']}건, 제외 {lat['excluded']}건)"]
-    lines.append("CER 분포: " + "  ".join(f"{k}: {v}" for k, v in snap["dist"].items()))
+    dist = snap["dist"]
+    dtot = sum(dist.values())
+    if dtot:
+        lines.append("파일별 CER 분포")
+        for k, v in dist.items():
+            pct = v / dtot * 100
+            bar = "█" * round(pct / 5)          # 5%당 한 칸
+            lab = f"{pct:.1f}%({v}건)"
+            lines.append(f"  {lab:<14}  {bar:<20}  CER:{k}")
     (out / "summary.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return out
