@@ -48,6 +48,8 @@ class Run:
         self.state = "idle"        # idle/running/paused/done/stopped
         self.started = None
         self.finished = None
+        self.paused_total = 0.0    # 일시정지로 보낸 누적 시간(경과·남은 시간 계산에서 제외)
+        self.paused_since = None
         self.by_speaker = {}
         self.eff = cfgmod.effective(cfg)
         self.models = list(cfg.get("models") or ["model_v2"])
@@ -200,25 +202,36 @@ class Run:
                 pass
 
     # ---- 조회 ----
+    def _close_pause(self):
+        if self.paused_since is not None:
+            self.paused_total += time.time() - self.paused_since
+            self.paused_since = None
+
     def stop(self):
         self.stop_ev.set()
         self.pause_ev.clear()
+        with self.lock:
+            self._close_pause()
 
     def pause(self, on=True):
-        if on:
-            self.pause_ev.set()
-            if self.state == "running":
-                self.state = "paused"
-        else:
-            self.pause_ev.clear()
-            if self.state == "paused":
-                self.state = "running"
+        with self.lock:
+            if on:
+                self.pause_ev.set()
+                if self.state == "running":
+                    self.state = "paused"
+                    self.paused_since = time.time()
+            else:
+                self.pause_ev.clear()
+                if self.state == "paused":
+                    self.state = "running"
+                self._close_pause()
 
     def snapshot(self, trend_points=300):
         with self.lock:
             done = len(self.order)
             lat = sorted(self.latencies)
-            elapsed = ((self.finished or time.time()) - self.started) if self.started else 0
+            now = self.paused_since or self.finished or time.time()   # 일시정지 중에는 시계를 멈춘다
+            elapsed = max(0.0, now - self.started - self.paused_total) if self.started else 0
             remaining = None
             ok_done = done - self.failed
             if self.total and done and self.state in ("running", "paused"):
@@ -236,7 +249,8 @@ class Run:
                 c = r["cer"]
                 dist["0%" if c == 0 else "~5%" if c <= 5 else "~10%" if c <= 10 else "10%+"] += 1
             return {
-                "state": self.state, "total": self.total, "done": done, "failed": self.failed,
+                "state": ("stopping" if self.stop_ev.is_set() and self.state in ("running", "paused") else self.state),
+                "total": self.total, "done": done, "failed": self.failed,
                 "ok": ok_done,
                 "cer": None if self.cer_tot.n == 0 else self.cer_tot.errors / self.cer_tot.n * 100,
                 "wer": None if self.wer_tot.n == 0 else self.wer_tot.errors / self.wer_tot.n * 100,

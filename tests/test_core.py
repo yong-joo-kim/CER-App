@@ -240,6 +240,7 @@ class StopTest(unittest.TestCase):
                     break
                 time.sleep(0.02)
             run.stop()
+            self.assertIn(run.snapshot()["state"], ("stopping", "stopped"))
             run.thread.join(10)
             s = run.snapshot()
             self.assertEqual(s["state"], "stopped")
@@ -248,6 +249,52 @@ class StopTest(unittest.TestCase):
             txt = (d / "out" / "summary.txt").read_text(encoding="utf-8")
             self.assertIn("중지됨", txt)
             self.assertTrue((d / "out" / "detail.csv").exists())
+
+
+class BrowseTest(unittest.TestCase):
+    def test_list_dir(self):
+        from app.web import server
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "b").mkdir()
+            (d / "A").mkdir()
+            (d / ".hidden").mkdir()
+            make_wav(d / "x.wav")
+            (d / "x.txt").write_text("가", encoding="utf-8")
+            r = server.list_dir(str(d))
+            self.assertEqual([x["name"] for x in r["dirs"]], ["A", "b"])
+            self.assertEqual((r["wav"], r["txt"]), (1, 1))
+            self.assertEqual(r["parent"], str(d.parent))
+            r2 = server.list_dir(str(d / "없는폴더" / "하위"))   # 없는 경로는 가장 가까운 상위로
+            self.assertEqual(r2["path"], str(d))
+
+    def test_drives(self):
+        from app.web import server
+        r = server.list_dir("")
+        self.assertIsNone(r["parent"])
+        self.assertTrue(all(x["path"].endswith("\\") for x in r["dirs"]) and r["dirs"])
+
+
+class PauseClockTest(unittest.TestCase):
+    def test_elapsed_freezes_while_paused(self):
+        cfg = config.load(Path("none.json"))
+        run = runner.Run(cfg, [], Path(tempfile.gettempdir()) / "cer_pause_test")
+        run.started = time.time() - 100
+        run.total = 10
+        run.order = [1, 2]
+        run.state = "running"
+        run.pause(True)
+        a = run.snapshot()
+        time.sleep(0.3)
+        b = run.snapshot()
+        self.assertEqual(a["state"], "paused")
+        self.assertAlmostEqual(a["elapsed_s"], b["elapsed_s"], places=3)
+        self.assertAlmostEqual(a["remaining_s"], b["remaining_s"], places=3)
+        run.pause(False)
+        time.sleep(0.2)
+        c = run.snapshot()
+        self.assertGreater(c["elapsed_s"], b["elapsed_s"])
+        self.assertLess(c["elapsed_s"], b["elapsed_s"] + 1.0)   # 정지한 시간은 더해지지 않음
 
 
 class ConfigTest(unittest.TestCase):

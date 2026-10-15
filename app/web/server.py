@@ -70,6 +70,48 @@ class App:
 
 APP = None
 
+MAX_DIRS = 2000
+
+
+def list_drives():
+    try:
+        return [d.rstrip("\\") + "\\" if not d.endswith("\\") else d for d in os.listdrives()]
+    except AttributeError:  # Python 3.11 이하
+        import string
+        return [f"{c}:\\" for c in string.ascii_uppercase if os.path.exists(f"{c}:\\")]
+
+
+def list_dir(path):
+    """폴더 선택 화면용 목록. path가 비어 있으면 드라이브 목록을 반환한다."""
+    if not path:
+        return {"path": "", "parent": None, "dirs": [{"name": d, "path": d} for d in list_drives()],
+                "wav": 0, "txt": 0, "truncated": False}
+    p = Path(path)
+    while not p.is_dir():           # 없는 경로면 존재하는 가장 가까운 상위로
+        if p.parent == p:
+            return {"error": "폴더를 찾을 수 없습니다"}
+        p = p.parent
+    dirs, wav, txt = [], 0, 0
+    try:
+        with os.scandir(p) as it:
+            for e in it:
+                try:
+                    if e.is_dir():
+                        if not e.name.startswith((".", "$")):
+                            dirs.append({"name": e.name, "path": e.path})
+                    elif e.name.lower().endswith(".wav"):
+                        wav += 1
+                    elif e.name.lower().endswith(".txt"):
+                        txt += 1
+                except OSError:
+                    continue
+    except OSError as ex:
+        return {"error": f"폴더를 열 수 없습니다: {ex.strerror or ex}"}
+    dirs.sort(key=lambda d: d["name"].lower())
+    parent = "" if p.parent == p else str(p.parent)
+    return {"path": str(p), "parent": parent, "dirs": dirs[:MAX_DIRS], "wav": wav, "txt": txt,
+            "truncated": len(dirs) > MAX_DIRS}
+
 
 def _int(q, k, d):
     try:
@@ -131,6 +173,10 @@ class Handler(BaseHTTPRequestHandler):
                 sort=q.get("sort", [""])[0], asc=q.get("asc", ["1"])[0] != "0",
                 min_cer=float(mc) if mc else None)
             self._json({"total": total, "rows": rows})
+        elif p == "/api/browse":
+            if self.client_address[0] not in ("127.0.0.1", "::1", "::ffff:127.0.0.1"):
+                return self._json({"error": "이 PC에서만 폴더를 선택할 수 있습니다"}, 403)
+            self._json(list_dir(q.get("path", [""])[0]))
         elif p == "/api/detail":
             d = run.detail(q.get("name", [""])[0], q.get("model", [""])[0]) if run else None
             self._json(d or {"error": "결과 없음"}, 200 if d else 404)

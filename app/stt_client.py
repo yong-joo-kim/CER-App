@@ -161,7 +161,7 @@ def transcribe(wav_path, cfg, model, tr_id, on_progress=None, stop=None):
     finally:
         st["done"] = True
         try:
-            ws.close()
+            ws.close(timeout=1)
         except Exception:
             pass
     objs = [m for _, m in msgs]
