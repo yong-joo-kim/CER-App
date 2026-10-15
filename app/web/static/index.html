@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CER/WER 시험 프로그램</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--mut:#6b7686;--line:#dfe3ea;--pri:#2457d6;--ok:#1f8a4c;--bad:#c23b3b;--warn:#b36b00}
+@media (prefers-color-scheme:dark){:root{--bg:#14171c;--card:#1c2027;--ink:#e6e9ee;--mut:#9099a8;--line:#2e343e;--pri:#6c93ff;--ok:#4cc380;--bad:#ff7a7a;--warn:#e0a24a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Malgun Gothic",system-ui,sans-serif;padding-bottom:56px}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:0 16px;display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap}
+header h1{font-size:15px;margin:0 16px 0 0;padding:12px 0}
+.tab{padding:10px 14px;border:0;background:none;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent;font:inherit}
+.tab.on{color:var(--pri);border-color:var(--pri);font-weight:600}
+main{padding:16px;max-width:1200px;margin:0 auto}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:12px}
+.card h2{font-size:14px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
+input,select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.row label{display:flex;gap:6px;align-items:center;color:var(--ink);font-size:14px;margin:0}.row input{width:auto}
+button.b{padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font:inherit}
+button.b.p{background:var(--pri);border-color:var(--pri);color:#fff}
+button.b:disabled{opacity:.5;cursor:default}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+.kpi small{color:var(--mut);display:block}.kpi b{font-size:22px}
+canvas{width:100%;height:260px;display:block}
+.legend{display:flex;gap:16px;color:var(--mut);font-size:12px;margin-top:6px;flex-wrap:wrap}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri);width:0}
+.tbl{border:1px solid var(--line);border-radius:8px;background:var(--card);overflow:hidden}
+.th,.tr{display:grid;grid-template-columns:2fr .8fr .8fr .8fr .8fr 1.2fr .9fr 1.4fr;padding:0 12px;align-items:center;gap:6px}
+.th{background:var(--bg);border-bottom:1px solid var(--line);height:36px;font-size:12px;color:var(--mut)}
+.th span{cursor:pointer}
+#vs{height:480px;overflow:auto;position:relative}#vsInner{position:relative}
+.tr{height:32px;border-bottom:1px solid var(--line);cursor:pointer;position:absolute;left:0;right:0;white-space:nowrap}
+.tr span{overflow:hidden;text-overflow:ellipsis}
+.tr:hover{background:var(--bg)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.f{color:var(--bad)}.x{color:var(--warn)}
+.diff{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.diff div{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px;min-height:90px;line-height:1.9;word-break:keep-all}
+.s{background:#ffd9a8;color:#000}.i{background:#bfecc9;color:#000}.d{background:#ffc2c2;color:#000;text-decoration:line-through}
+footer{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:20px;flex-wrap:wrap;font-size:13px}
+footer b{font-variant-numeric:tabular-nums}
+.note{color:var(--mut);font-size:12px;margin-top:8px}
+.warn{color:var(--warn)}.okc{color:var(--ok)}.badc{color:var(--bad)}
+@media (max-width:640px){.diff{grid-template-columns:1fr}.th,.tr{grid-template-columns:2fr 1fr 1fr}.th span:nth-child(n+4),.tr span:nth-child(n+4){display:none}}
+</style></head><body>
+<header><h1>CER/WER 시험 프로그램</h1>
+<button class="tab on" data-t="t1">① 설정·실행</button><button class="tab" data-t="t2">② 실시간 결과</button><button class="tab" data-t="t3">③ 파일별 결과</button><button class="tab" data-t="t4">④ 상세</button><button class="tab" data-t="t5">⑤ 리포트</button></header>
+<main>
+<section id="t1" class="on">
+ <div class="card"><h2>서버·모델</h2><div class="grid">
+  <div><label>서버 주소</label><input id="host"></div>
+  <div><label>포트</label><input id="port" type="number"></div>
+  <div><label>접속 방식</label><select id="scheme"><option>ws</option><option>wss</option></select></div>
+  <div><label>API 키 <span id="keyinfo"></span></label><input id="apikey" type="password" placeholder="변경할 때만 입력" autocomplete="off"></div>
+  <div><label>모델</label><select id="model"><option>model_v2</option><option>model_v1</option><option>model_v3</option></select></div></div>
+  <div class="row"><button class="b" id="bHealth">연결 확인</button><span id="healthMsg" class="note" style="margin:0"></span></div></div>
+ <div class="card"><h2>입력</h2><div class="grid"><div><label>음성(.wav) 폴더 (하위 한 단계까지 탐색)</label><input id="wavdir"></div><div><label>정답 전사(.txt) 폴더 (비우면 음성 폴더와 동일)</label><input id="txtdir" placeholder="비우면 wav 폴더와 같은 위치"></div><div><label>결과 저장 폴더</label><input id="outdir"></div></div>
+  <div class="row"><button class="b" id="bScan">파일 검색</button><span id="scanMsg" class="note" style="margin:0"></span></div></div>
+ <div class="card"><h2>시험 옵션</h2>
+  <div class="row"><label><input type="checkbox" id="sent"> 문장 단위 시험 (평균 7초 내외)</label>
+  <label><input type="checkbox" id="lat"> 응답 속도 측정 (30초 이상 제외)</label>
+  <label><input type="checkbox" id="nopace"> 실시간 페이싱 해제</label>
+  <label><input type="checkbox" id="resume"> 이어서 하기</label></div>
+  <div class="row"><label>동시 접속 <select id="conc" style="width:80px"><option>1</option><option>2</option><option>4</option><option>8</option></select></label><span class="note" style="margin:0" id="optNote"></span></div></div>
+ <div class="row"><button class="b p" id="bRun">실행</button><button class="b" id="bPause">일시정지</button><button class="b" id="bStop" disabled>중지</button><span id="runMsg" class="note" style="margin:0"></span></div>
+</section>
+<section id="t2">
+ <div id="stopBanner" class="card warn" style="display:none"></div>
+ <div class="kpis">
+  <div class="kpi"><small>누적 CER</small><b id="kCer">-</b></div>
+  <div class="kpi"><small id="kWinL">최근 구간 CER</small><b id="kWin">-</b></div>
+  <div class="kpi"><small>누적 WER</small><b id="kWer">-</b></div>
+  <div class="kpi"><small>응답속도 평균</small><b id="kLat">-</b><small id="kLatS"></small></div>
+  <div class="kpi"><small>완료 / 전체</small><b id="kDone">-</b><small id="kFail"></small></div>
+  <div class="kpi"><small>경과 / 남은 예상</small><b id="kEl">-</b><small id="kRem"></small></div></div>
+ <div class="card" style="margin-top:12px"><h2>CER 변화 (완료 건수 기준)</h2><canvas id="ch"></canvas>
+  <div class="legend"><span style="color:var(--pri)">━ 누적 CER</span><span style="color:var(--warn)">━ 최근 구간 CER</span><span>1초마다 갱신</span></div>
+  <div class="bar" style="margin-top:12px"><i id="prog"></i></div></div>
+ <div class="card"><h2>CER 분포 / 화자별</h2><div id="dist"></div><div id="spk" class="note"></div></div>
+</section>
+<section id="t3">
+ <div class="card"><div class="grid">
+  <div><label>파일명 검색</label><input id="q" placeholder="파일명 일부"></div>
+  <div><label>상태</label><select id="st"><option value="">전체</option><option>완료</option><option>실패</option><option>제외</option></select></div>
+  <div><label>CER 최소 %</label><input id="mn" type="number" placeholder="예: 10"></div></div>
+  <div class="note" id="cnt"></div></div>
+ <div class="tbl"><div class="th"><span data-k="name">파일 ↕</span><span data-k="status">상태</span><span class="num" data-k="cer">CER ↕</span><span class="num" data-k="wer">WER ↕</span><span class="num">S/I/D/N</span><span class="num" data-k="latency">응답속도 ↕</span><span class="num" data-k="duration_s">길이</span><span>비고</span></div>
+ <div id="vs"><div id="vsInner"></div></div></div>
+ <div class="note">스크롤 방식 · 화면에 보이는 행만 그림 · 헤더 클릭으로 정렬 · 행 클릭 → ④ 상세</div>
+</section>
+<section id="t4">
+ <div class="card"><h2 id="dTitle">상세</h2>
+  <div id="dEmpty" class="note">③ 파일별 결과에서 파일을 선택하세요.</div>
+  <div id="dBody" style="display:none"><div class="diff"><div><label id="dRefL">정답</label><span id="dRef"></span></div><div><label id="dHypL">인식 결과</label><span id="dHyp"></span></div></div>
+  <div class="note" id="dInfo"></div></div></div>
+</section>
+<section id="t5">
+ <div class="card"><h2>시험 전체 리포트</h2><div id="rInfo" class="note">실행 결과가 없습니다.</div>
+  <div class="row"><button class="b p" data-f="detail.csv">detail.csv 받기</button><button class="b" data-f="summary.json">summary.json 받기</button><button class="b" data-f="summary.txt">summary.txt 받기</button><button class="b" id="bOpen">결과 폴더 열기</button></div>
+  <div class="note">인식 결과 원문은 결과 폴더의 &lt;이름&gt;_result.txt 입니다. 실행 설정(API 키 제외)과 동시 접속 수가 summary에 기록됩니다.</div></div>
+ <div class="card"><h2>요약 미리보기</h2><pre id="rText" style="white-space:pre-wrap;margin:0"></pre></div>
+</section>
+</main>
+<footer><span>완료 <b id="fDone">0</b> / <b id="fTotal">0</b></span><span>실패 <b id="fFail">0</b></span><span>누적 CER <b id="fCer">-</b></span><span>응답속도 평균 <b id="fLat">-</b></span><span>남은 <b id="fRem">-</b></span><span id="fState" style="margin-left:auto"></span></footer>
+<script>
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function api(path,opt){return fetch(path,opt).then(function(r){return r.json()})}
+function post(path,body){return api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})})}
+function pct(v){return v==null?'-':v.toFixed(2)+'%'}
+function sec(v){return v==null?'-':v.toFixed(2)+'s'}
+function dur(s){if(s==null)return '-';s=Math.round(s);var h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?h+'h '+m+'m':m+'m '+(s%60)+'s'}
+var stateKo={idle:'대기',running:'실행 중',paused:'일시정지',done:'완료',stopped:'중지됨'};
+var last=null;
+document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){show(b.dataset.t)}});
+var savedScroll=0,curTab='t1',detailKey=null;
+function show(t,noPush,state){
+  if(curTab==='t3')savedScroll=$('vs').scrollTop;
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x.dataset.t===t)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===t)});
+  curTab=t;
+  if(!noPush&&history.state&&history.state.t===t&&!(state&&state.n))return;
+  if(!noPush)history.pushState(state||{t:t},'','#'+t);
+  if(t==='t2')draw();
+  if(t==='t3'){loadView(false);$('vs').scrollTop=savedScroll;render()}
+  if(t==='t5')loadReport();}
+/* 브라우저 뒤로/앞으로 가기: 탭 이동과 상세 선택을 히스토리에 기록한다 */
+window.addEventListener('popstate',function(e){
+  var st=e.state,t=(st&&st.t)||(location.hash||'#t1').slice(1);
+  if(!document.getElementById(t)||t.charAt(0)!=='t')t='t1';
+  if(t==='t4'&&st&&st.n){openDetail(st.n,st.m,true);return}
+  show(t,true)});
+history.replaceState({t:'t1'},'','#t1');
+/* ---- 설정 ---- */
+var cfg=null;
+function fillCfg(c){cfg=c;$('host').value=c.server.host;$('port').value=c.server.port;$('scheme').value=c.server.scheme;
+  $('model').value=(c.models&&c.models[0])||'model_v2';$('wavdir').value=c.wav_dir;$('txtdir').value=c.txt_dir||'';$('outdir').value=c.output_dir;
+  $('sent').checked=c.sentence_mode;$('lat').checked=c.measure_latency;$('nopace').checked=!c.realtime_pacing;$('resume').checked=c.resume;
+  $('conc').value=String(c.concurrency);$('keyinfo').textContent=c.api_key_set?'('+c.api_key_masked+' 저장됨)':'(미설정)';optRules(false)}
+function optRules(fromUser){
+  var latOn=$('sent').checked&&$('lat').checked&&!$('nopace').checked;
+  $('lat').disabled=!$('sent').checked;
+  var n='';
+  if($('nopace').checked&&$('sent').checked&&$('lat').checked)n='페이싱을 해제하면 응답 속도 측정이 비활성화됩니다.';
+  else if(latOn)n='응답 속도 측정 중에는 동시 접속 1을 권장합니다.';
+  else n='CER만 측정할 때는 동시 접속 4를 권장합니다.';
+  if(fromUser)$('conc').value=latOn?'1':'4';
+  $('optNote').textContent=n;}
+['sent','lat','nopace'].forEach(function(i){$(i).onchange=function(){optRules(true)}});
+function readCfg(){return {server:{scheme:$('scheme').value,host:$('host').value.trim(),port:parseInt($('port').value||'8081',10)},
+  api_key:$('apikey').value,models:[$('model').value],wav_dir:$('wavdir').value.trim(),txt_dir:$('txtdir').value.trim(),output_dir:$('outdir').value.trim(),
+  sentence_mode:$('sent').checked,measure_latency:$('lat').checked,realtime_pacing:!$('nopace').checked,resume:$('resume').checked,
+  concurrency:parseInt($('conc').value,10)}}
+function saveCfg(){return api('/api/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(readCfg())}).then(function(c){$('apikey').value='';fillCfg(c);return c})}
+$('bHealth').onclick=function(){saveCfg().then(function(){$('healthMsg').textContent='확인 중...';return post('/api/health',{})}).then(function(r){
+  $('healthMsg').textContent=(r.ok?'● 정상 ':'● 실패 ')+r.message;$('healthMsg').className='note '+(r.ok?'okc':'badc')})};
+$('bScan').onclick=function(){saveCfg().then(function(){$('scanMsg').textContent='검색 중...';return post('/api/scan',{wav_dir:$('wavdir').value.trim(),txt_dir:$('txtdir').value.trim()})}).then(function(r){
+  var h=r.audio_total_s/3600;$('scanMsg').textContent='.wav '+r.count.toLocaleString()+'건 (제외 '+r.warning_count+'건) · 음성 합계 '+dur(r.audio_total_s)+
+  ' · 예상 소요 '+dur(r.audio_total_s/Math.max(1,parseInt($('conc').value,10)))+'(페이싱 기준)'})};
+$('bRun').onclick=function(){saveCfg().then(function(){return post('/api/run',{})}).then(function(r){
+  $('runMsg').textContent=r.ok?'시작: '+r.message:r.message;$('runMsg').className='note '+(r.ok?'okc':'badc');if(r.ok)show('t2')})};
+$('bStop').onclick=function(){
+  if(!confirm('시험을 중지합니다.\n지금까지 완료된 파일의 결과로 CER/WER을 산정합니다.\n(진행 중이던 파일은 미완료로 남고, 이어서 하기로 계속할 수 있습니다.)'))return;
+  $('bStop').disabled=true;$('runMsg').textContent='중지하는 중...';
+  post('/api/stop',{}).then(function(){refresh()})};
+$('bPause').onclick=function(){var on=last&&last.state==='running';post('/api/pause',{on:on})};
+/* ---- 실시간 ---- */
+function refresh(){api('/api/status').then(function(s){last=s;
+  var L=s.latency||{},run=s.state==='running'||s.state==='paused';
+  $('kCer').textContent=pct(s.cer);$('kWin').textContent=pct(s.window_cer);$('kWinL').textContent='최근 '+(s.window_size||500)+'건 CER';
+  $('kWer').textContent=pct(s.wer);$('kLat').textContent=L.on?sec(L.mean):'측정 안 함';
+  $('kLatS').textContent=L.on?('p95 '+sec(L.p95)+' · 최대 '+sec(L.max)+' · 제외 '+L.excluded):'';
+  $('kDone').textContent=(s.done||0).toLocaleString()+' / '+(s.total||0).toLocaleString();$('kFail').textContent='실패 '+(s.failed||0);
+  $('kEl').textContent=dur(s.elapsed_s);$('kRem').textContent=s.remaining_s==null?'':'남은 '+dur(s.remaining_s);
+  $('prog').style.width=(s.total?Math.min(100,s.done/s.total*100):0)+'%';
+  $('fDone').textContent=(s.done||0).toLocaleString();$('fTotal').textContent=(s.total||0).toLocaleString();$('fFail').textContent=s.failed||0;
+  $('fCer').textContent=pct(s.cer);$('fLat').textContent=L.on?sec(L.mean):'-';$('fRem').textContent=s.remaining_s==null?'-':dur(s.remaining_s);
+  $('fState').textContent='상태: '+(stateKo[s.state]||s.state);$('bPause').textContent=s.state==='paused'?'재개':'일시정지';
+  $('bRun').disabled=run;$('bStop').disabled=!run;$('bPause').disabled=!run;
+  var sb=$('stopBanner');
+  if(s.state==='stopped'){sb.style.display='';sb.textContent='중지됨 — 전체 '+(s.total||0).toLocaleString()+'건 중 완료 '+(s.ok||0).toLocaleString()+'건(실패 '+(s.failed||0)+'건) 기준 결과입니다. 누적 CER '+pct(s.cer)+' / WER '+pct(s.wer)+'. 미실행 '+Math.max(0,(s.total||0)-(s.done||0)).toLocaleString()+'건은 "이어서 하기"로 계속할 수 있습니다.'}
+  else{sb.style.display='none'}
+  if(s.dist){$('dist').textContent=Object.keys(s.dist).map(function(k){return k+': '+s.dist[k]}).join(' · ')}
+  if(s.speakers){$('spk').textContent=Object.keys(s.speakers).map(function(k){var v=s.speakers[k];return '화자 '+k+' CER '+pct(v.cer==null?null:v.cer*100)+' / WER '+pct(v.wer==null?null:v.wer*100)}).join('  ·  ')}
+  if($('t2').classList.contains('on'))draw();
+  if($('t3').classList.contains('on')&&run)loadView(false);
+}).catch(function(){})}
+function draw(){var c=$('ch'),d=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;if(!w)return;
+  c.width=w*d;c.height=h*d;var x=c.getContext('2d');x.scale(d,d);
+  var css=getComputedStyle(document.body),pri=css.getPropertyValue('--pri'),warn=css.getPropertyValue('--warn'),line=css.getPropertyValue('--line'),mut=css.getPropertyValue('--mut');
+  var tr=(last&&last.trend)||[];var L=44,B=24,T=8,R=8,W=w-L-R,Hh=h-T-B;
+  var mx=5;tr.forEach(function(p){if(p[1]!=null)mx=Math.max(mx,p[1]);if(p[2]!=null)mx=Math.max(mx,p[2])});mx=Math.ceil(mx/5)*5;
+  x.font='11px sans-serif';x.fillStyle=mut;x.strokeStyle=line;x.lineWidth=1;
+  for(var g=0;g<=4;g++){var v=mx*g/4,y=T+Hh-g/4*Hh;x.beginPath();x.moveTo(L,y);x.lineTo(w-R,y);x.stroke();x.fillText(v.toFixed(0)+'%',4,y+4)}
+  if(!tr.length){x.fillText('데이터 없음',L+10,T+20);return}
+  var n=Math.max(1,tr[tr.length-1][0]);
+  for(var k=0;k<=4;k++){x.fillText(Math.round(n*k/4).toLocaleString(),L+W*k/4-10,h-6)}
+  [[2,warn],[1,pri]].forEach(function(sc){x.strokeStyle=sc[1];x.lineWidth=2;x.beginPath();var f=true;
+    tr.forEach(function(p){if(p[sc[0]]==null)return;var X=L+W*p[0]/n,Y=T+Hh-Math.min(p[sc[0]],mx)/mx*Hh;if(f){x.moveTo(X,Y);f=false}else x.lineTo(X,Y)});x.stroke()})}
+window.addEventListener('resize',draw);
+/* ---- 파일별 결과 (스크롤 방식 가상 목록) ---- */
+var H=32,CH=100,vs=$('vs'),inner=$('vsInner'),total=0,cache={},sortK='',asc=true,fkey='',pend={};
+function fparams(){return 'q='+encodeURIComponent($('q').value.trim())+'&status='+encodeURIComponent($('st').value)+'&min_cer='+encodeURIComponent($('mn').value)+'&sort='+sortK+'&asc='+(asc?1:0)}
+function fetchChunk(ci,force){var key=fkey+'|'+ci;if(!force&&(cache[key]||pend[key]))return;pend[key]=1;
+  api('/api/results?offset='+(ci*CH)+'&limit='+CH+'&'+fparams()).then(function(r){delete pend[key];if(key.split('|')[0]!==fkey)return;
+    cache[key]=r.rows;if(r.total!==total){total=r.total;inner.style.height=(total*H)+'px';$('cnt').textContent='표시 '+total.toLocaleString()+'건'}render()}).catch(function(){delete pend[key]})}
+function loadView(reset){if(reset){fkey=fparams();cache={};pend={};vs.scrollTop=0}else{cache={};pend={}}
+  var top=vs.scrollTop,ci=Math.floor(top/H/CH);fetchChunk(ci,true);fetchChunk(ci+1,true);}
+function render(){var top=vs.scrollTop,h=vs.clientHeight||480,a=Math.max(0,Math.floor(top/H)-3),b=Math.min(total,Math.ceil((top+h)/H)+3),o='';
+  for(var i=a;i<b;i++){var ci=Math.floor(i/CH),rows=cache[fkey+'|'+ci];
+    if(!rows){fetchChunk(ci);o+='<div class="tr" style="top:'+(i*H)+'px"><span class="note">…</span></div>';continue}
+    var r=rows[i-ci*CH];if(!r)continue;
+    var cl=r.status==='실패'?'f':(r.lat_excluded?'x':'');var st=r.status==='실패'?'실패':(r.lat_excluded?'제외':r.status);
+    o+='<div class="tr" data-n="'+esc(r.name)+'" data-m="'+esc(r.model)+'" style="top:'+(i*H)+'px"><span title="'+esc(r.name)+'">'+esc(r.name)+'</span><span class="'+cl+'">'+esc(st)+'</span><span class="num">'+(r.cer==null?'-':r.cer.toFixed(1)+'%')+'</span><span class="num">'+(r.wer==null?'-':r.wer.toFixed(1)+'%')+'</span><span class="num">'+r.cs+'/'+r.ci+'/'+r.cd+'/'+r.cn+'</span><span class="num">'+(r.latency==null?'-':r.latency.toFixed(2)+'s')+'</span><span class="num">'+r.duration_s+'s</span><span title="'+esc(r.note)+'">'+esc(r.note)+'</span></div>'}
+  inner.innerHTML=o}
+vs.addEventListener('scroll',render);
+inner.addEventListener('click',function(e){var t=e.target.closest('.tr');if(t&&t.dataset.n)openDetail(t.dataset.n,t.dataset.m)});
+['q','st','mn'].forEach(function(id){$(id).addEventListener('input',function(){loadView(true)})});
+document.querySelectorAll('.th [data-k]').forEach(function(s){s.onclick=function(){var k=s.dataset.k;if(sortK===k)asc=!asc;else{sortK=k;asc=(k==='name')}loadView(true)}});
+/* ---- 상세 ---- */
+function openDetail(name,model,noPush){api('/api/detail?name='+encodeURIComponent(name)+'&model='+encodeURIComponent(model)).then(function(d){
+  show('t4',!!noPush,{t:'t4',n:name,m:model});$('dTitle').textContent='상세: '+name+' / '+model;
+  if(d.error){$('dEmpty').style.display='';$('dBody').style.display='none';$('dEmpty').textContent=d.error;return}
+  $('dEmpty').style.display='none';$('dBody').style.display='';
+  var r=[],h=[];d.ops.forEach(function(o){var op=o[0],a=o[1],b=o[2];
+    if(op==='='){r.push(esc(a));h.push(esc(b))}
+    else if(op==='S'){r.push('<span class="s">'+esc(a)+'</span>');h.push('<span class="s">'+esc(b)+'</span>')}
+    else if(op==='D'){r.push('<span class="d">'+esc(a)+'</span>')}
+    else{h.push('<span class="i">'+esc(b)+'</span>')}});
+  $('dRef').innerHTML=r.join(' ');$('dHyp').innerHTML=h.join(' ');
+  var rc=d.record;$('dInfo').textContent='CER '+pct(rc.cer)+' · S/I/D/N '+rc.cs+'/'+rc.ci+'/'+rc.cd+'/'+rc.cn+' · WER '+pct(rc.wer)+' · 응답속도 '+sec(rc.latency)+' · 음성 '+rc.duration_s+'s · 결과 파일 '+d.result_file})}
+/* ---- 리포트 ---- */
+function loadReport(){api('/api/report').then(function(r){if(r.error){$('rInfo').textContent=r.error;return}
+  $('rInfo').textContent='저장 위치: '+r.dir;
+  fetch('/api/report?file=summary.txt').then(function(x){return x.text()}).then(function(t){$('rText').textContent=t})})}
+document.querySelectorAll('#t5 button[data-f]').forEach(function(b){b.onclick=function(){window.location='/api/report?file='+b.dataset.f}});
+$('bOpen').onclick=function(){post('/api/open_folder',{})};
+api('/api/config').then(fillCfg);refresh();setInterval(refresh,1000);
+</script></body></html>

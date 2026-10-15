@@ -1,0 +1,1 @@
+{"phase":"P3","gates":{"P1":"approved","P2":"approved"},"note":"P3 구현 1차 완료(코어+웹UI+단위테스트 11건 통과). 실서버 연동·장시간 시험은 미검증","artifacts":["docs/02_requirements/requirements.md","docs/03_design/design.md","docs/03_design/ui/mockup.html","app/","tests/test_core.py"]}

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CER/WER 시험 프로그램 시안</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--mut:#6b7686;--line:#dfe3ea;--pri:#2457d6;--ok:#1f8a4c;--bad:#c23b3b;--warn:#b36b00}
+@media (prefers-color-scheme:dark){:root{--bg:#14171c;--card:#1c2027;--ink:#e6e9ee;--mut:#9099a8;--line:#2e343e;--pri:#6c93ff;--ok:#4cc380;--bad:#ff7a7a;--warn:#e0a24a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Malgun Gothic",system-ui,sans-serif;padding-bottom:56px}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:0 16px;display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap}
+header h1{font-size:15px;margin:0 16px 0 0;padding:12px 0}
+.tab{padding:10px 14px;border:0;background:none;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent;font:inherit}
+.tab.on{color:var(--pri);border-color:var(--pri);font-weight:600}
+main{padding:16px;max-width:1200px;margin:0 auto}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:12px}
+.card h2{font-size:14px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
+input,select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.row label{display:flex;gap:6px;align-items:center;color:var(--ink);font-size:14px;margin:0}.row input{width:auto}
+button.b{padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font:inherit}
+button.b.p{background:var(--pri);border-color:var(--pri);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+.kpi small{color:var(--mut);display:block}.kpi b{font-size:22px}
+canvas{width:100%;height:260px;display:block}
+.legend{display:flex;gap:16px;color:var(--mut);font-size:12px;margin-top:6px;flex-wrap:wrap}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri)}
+.tbl{border:1px solid var(--line);border-radius:8px;background:var(--card);overflow:hidden}
+.th,.tr{display:grid;grid-template-columns:2fr .8fr .8fr .8fr 1.2fr .9fr 1.2fr;padding:0 12px;align-items:center}
+.th{background:var(--bg);border-bottom:1px solid var(--line);height:36px;font-size:12px;color:var(--mut)}
+.th span{cursor:pointer}
+#vs{height:420px;overflow:auto;position:relative}#vsInner{position:relative}
+.tr{height:32px;border-bottom:1px solid var(--line);cursor:pointer;position:absolute;left:0;right:0}
+.tr:hover{background:var(--bg)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.f{color:var(--bad)}.x{color:var(--warn)}
+.diff{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.diff div{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px;min-height:90px}
+.s{background:#ffd9a8;color:#000}.i{background:#bfecc9;color:#000}.d{background:#ffc2c2;color:#000;text-decoration:line-through}
+footer{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:20px;flex-wrap:wrap;font-size:13px}
+footer b{font-variant-numeric:tabular-nums}
+.note{color:var(--mut);font-size:12px;margin-top:8px}
+.warn{color:var(--warn)}
+@media (max-width:640px){.diff{grid-template-columns:1fr}.th,.tr{grid-template-columns:2fr 1fr 1fr}.th span:nth-child(n+4),.tr span:nth-child(n+4){display:none}}
+</style></head><body>
+<header><h1>CER/WER 시험 프로그램</h1>
+<button class="tab on" data-t="t1">① 설정·실행</button><button class="tab" data-t="t2">② 실시간 결과</button><button class="tab" data-t="t3">③ 파일별 결과</button><button class="tab" data-t="t4">④ 상세</button><button class="tab" data-t="t5">⑤ 리포트</button></header>
+<main>
+<section id="t1" class="on">
+ <div class="card"><h2>서버·모델</h2><div class="grid">
+  <div><label>서버 주소</label><input value="192.168.0.xxx"></div>
+  <div><label>포트</label><input value="8081"></div>
+  <div><label>API 키</label><input type="password" value="sk-xxxxxxxxxx"></div>
+  <div><label>모델</label><select><option>model_v2</option><option>model_v1</option><option>model_v3</option></select></div></div>
+  <div class="row"><button class="b">연결 확인</button><span style="color:var(--ok)">● 정상</span></div></div>
+ <div class="card"><h2>입력</h2><div class="grid"><div><label>입력 폴더 (하위 한 단계까지 탐색)</label><input value="D:\data\input"></div></div>
+  <div class="note">발견: .wav 10,000건 (정답 .txt 없는 파일 3건 제외) · 예상 소요 19h 26m</div></div>
+ <div class="card"><h2>시험 옵션</h2>
+  <div class="row"><label><input type="checkbox" checked> 문장 단위 시험 (평균 7초 내외)</label>
+  <label><input type="checkbox" checked> 응답 속도 측정 (30초 이상 제외)</label>
+  <label><input type="checkbox"> 실시간 페이싱 해제</label>
+  <label><input type="checkbox" checked> 이어서 하기</label></div>
+  <div class="row"><label>동시 접속 <select style="width:70px"><option>1</option><option>2</option><option>4</option></select></label><span class="note" style="margin:0">속도 측정 ON=1 / OFF(CER만)=4 · 페이싱 해제 시 속도 측정 비활성+경고</span></div></div>
+ <div class="row"><button class="b p">실행</button><button class="b">일시정지</button><button class="b">중지</button></div>
+</section>
+<section id="t2">
+ <div class="kpis">
+  <div class="kpi"><small>누적 CER</small><b>4.8%</b></div>
+  <div class="kpi"><small>최근 500건 CER</small><b>4.1%</b></div>
+  <div class="kpi"><small>누적 WER</small><b>9.9%</b></div>
+  <div class="kpi"><small>응답속도 평균</small><b>1.9s</b><small>p95 3.4s · 최대 6.2s</small></div>
+  <div class="kpi"><small>완료 / 전체</small><b>6,000 / 10,000</b><small>실패 12 · 속도 제외 12</small></div>
+  <div class="kpi"><small>경과 / 남은 예상</small><b>11h 52m</b><small>남은 7h 40m</small></div></div>
+ <div class="card" style="margin-top:12px"><h2>CER 변화 (완료 건수 기준)</h2><canvas id="ch"></canvas>
+  <div class="legend"><span style="color:var(--pri)">━ 누적 CER</span><span style="color:var(--warn)">━ 최근 500건 구간 CER</span><span>0.5초마다 갱신</span></div>
+  <div class="bar" style="margin-top:12px"><i style="width:60%"></i></div></div>
+ <div class="card"><h2>CER 분포</h2>0%: 6,120 · ~5%: 2,300 · ~10%: 900 · 10%+: 680</div>
+</section>
+<section id="t3">
+ <div class="card"><div class="grid">
+  <div><label>파일명 검색</label><input id="q" placeholder="a0012"></div>
+  <div><label>상태</label><select id="st"><option value="">전체</option><option>완료</option><option>실패</option><option>제외</option></select></div>
+  <div><label>CER 최소 %</label><input id="mn" type="number" placeholder="예: 10"></div></div>
+  <div class="note" id="cnt"></div></div>
+ <div class="tbl"><div class="th"><span data-k="name">파일 ↕</span><span data-k="st">상태</span><span class="num" data-k="cer">CER ↕</span><span class="num" data-k="wer">WER</span><span class="num">S/I/D/N</span><span class="num" data-k="lat">응답속도</span><span>비고</span></div>
+ <div id="vs"><div id="vsInner"></div></div></div>
+ <div class="note">스크롤 방식 · 화면에 보이는 행만 그림(가상 스크롤) · 헤더 클릭으로 정렬 · 행 클릭 → ④ 상세</div>
+</section>
+<section id="t4">
+ <div class="card"><h2>상세: a000123.wav / model_v2</h2>
+  <div class="diff"><div><label>정답 (a000123.txt, 정규화 후)</label>그러면 동구청 보건소로 연결 해 달라 확인 바랍니다</div>
+  <div><label>인식 결과 (a000123_result.txt, 정규화 후)</label>그러면 동구청 <span class="s">보건소를</span> 연결 <span class="i">좀</span> 해 달라 <span class="d">확인</span> 바랍니다</div></div>
+  <div class="note">CER 33.3% · S1 I1 D1 N9 · 응답속도 1.8s · 음성 6.9s · <span class="s">치환</span> <span class="i">삽입</span> <span class="d">삭제</span></div></div>
+ </section>
+<section id="t5">
+ <div class="card"><h2>시험 전체 리포트 (완료 6,000건 / 실패 12건)</h2><div class="row"><button class="b p">detail.csv 저장</button><button class="b">summary.json</button><button class="b">summary.txt</button><button class="b">결과 폴더 열기</button></div>
+  <div class="note">인식 결과 원문: &lt;이름&gt;_result.txt · 실행 설정 스냅샷(API 키 제외) · 동시 접속 수 기록</div></div>
+</section>
+</main>
+<footer><span>완료 <b>6,000</b> / 10,000</span><span>실패 <b>12</b></span><span>누적 CER <b>4.8%</b></span><span>응답속도 평균 <b>1.9s</b></span><span>남은 <b>7h 40m</b></span><span style="margin-left:auto" class="warn">※ 시안(샘플 데이터)</span></footer>
+<script>
+document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===b)});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t)});
+  if(b.dataset.t==='t2')draw(); if(b.dataset.t==='t3')render();};});
+var seed=7;function rnd(){seed=(seed*1664525+1013904223)%4294967296;return seed/4294967296}
+var rows=[];
+for(var i=0;i<10000;i++){
+  var n=6+Math.floor(rnd()*14), cer=rnd()<.6?0:Math.round(rnd()*rnd()*600)/10;
+  var e=Math.round(cer*n/100); cer=Math.round(e/n*1000)/10;
+  var st='완료',note='',lat=Math.round((.9+rnd()*2.5)*10)/10,r=rnd();
+  if(r<.0012){st='실패';note='연결 끊김';lat=null}else if(r<.0024){st='제외';note='30s 이상 제외';lat=null}
+  var failed=st==='실패', s1=Math.floor(e*.6), i1=Math.floor(e*.1);
+  rows.push({name:'a'+String(i).padStart(6,'0')+'.wav',st:st,cer:failed?null:cer,
+    wer:failed?null:Math.min(100,Math.round(cer*1.7*10)/10),
+    sid:failed?'-':s1+'/'+i1+'/'+(e-s1-i1)+'/'+n,lat:lat,note:note});
+}
+var H=32,vs=document.getElementById('vs'),inner=document.getElementById('vsInner'),view=rows,sortK=null,asc=true;
+function filt(){
+  var q=document.getElementById('q').value.trim(),s=document.getElementById('st').value,m=parseFloat(document.getElementById('mn').value);
+  view=rows.filter(function(r){return (!q||r.name.indexOf(q)>=0)&&(!s||r.st===s)&&(isNaN(m)||(r.cer!==null&&r.cer>=m))});
+  if(sortK){view=view.slice().sort(function(a,b){var x=a[sortK],y=b[sortK];
+    if((x===null)!==(y===null))return x===null?1:-1; return (x>y?1:x<y?-1:0)*(asc?1:-1)})}
+  document.getElementById('cnt').textContent='표시 '+view.length.toLocaleString()+' / 전체 '+rows.length.toLocaleString();
+  inner.style.height=(view.length*H)+'px'; render();
+}
+function render(){
+  var top=vs.scrollTop,h=vs.clientHeight||420,a=Math.max(0,Math.floor(top/H)-5),b=Math.min(view.length,Math.ceil((top+h)/H)+5),o='';
+  for(var i=a;i<b;i++){var r=view[i],c=r.st==='실패'?'f':r.st==='제외'?'x':'';
+    o+='<div class="tr" style="top:'+(i*H)+'px"><span>'+r.name+'</span><span class="'+c+'">'+r.st+'</span><span class="num">'+(r.cer===null?'-':r.cer.toFixed(1)+'%')+'</span><span class="num">'+(r.wer===null?'-':r.wer.toFixed(1)+'%')+'</span><span class="num">'+r.sid+'</span><span class="num">'+(r.lat===null?'-':r.lat.toFixed(1)+'s')+'</span><span>'+r.note+'</span></div>';}
+  inner.innerHTML=o;
+}
+vs.addEventListener('scroll',render);
+['q','st','mn'].forEach(function(id){document.getElementById(id).addEventListener('input',filt)});
+document.querySelectorAll('.th [data-k]').forEach(function(s){s.onclick=function(){
+  var k=s.dataset.k; if(sortK===k)asc=!asc; else{sortK=k;asc=(k==='name')} filt();};});
+filt();
+function draw(){
+  var c=document.getElementById('ch'),d=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;
+  c.width=w*d;c.height=h*d;var x=c.getContext('2d');x.scale(d,d);
+  var css=getComputedStyle(document.body),pri=css.getPropertyValue('--pri'),warn=css.getPropertyValue('--warn'),line=css.getPropertyValue('--line'),mut=css.getPropertyValue('--mut');
+  var L=40,B=24,T=8,R=8,W=w-L-R,Hh=h-T-B,N=60,max=10;
+  x.font='11px sans-serif';x.fillStyle=mut;x.strokeStyle=line;x.lineWidth=1;
+  for(var g=0;g<=max;g+=2){var y=T+Hh-g/max*Hh;x.beginPath();x.moveTo(L,y);x.lineTo(w-R,y);x.stroke();x.fillText(g+'%',4,y+4)}
+  for(var k=0;k<=6;k++){x.fillText((k*1000).toLocaleString(),L+W*k/6-10,h-6)}
+  var cum=0,p1=[],p2=[];
+  for(var i=0;i<N;i++){var r=4+Math.sin(i/6)*1.6+Math.sin(i/2.3)*.7+(i<5?4-i:0);cum=(cum*i+r)/(i+1);p1.push(cum);p2.push(Math.max(.5,r))}
+  [[p2,warn],[p1,pri]].forEach(function(pc){var p=pc[0];x.strokeStyle=pc[1];x.lineWidth=2;x.beginPath();
+    p.forEach(function(v,i){var X=L+W*i/(N-1)*.98,Y=T+Hh-Math.min(v,max)/max*Hh;if(i)x.lineTo(X,Y);else x.moveTo(X,Y)});x.stroke()});
+}
+window.addEventListener('resize',draw);
+</script></body></html>

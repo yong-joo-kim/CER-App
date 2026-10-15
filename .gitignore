@@ -1,0 +1,13 @@
+﻿__pycache__/
+.venv/
+data/input/*.wav
+data/results/*
+!data/results/.gitkeep
+config.local.json
+data/results/
+
+# 비밀키·개인정보 포함 파일은 저장소에 올리지 않는다
+docs/spec/zieum_client_pcm_ws_py
+docs/spec/*.pdf
+data/input/*
+!data/input/README.md
