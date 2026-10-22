@@ -171,7 +171,7 @@ class Run:
         try:
             ref_raw = inputs.read_text(it.txt)
             fill = self.cfg.get("filler_words", [])
-            ref_segs = normalize.normalize_ref(ref_raw, fill)
+            ref_segs = normalize.normalize_ref2(ref_raw, fill)
             attempts = 1 + int(self.cfg["retry"].get("count", 2))
             res, last_err = None, ""
             t0 = time.perf_counter()
@@ -386,26 +386,34 @@ class Run:
         it = next((i for i in self.items if i.name == name), None)
         txt = it.txt if it is not None else self.resolve_txt(name)
         fill = self.cfg.get("filler_words", [])
-        ref_n = hyp_n = ""
+        ref_n = hyp_n = ref_raw = ""
         ops = []
         ref_missing = txt is None or not Path(txt).exists()
         ref_segs = None
         if not ref_missing:
             try:
-                ref_segs = normalize.normalize_ref(inputs.read_text(txt), fill)
+                raw_text = inputs.read_text(txt)
+                ref_raw = " ".join(l.strip() for l in raw_text.splitlines() if l.strip())
+                ref_segs = normalize.normalize_ref2(raw_text, fill)
                 ref_n = normalize.ref_text(ref_segs)
             except Exception:
                 ref_missing = True
         p = self.result_path(name, model)
         try:
             if p.exists():
-                hyp_n = normalize.normalize(p.read_text(encoding="utf-8"), fill)
+                hyp_c, hyp_d = normalize.normalize2(p.read_text(encoding="utf-8"), fill)
+                hyp_n = hyp_d
                 if ref_segs is not None:
-                    _, ops = metrics.score_lattice(normalize.lattice(ref_segs, "word"), normalize.to_words(hyp_n))
+                    _, ops = metrics.score_lattice(normalize.lattice(ref_segs, "word"),
+                                                   normalize.to_words_disp(hyp_c, hyp_d))
         except Exception:
             pass
-        return {"record": rec, "ref": ref_n, "hyp": hyp_n, "ref_missing": ref_missing,
-                "ops": [list(o) for o in ops],
+        def disp(x):
+            return getattr(x, "disp", x)
+
+        return {"record": rec, "ref": ref_n, "ref_raw": ref_raw, "hyp": hyp_n, "ref_missing": ref_missing,
+                "ops": [[o[0], disp(o[1]), disp(o[2]), getattr(o[1], "seg", None)] for o in ops],
+                "alts": [[a[1] if isinstance(a, tuple) else a for a in alts] for alts in ref_segs] if ref_segs else [],
                 "result_file": str(p)}
 
     @classmethod

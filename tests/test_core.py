@@ -81,6 +81,52 @@ class AlternativeTest(unittest.TestCase):
         self.assertEqual((sc.errors, sc.n), (0, 4))
 
 
+class AttachedParticleTest(unittest.TestCase):
+    REF = "(17살)/(열 일곱 살)이랑 (14살)/(열 네 살)이에요"
+
+    def _score(self, hyp, unit):
+        segs = normalize.normalize_ref2(self.REF, ["네"] if False else [])
+        c, _ = normalize.normalize2(hyp, [])
+        h = normalize.to_chars(c) if unit == "char" else normalize.to_words(c)
+        return metrics.score_lattice(normalize.lattice(segs, unit), h)[0]
+
+    def test_group_with_attached_particle(self):
+        segs = normalize.normalize_ref2(self.REF)
+        self.assertEqual(len(segs), 2)
+        self.assertEqual(segs[0], [("일칠살이랑", "17살이랑"), ("열 일곱 살이랑", "열 일곱 살이랑")])
+        self.assertEqual(segs[1], [("일사살이에요", "14살이에요"), ("열 네 살이에요", "열 네 살이에요")])
+
+    def test_either_form_matches_char_and_word(self):
+        for hyp in ("17살이랑 14살이에요", "열 일곱 살이랑 열 네 살이에요", "17살이랑 열 네 살이에요"):
+            for unit in ("char", "word"):
+                sc = self._score(hyp, unit)
+                self.assertEqual(sc.errors, 0, (hyp, unit))
+        self.assertGreater(self._score("17살이랑 15살이에요", "char").errors, 0)
+
+    def test_display_keeps_original_digits(self):
+        segs = normalize.normalize_ref2(self.REF)
+        c, d = normalize.normalize2("17살이랑 14살이에요")
+        _, ops = metrics.score_lattice(normalize.lattice(segs, "word"), normalize.to_words_disp(c, d))
+        shown = [getattr(o[1], "disp", o[1]) for o in ops]
+        self.assertEqual(shown, ["17살이랑", "14살이에요"])
+        self.assertNotIn("일칠", " ".join(shown))
+        self.assertEqual(normalize.ref_text(segs), "(17살이랑|열 일곱 살이랑) (14살이에요|열 네 살이에요)")
+
+    def test_numeral_ne_is_not_a_filler(self):
+        fill = ["음", "네", "예"]
+        c, d = normalize.normalize2("열 네 살이에요 네 맞아요", fill)
+        self.assertEqual(c, "열 네 살이에요 맞아요")               # 숫자 "네"는 유지, 맞장구 "네"는 제외
+        segs = normalize.normalize_ref2(self.REF, fill)
+        self.assertEqual(normalize.ref_text(segs), "(17살이랑|열 일곱 살이랑) (14살이에요|열 네 살이에요)")
+        hc, hd = normalize.normalize2("열 일곱 살이랑 열 네 살이에요", fill)
+        sc, _ = metrics.score_lattice(normalize.lattice(segs, "char"), normalize.to_chars(hc))
+        self.assertEqual(sc.errors, 0)
+
+    def test_prefix_attached(self):
+        segs = normalize.normalize_ref2("저는(5살)/(다섯 살)입니다")
+        self.assertEqual(segs[0], [("저는오살입니다", "저는5살입니다"), ("저는다섯 살입니다", "저는다섯 살입니다")])
+
+
 class MergeTest(unittest.TestCase):
     def test_segments_dedup_and_partial(self):
         msgs = [{"partial": True, "transcript": "안"},

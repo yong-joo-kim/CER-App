@@ -99,6 +99,10 @@ details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:
 .runitem:hover{border-color:var(--pri)}
 .runitem b{min-width:150px}
 .runitem span{color:var(--mut);font-variant-numeric:tabular-nums}
+.legend2{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin-top:10px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:13px}
+.legend2 b{font-size:13px}
+.legend2 .lg{font-style:normal;padding:1px 8px;border-radius:4px;margin-right:4px;font-weight:600}
+.legend2 .mut{color:var(--mut)}
 </style></head><body>
 <header><h1>CER/WER 시험 프로그램</h1>
 <button class="tab on" data-t="t1">① 설정·실행</button><button class="tab" data-t="t2">② 실시간 결과</button><button class="tab" data-t="t3">③ 파일별 결과</button><button class="tab" data-t="t4">④ 상세</button><button class="tab" data-t="t5">⑤ 리포트</button><button class="tab" data-t="t6">⑥ 시험결과 요약</button></header>
@@ -158,8 +162,9 @@ details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:
 <section id="t4">
  <div class="card"><h2 id="dTitle">상세</h2>
   <div id="dEmpty" class="note">③ 파일별 결과에서 파일을 선택하세요.</div>
-  <div id="dBody" style="display:none"><div class="diff"><div><label id="dRefL">정답</label><span id="dRef"></span></div><div><label id="dHypL">인식 결과</label><span id="dHyp"></span></div></div>
-  <div class="note" id="dInfo"></div></div></div>
+  <div id="dBody" style="display:none"><div id="dRaw" class="note" style="margin:0 0 10px;max-height:120px;overflow:auto"></div><div class="diff"><div><label id="dRefL">정답</label><span id="dRef"></span></div><div><label id="dHypL">인식 결과</label><span id="dHyp"></span></div></div>
+  <div class="note" id="dInfo"></div>
+  <div id="dLegend" class="legend2"><b>범례</b><span><i class="lg s">치환</i> 같은 자리의 단어가 다르게 인식됨</span><span><i class="lg i">삽입</i> 정답에 없는 단어가 추가됨 (인식 결과 쪽)</span><span><i class="lg d">삭제</i> 정답에 있는 단어가 빠짐 (정답 쪽)</span><span class="mut">색이 없으면 일치 · 단어(어절) 단위 비교</span></div></div></div>
 </section>
 <section id="t5">
  <div class="card"><h2>시험 전체 리포트</h2><div id="rInfo" class="note">실행 결과가 없습니다.</div>
@@ -359,13 +364,22 @@ function openDetail(name,model,noPush){api('/api/detail?name='+encodeURIComponen
   show('t4',!!noPush,{t:'t4',n:name,m:model});$('dTitle').textContent='상세: '+name+' / '+model;
   if(d.error){$('dEmpty').style.display='';$('dBody').style.display='none';$('dEmpty').textContent=d.error;return}
   $('dEmpty').style.display='none';$('dBody').style.display='';
+  $('dRaw').textContent=d.ref_raw?('정답 원문: '+d.ref_raw):'';$('dRaw').style.display=d.ref_raw?'':'none';
+  $('dLegend').style.display=d.ref_missing?'none':'';
   if(d.ref_missing){$('dRef').textContent='(정답 원본 파일을 찾을 수 없습니다. ① 탭에서 정답 폴더를 지정한 뒤 이전 시험을 다시 여세요.)';$('dHyp').textContent=d.hyp||'(인식 결과 파일 없음)';
     var rc0=d.record;$('dInfo').textContent='CER '+pct(rc0.cer)+' · S/I/D/N '+rc0.cs+'/'+rc0.ci+'/'+rc0.cd+'/'+rc0.cn+' · WER '+pct(rc0.wer)+' · 응답속도 '+sec(rc0.latency)+' · 음성 '+rc0.duration_s+'s · 결과 파일 '+d.result_file;return}
-  var r=[],h=[];d.ops.forEach(function(o){var op=o[0],a=o[1],b=o[2];
-    if(op==='='){r.push(esc(a));h.push(esc(b))}
-    else if(op==='S'){r.push('<span class="s">'+esc(a)+'</span>');h.push('<span class="s">'+esc(b)+'</span>')}
-    else if(op==='D'){r.push('<span class="d">'+esc(a)+'</span>')}
-    else{h.push('<span class="i">'+esc(b)+'</span>')}});
+  var r=[],h=[],grp=null;
+  function flush(){if(!grp)return;var alts=d.alts[grp.seg],ch=grp.items.join(' '),oth=[];
+    alts.forEach(function(x){if(x!==grp.words.join(" "))oth.push('<span class="mut">'+esc(x)+'</span>')});
+    r.push('('+ch+')/('+oth.join(')/(')+')');grp=null}
+  d.ops.forEach(function(o){var op=o[0],a=o[1],b=o[2],sg=o[3];
+    var multi=sg!=null&&d.alts[sg]&&d.alts[sg].length>1;
+    if(grp&&(!multi||sg!==grp.seg))flush();
+    if(op==='I'){h.push('<span class="i">'+esc(b)+'</span>');return}
+    var ra=op==='='?esc(a):op==='S'?'<span class="s">'+esc(a)+'</span>':'<span class="d">'+esc(a)+'</span>';
+    if(multi){if(!grp)grp={seg:sg,items:[],words:[]};grp.items.push(ra);grp.words.push(a)}else r.push(ra);
+    if(op==='='){h.push(esc(b))}else if(op==='S'){h.push('<span class="s">'+esc(b)+'</span>')}});
+  flush();
   $('dRef').innerHTML=r.join(' ');$('dHyp').innerHTML=h.join(' ');
   var rc=d.record;$('dInfo').textContent='CER '+pct(rc.cer)+' · S/I/D/N '+rc.cs+'/'+rc.ci+'/'+rc.cd+'/'+rc.cn+' · WER '+pct(rc.wer)+' · 응답속도 '+sec(rc.latency)+' · 음성 '+rc.duration_s+'s · 결과 파일 '+d.result_file})}
 /* ---- 리포트 ---- */
