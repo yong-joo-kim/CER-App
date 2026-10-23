@@ -31,8 +31,8 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 @media print{body{background:#fff}.m{break-inside:avoid}}
 </style></head><body><div class="wrap">
 <h1 class="t">CER App 대화 기록</h1>
-<p class="sub">Claude Code와 나눈 대화(사용자 입력 / Claude 응답) · 총 161개 메시지 · 표와 코드는 원문 형식을 유지했습니다 · 도구 실행 로그와 시스템 알림은 제외했고 API 키 값은 가렸습니다</p>
-<article class="m user"><header><b>나</b><span>2026-10-14 13:49</span><i>#1</i></header><div class="b"><p class="u">음성인식 장비의 CER WER 을 측정하는 테스트 프로그램을 만든다. 입력은 시험용 음석녹음 WAVE 파일과 음성을 전사한 텍스트 파일 쌍으로 이루어진 다수의 파일을 특정 디렉토리에 저장하고, 실행을 시키면 음성인식 실시간 측정을 진행한다. 진행시에도 CER WER 대략적인 누적 점수를 시계열 그래프상으로 실시간으로 볼수 있게 화면을 구성한다. 음성인식 시험용 파일로 시험을 종료한 경우 최종 결과는 막대 그래프로 CER WER 시험 데이터 갯수를 볼 수 있는 화면을 구성한다. 음성인식 장비는 내부 망에있는 장비로 연동 Spec을 참조하여 음성녹취 Wave 파일의 음성을 연동 spec에 따라서 API를 사용하여 음성인식을 요청하고 음성인식 결과를 수신하여 전사된 원본 음성텍스트과 비교하여 시험 결과에 반영한다. 필요한 디렉토리 만들어주고 연동 spec 문서 저장 위치 알려줘.<br>개발 단계별 절차를 준수하여 분석과 계획수립부터 구현 검증 Git 배포까지 문서화 포함하여 PM,요구분석,UI시안,구현,검증,자동시험,버전관리,배포 등 기능별 에이전트 구성하여 하네스 방식으로 자동 개발하도록 Plan 만들어줘.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 13:51</span><i>#2</i></header><div class="b"><p>Plan 승인됨. 디렉토리와 하네스 골격을 생성합니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 13:51</span><i>#3</i></header><div class="b"><p>디렉토리 구조 생성과 <code>git init</code>은 완료됐습니다. (exit code 255는 <code>git init</code>의 출력 처리 때문에 나온 것으로, 디렉토리와 파일은 정상 생성됨.)</p>
+<p class="sub">Claude Code와 나눈 대화(사용자 입력 / Claude 응답) · 총 192개 메시지 · 표와 코드는 원문 형식을 유지했습니다 · 도구 실행 로그와 시스템 알림은 제외했고 API 키 값은 가렸습니다</p>
+<article class="m user"><header><b>나</b><span>2026-10-14 13:49</span><i>#1</i></header><div class="b"><p class="u">음성인식 장비의 CER WER 을 측정하는 테스트 프로그램을 만든다. 입력은 시험용 음석녹음 WAVE 파일과 음성을 전사한 텍스트 파일 쌍으로 이루어진 다수의 파일을 특정 디렉토리에 저장하고, 실행을 시키면 음성인식 실시간 측정을 진행한다. 진행시에도 CER WER 대략적인 누적 점수를 시계열 그래프상으로 실시간으로 볼수 있게 화면을 구성한다. 음성인식 시험용 파일로 시험을 종료한 경우 최종 결과는 막대 그래프로 CER WER 시험 데이터 갯수를 볼 수 있는 화면을 구성한다. 음성인식 장비는 내부 망에있는 장비로 연동 Spec을 참조하여 음성녹취 Wave 파일의 음성을 연동 spec에 따라서 API를 사용하여 음성인식을 요청하고 음성인식 결과를 수신하여 전사된 원본 음성텍스트과 비교하여 시험 결과에 반영한다. 필요한 디렉토리 만들어주고 연동 spec 문서 저장 위치 알려줘.<br />개발 단계별 절차를 준수하여 분석과 계획수립부터 구현 검증 Git 배포까지 문서화 포함하여 PM,요구분석,UI시안,구현,검증,자동시험,버전관리,배포 등 기능별 에이전트 구성하여 하네스 방식으로 자동 개발하도록 Plan 만들어줘.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 13:51</span><i>#2</i></header><div class="b"><p>Plan 승인됨. 디렉토리와 하네스 골격을 생성합니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 13:51</span><i>#3</i></header><div class="b"><p>디렉토리 구조 생성과 <code>git init</code>은 완료됐습니다. (exit code 255는 <code>git init</code>의 출력 처리 때문에 나온 것으로, 디렉토리와 파일은 정상 생성됨.)</p>
 <h2>연동 Spec 문서 저장 위치</h2>
 <p><strong><code>D:\2. Team Source\CER App\docs\spec\</code></strong> — 연동 Spec(PDF/DOCX/MD 등)을 이 폴더에 넣어 주세요.</p>
 <h2>생성된 구조</h2>
@@ -52,7 +52,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <ol>
 <li>연동 Spec을 <code>docs/spec/</code>에 저장해 주세요 (P0 블로킹 게이트).</li>
 <li>확인되면 <code>.claude/agents/*</code> 정의 작성과 P1 요구분석을 시작하겠습니다.</li>
-</ol></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:17</span><i>#4</i></header><div class="b"><p class="u">resume</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:17</span><i>#5</i></header><div class="b"><p>I don't have a prior conversation to pick up from, so I'll check the project for notes on where things stood.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:18</span><i>#6</i></header><div class="b"><p>The project is at the very start, and there's no earlier work to resume.</p>
+</ol></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:17</span><i>#4</i></header><div class="b"><p class="u">resume</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:17</span><i>#5</i></header><div class="b"><p>I don't have a prior conversation to pick up from, so I'll check the project for notes on where things stood.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:18</span><i>#6</i></header><div class="b"><p>The project is at the very start, and there's no earlier work to resume.</p>
 <ul>
 <li><strong>Project:</strong> CER App, a CER/WER test program for speech-recognition equipment.</li>
 <li><strong>Harness state:</strong> <code>harness/state.json</code> shows phase <code>P0</code> with no gates passed and no artifacts.</li>
@@ -62,7 +62,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p>What should I do next? Options include:<br />
 1. Read the spec PDF and draft the P0/PM plan in <code>docs/01_pm</code>.<br />
 2. Draft requirements in <code>docs/02_requirements</code> from the spec.<br />
-3. Something else you had in mind.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:19</span><i>#7</i></header><div class="b"><p class="u">진행사항 알려줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:19</span><i>#8</i></header><div class="b"><h2>진행사항 (CER App)</h2>
+3. Something else you had in mind.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:19</span><i>#7</i></header><div class="b"><p class="u">진행사항 알려줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:19</span><i>#8</i></header><div class="b"><h2>진행사항 (CER App)</h2>
 <p><strong>현재 단계: P0 (초기 세팅 완료, 본 작업 미착수)</strong></p>
 <div class="tw"><table>
 <thead>
@@ -103,7 +103,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 </tbody>
 </table></div>
 <p><strong>요약:</strong> 폴더 구조와 Spec 문서만 준비된 상태이고, 산출물은 아직 없습니다. 다음 단계는 P1(요구분석)로, Spec PDF를 읽고 요구사항 문서를 <code>docs/02_requirements</code>에 작성하는 것입니다.</p>
-<p>현재 plan 모드라 변경은 하지 않았습니다. P1 진행을 원하시면 말씀해 주세요. 그러면 계획을 세워 승인 요청드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:20</span><i>#9</i></header><div class="b"><p class="u">spec 문서 저장했어 p1 진행해</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:20</span><i>#10</i></header><div class="b"><p>스펙 PDF에서 한글이 깨져 추출되어, 다른 방식으로 다시 읽어보는 중입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:22</span><i>#11</i></header><div class="b"><p class="u">평균 응답 속도 결과도 필요해</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:22</span><i>#12</i></header><div class="b"><p>P1(요구분석) 산출물을 작성했습니다. <code>docs/02_requirements/</code> 아래에 3개 문서가 있습니다.</p>
+<p>현재 plan 모드라 변경은 하지 않았습니다. P1 진행을 원하시면 말씀해 주세요. 그러면 계획을 세워 승인 요청드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:20</span><i>#9</i></header><div class="b"><p class="u">spec 문서 저장했어 p1 진행해</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:20</span><i>#10</i></header><div class="b"><p>스펙 PDF에서 한글이 깨져 추출되어, 다른 방식으로 다시 읽어보는 중입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:21</span><i>#11</i></header><div class="b"><p class="u">[Request interrupted by user for tool use]</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:22</span><i>#12</i></header><div class="b"><p class="u">평균 응답 속도 결과도 필요해</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:22</span><i>#13</i></header><div class="b"><p>P1(요구분석) 산출물을 작성했습니다. <code>docs/02_requirements/</code> 아래에 3개 문서가 있습니다.</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -141,13 +141,13 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 2. 텍스트 정규화 규칙(추임새 "음/네" 포함 여부, 숫자 표기 통일)과 WER 토큰 기준.<br />
 3. rx/tx를 채널별로 평가할지 합산할지.<br />
 4. 실행 형태(CLI/GUI)와 시험 대상 모델(model_v2 기본으로 할지).</p>
-<p>위 항목을 정해 주시면 반영해서 P1 gate 승인을 요청드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:24</span><i>#13</i></header><div class="b"><p class="u">음성인식 문장 입력에 대해서 음성인식 문장의 결과 최종 출력완료</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:24</span><i>#14</i></header><div class="b"><p>말씀하신 내용을 "평균 응답 속도 = 문장 입력 후 최종 결과 출력 완료까지의 시간"으로 정의하고 문서에 반영하겠습니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:24</span><i>#15</i></header><div class="b"><p>평균 응답 속도의 정의를 "문장 입력에 대한 최종 결과 출력 완료까지의 시간"으로 반영했습니다.</p>
+<p>위 항목을 정해 주시면 반영해서 P1 gate 승인을 요청드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:24</span><i>#14</i></header><div class="b"><p class="u">음성인식 문장 입력에 대해서 음성인식 문장의 결과 최종 출력완료</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:24</span><i>#15</i></header><div class="b"><p>말씀하신 내용을 "평균 응답 속도 = 문장 입력 후 최종 결과 출력 완료까지의 시간"으로 정의하고 문서에 반영하겠습니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:24</span><i>#16</i></header><div class="b"><p>평균 응답 속도의 정의를 "문장 입력에 대한 최종 결과 출력 완료까지의 시간"으로 반영했습니다.</p>
 <ul>
 <li><strong><code>requirements.md</code> FR-08:</strong> 문장(발화) 단위로, 문장 입력 종료(마지막 청크 전송 또는 <code>finalize</code>)부터 최종 인식 결과 수신 완료까지를 대표 지표로 기록합니다. 첫 부분결과 지연과 xRT는 참고 지표로 함께 기록합니다.</li>
 <li><strong>FR-09:</strong> 위 문장별 응답 속도의 평균, 중앙값, 최대, p95를 전체·모델별·채널별로 집계합니다.</li>
 <li><strong><code>open_issues.md</code> #1:</strong> 대표 지표는 확정으로 바꿨습니다.</li>
 </ul>
-<p>시작 시점을 문장 입력 종료(제안)로 할지 입력 시작으로 할지는 아직 확인이 필요합니다. 입력 시작 기준이면 오디오 길이가 포함됩니다. 이 점만 알려주시면 정리하고 나머지 미결 사항(정규화 규칙, rx/tx 평가 단위, CLI/GUI)으로 넘어가겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:29</span><i>#16</i></header><div class="b"><p class="u">음성인식 결과 시간 요구는 취소한다. 약 7초 짜리 문장단위 음성 파일이 아닌 연속된 음성 파일임으로 의미가 없다</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:29</span><i>#17</i></header><div class="b"><p>응답 속도(시간) 측정 요구를 모두 취소하고 문서에서 제거했습니다.</p>
+<p>시작 시점을 문장 입력 종료(제안)로 할지 입력 시작으로 할지는 아직 확인이 필요합니다. 입력 시작 기준이면 오디오 길이가 포함됩니다. 이 점만 알려주시면 정리하고 나머지 미결 사항(정규화 규칙, rx/tx 평가 단위, CLI/GUI)으로 넘어가겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:29</span><i>#17</i></header><div class="b"><p class="u">음성인식 결과 시간 요구는 취소한다. 약 7초 짜리 문장단위 음성 파일이 아닌 연속된 음성 파일임으로 의미가 없다</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:29</span><i>#18</i></header><div class="b"><p>응답 속도(시간) 측정 요구를 모두 취소하고 문서에서 제거했습니다.</p>
 <ul>
 <li><strong><code>requirements.md</code>:</strong> 응답 속도 측정과 집계(옛 FR-08, FR-09), 속도 측정 방식 관련 비기능 요구(옛 NFR-02)를 삭제하고, 목적 문구와 리포트 항목에서 응답속도 표현도 뺐습니다. 남은 항목은 번호를 다시 매겨 기능 요구 FR-01~10, 비기능 요구 NFR-01~04가 되었습니다.</li>
 <li><strong><code>open_issues.md</code>:</strong> 응답 속도 관련 미결 2건을 삭제하고 번호를 정리했습니다. 취소 사유는 하단에 한 줄로 남겼습니다.</li>
@@ -163,7 +163,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <li>시험 대상 모델</li>
 <li>API 키 보관</li>
 </ol>
-<p>각 항목에 제안은 적어 두었습니다. 연속 음성 파일이라는 점은 정규화와 CER 비교 방식(문장 정렬 없이 전체 텍스트 비교)에 영향이 있어, 이 방향으로 정리하면 될지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:31</span><i>#18</i></header><div class="b"><p class="u">화자 분리된 음성 파일이다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:31</span><i>#19</i></header><div class="b"><p>화자 분리된 연속 음성 파일이라는 점을 문서에 반영했습니다.</p>
+<p>각 항목에 제안은 적어 두었습니다. 연속 음성 파일이라는 점은 정규화와 CER 비교 방식(문장 정렬 없이 전체 텍스트 비교)에 영향이 있어, 이 방향으로 정리하면 될지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:31</span><i>#19</i></header><div class="b"><p class="u">화자 분리된 음성 파일이다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:31</span><i>#20</i></header><div class="b"><p>화자 분리된 연속 음성 파일이라는 점을 문서에 반영했습니다.</p>
 <ul>
 <li><strong>입력 데이터 관찰:</strong> rx/tx가 화자별 파일이고 각 파일에 해당 화자의 정답 TXT가 대응하며, 문장 단위가 아닌 연속 음성이라 문장 정렬 없이 파일 전체 텍스트로 비교한다고 명시했습니다.</li>
 <li><strong>FR-06:</strong> 화자(파일)별로 독립 평가하도록 바꿨습니다.</li>
@@ -179,7 +179,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <li>시험 대상 모델</li>
 <li>API 키 보관</li>
 </ol>
-<p>이 중 정규화 규칙이 CER 값에 가장 큰 영향을 줍니다. 샘플 TXT에는 "음", "네" 같은 추임새가 많고 숫자도 "육육이에 3 1"처럼 섞여 있으니, 이 부분부터 정해 주시면 좋겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:32</span><i>#20</i></header><div class="b"><p class="u">추임새 숫자표기는 무시. GUI 출력, API키 보관</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:32</span><i>#21</i></header><div class="b"><p>FR-11이 FR-10보다 앞에 들어가 순서가 어긋나서 바로잡겠습니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:32</span><i>#22</i></header><div class="b"><p>반영했습니다.</p>
+<p>이 중 정규화 규칙이 CER 값에 가장 큰 영향을 줍니다. 샘플 TXT에는 "음", "네" 같은 추임새가 많고 숫자도 "육육이에 3 1"처럼 섞여 있으니, 이 부분부터 정해 주시면 좋겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:32</span><i>#21</i></header><div class="b"><p class="u">추임새 숫자표기는 무시. GUI 출력, API키 보관</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:32</span><i>#22</i></header><div class="b"><p>FR-11이 FR-10보다 앞에 들어가 순서가 어긋나서 바로잡겠습니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:32</span><i>#23</i></header><div class="b"><p>반영했습니다.</p>
 <ul>
 <li><strong>정규화(확정):</strong> 추임새("음", "네" 등)는 비교에서 제외하고, 숫자 표기 차이(한글/아라비아)는 무시합니다. 추임새 목록과 숫자 변환 규칙의 세부 사항은 P2 설계에서 정합니다.</li>
 <li><strong>GUI(확정):</strong> FR-11을 추가했습니다. 입력 폴더, 모델, 서버를 GUI에서 지정하고, 진행 상황과 화자별·전체 CER/WER을 화면에 표시하며, 리포트를 저장합니다.</li>
@@ -213,7 +213,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 </tr>
 </tbody>
 </table></div>
-<p>제안대로 괜찮으시면 "제안대로"라고만 답해 주세요. 그러면 3건을 확정하고 P1 gate 승인을 요청드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:32</span><i>#23</i></header><div class="b"><p class="u">제안데로</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:33</span><i>#24</i></header><div class="b"><p>미결 사항 3건을 제안대로 확정했고, 이제 P1 미결 사항이 없습니다.</p>
+<p>제안대로 괜찮으시면 "제안대로"라고만 답해 주세요. 그러면 3건을 확정하고 P1 gate 승인을 요청드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:32</span><i>#24</i></header><div class="b"><p class="u">제안데로</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:33</span><i>#25</i></header><div class="b"><p>미결 사항 3건을 제안대로 확정했고, 이제 P1 미결 사항이 없습니다.</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -245,7 +245,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 - <strong>비기능 요구사항:</strong> NFR-01~04<br />
 - <strong>평가 방식:</strong> 화자 분리 파일을 파일별로 독립 평가하며, 추임새는 제외하고 숫자 표기 차이는 무시합니다.<br />
 - <strong>제외:</strong> 응답 속도 측정은 취소했습니다.</p>
-<p><strong>P1 gate 승인을 요청드립니다.</strong> 승인하시면 <code>harness/state.json</code>의 P1 gate를 통과로 기록하고 P2(설계)로 넘어갑니다. 승인 전에는 gate를 비워 두었습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:33</span><i>#25</i></header><div class="b"><p class="u">승인하고 P2 설계 진행해</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:34</span><i>#26</i></header><div class="b"><p>P1 gate를 승인으로 기록하고 P2 설계서를 작성했습니다. 설계서는 <code>docs/03_design/design.md</code>, 상태는 <code>harness/state.json</code>(phase <code>P2</code>, gate <code>P1: approved</code>)입니다.</p>
+<p><strong>P1 gate 승인을 요청드립니다.</strong> 승인하시면 <code>harness/state.json</code>의 P1 gate를 통과로 기록하고 P2(설계)로 넘어갑니다. 승인 전에는 gate를 비워 두었습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:33</span><i>#26</i></header><div class="b"><p class="u">승인하고 P2 설계 진행해</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:34</span><i>#27</i></header><div class="b"><p>P1 gate를 승인으로 기록하고 P2 설계서를 작성했습니다. 설계서는 <code>docs/03_design/design.md</code>, 상태는 <code>harness/state.json</code>(phase <code>P2</code>, gate <code>P1: approved</code>)입니다.</p>
 <p><strong>설계 요약</strong></p>
 <div class="tw"><table>
 <thead>
@@ -294,7 +294,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 1. 파일명 규칙을 <code>_rx</code> / <code>_tx</code> 접미사로 확정해도 될지.<br />
 2. "네/예"를 추임새 목록에 기본 포함해도 될지. 응답어이기도 해서, 제외하면 CER이 달라질 수 있습니다.<br />
 3. 서버가 연속 음성에 대해 구간별로 여러 최종 메시지를 보내는지는 실제 호출로만 알 수 있습니다. 설계는 두 경우 모두 처리하도록 했고, 구현 단계에서 실서버로 확인하겠습니다.</p>
-<p>위 1, 2번에 답해 주시고 설계를 승인하시면 P3(구현)으로 넘어가겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:36</span><i>#27</i></header><div class="b"><p class="u">입력 파일명은 .wav 이고 전사된 텍스트 원본 파일명은 .txt 이다 음성인식된 파일명은 _result.txt로 해달라</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:36</span><i>#28</i></header><div class="b"><p>파일명 규칙을 설계서(<code>docs/03_design/design.md</code>)에 반영했습니다.</p>
+<p>위 1, 2번에 답해 주시고 설계를 승인하시면 P3(구현)으로 넘어가겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:36</span><i>#28</i></header><div class="b"><p class="u">입력 파일명은 .wav 이고 전사된 텍스트 원본 파일명은 .txt 이다 음성인식된 파일명은 _result.txt로 해달라</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:36</span><i>#29</i></header><div class="b"><p>파일명 규칙을 설계서(<code>docs/03_design/design.md</code>)에 반영했습니다.</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -329,9 +329,9 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p>P2 gate 승인 전에 남은 확인 사항은 두 가지입니다.<br />
 1. "네/예"를 추임새 목록에 기본 포함해도 될지. 포함하면 응답어도 비교에서 빠집니다.<br />
 2. 서버의 연속 음성 응답 방식(구간별 다중 최종 메시지 여부). 설계는 두 경우 모두 처리하고 구현 단계에서 실서버로 확인합니다.</p>
-<p>1번만 답해 주시고 설계를 승인하시면 P3(구현)으로 진행하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:37</span><i>#29</i></header><div class="b"><p class="u">1. 포함해</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:37</span><i>#30</i></header><div class="b"><p>"네/예"는 추임새 목록에 기본 포함으로 확정했고, 설계서 4장에 반영했습니다. 설정 파일에서 언제든 바꿀 수 있습니다.</p>
+<p>1번만 답해 주시고 설계를 승인하시면 P3(구현)으로 진행하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:37</span><i>#30</i></header><div class="b"><p class="u">1. 포함해</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:37</span><i>#31</i></header><div class="b"><p>"네/예"는 추임새 목록에 기본 포함으로 확정했고, 설계서 4장에 반영했습니다. 설정 파일에서 언제든 바꿀 수 있습니다.</p>
 <p>이제 P2 설계서에 미결 항목은 없습니다. 서버의 연속 음성 응답 방식은 구현 단계에서 실서버로 확인합니다.</p>
-<p><strong>P2 gate 승인을 요청드립니다.</strong> 승인하시면 <code>harness/state.json</code>에 P2 gate를 기록하고 P3(구현)으로 넘어갑니다. 구현 시 <code>websocket-client</code> 패키지를 설치하고 <code>.gitignore</code>에 <code>config.local.json</code>을 추가합니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:38</span><i>#31</i></header><div class="b"><p class="u">P2 승인하고, 화면 시안 보여줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:38</span><i>#32</i></header><div class="b"><p>P2 gate를 승인으로 기록했습니다. 화면 시안은 <code>docs/03_design/ui_mockup.md</code>에도 저장했습니다.</p>
+<p><strong>P2 gate 승인을 요청드립니다.</strong> 승인하시면 <code>harness/state.json</code>에 P2 gate를 기록하고 P3(구현)으로 넘어갑니다. 구현 시 <code>websocket-client</code> 패키지를 설치하고 <code>.gitignore</code>에 <code>config.local.json</code>을 추가합니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:38</span><i>#32</i></header><div class="b"><p class="u">P2 승인하고, 화면 시안 보여줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:38</span><i>#33</i></header><div class="b"><p>P2 gate를 승인으로 기록했습니다. 화면 시안은 <code>docs/03_design/ui_mockup.md</code>에도 저장했습니다.</p>
 <h2>메인 화면</h2>
 <pre><code>┌─ CER/WER 시험 프로그램 ──────────────────────────────────────────────────────────┐
 │ [설정]                                                                           │
@@ -371,10 +371,10 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 - 중앙의 표는 파일×모델별 CER/WER과 S/I/D/N을 보여주고, 그 아래에 화자(rx/tx)별 평균과 전체 가중 평균을 둡니다.<br />
 - 하단에는 진행 바, 로그, 실행·중지·리포트 저장 버튼이 있습니다.<br />
 - 상세 화면은 정답과 인식 결과를 좌우로 비교하며 오류 유형을 색으로 구분합니다. 요구사항에는 없던 추가 제안이라, 필요 없으면 구현에서 뺄 수 있습니다.</p>
-<p>표 안의 숫자와 파일명은 예시 값입니다. 이 시안으로 괜찮으시면 P3(구현)을 시작하고, 수정할 부분이 있으면 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:39</span><i>#33</i></header><div class="b"><p class="u">시안 승인하고 P3 구현 진행해</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:39</span><i>#34</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:39</span><i>#35</i></header><div class="b"><p>알겠습니다, 작업을 멈춥니다.</p>
+<p>표 안의 숫자와 파일명은 예시 값입니다. 이 시안으로 괜찮으시면 P3(구현)을 시작하고, 수정할 부분이 있으면 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:39</span><i>#34</i></header><div class="b"><p class="u">시안 승인하고 P3 구현 진행해</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:39</span><i>#35</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:39</span><i>#36</i></header><div class="b"><p>알겠습니다, 작업을 멈춥니다.</p>
 <p>방금 실행한 명령은 쉘 따옴표 오류로 중간에 실패했습니다. 이 명령은 <code>websocket-client</code> 설치와 <code>app/</code> 모듈 파일 생성을 한 번에 하려던 것이었고, 오류가 난 시점에 실제로 실행되었는지 불분명합니다. 현재 상태는 확인하지 않은 채로 두었고, 그 이후 추가로 실행한 것은 없습니다.</p>
 <p><code>harness/state.json</code>은 P2 승인 상태 그대로이며, P3 시작은 기록하지 않았습니다.</p>
-<p>어떻게 진행할지 말씀해 주세요. 현재 파일 상태를 확인하거나, 이어서 구현을 재개하거나, 다른 방향으로 바꿀 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:43</span><i>#36</i></header><div class="b"><p class="u">파일이 수천개 이상으로 무지하게 많을텐데 파일별 결과 확인 가능한지 시안상으로는 안보일것 같은데 가능한지 궁금하네</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:43</span><i>#37</i></header><div class="b"><p>가능은 하지만, 현재 시안은 수천 건 규모를 고려하지 않아 그대로는 불편합니다.</p>
+<p>어떻게 진행할지 말씀해 주세요. 현재 파일 상태를 확인하거나, 이어서 구현을 재개하거나, 다른 방향으로 바꿀 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:43</span><i>#37</i></header><div class="b"><p class="u">파일이 수천개 이상으로 무지하게 많을텐데 파일별 결과 확인 가능한지 시안상으로는 안보일것 같은데 가능한지 궁금하네</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:43</span><i>#38</i></header><div class="b"><p>가능은 하지만, 현재 시안은 수천 건 규모를 고려하지 않아 그대로는 불편합니다.</p>
 <p><strong>지금 시안의 한계</strong><br />
 - 파일별 결과가 표 한 개뿐이라 스크롤만 가능합니다. 검색, 정렬, 필터가 없어서 오류율이 높은 파일을 찾기 어렵습니다.<br />
 - 모델 비교 시 행이 파일 수 × 모델 수로 늘어납니다.<br />
@@ -395,7 +395,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p><strong>제안</strong><br />
 - 위 1~5번 화면 보완과 병렬 실행, 이어서 하기를 요구사항·설계·시안에 반영하겠습니다.<br />
 - 실제 파일 규모(대략 몇 건, 파일당 길이)와 서버 동시 접속 허용 수를 알려주시면 병렬도 기본값과 설계 수준을 더 정확히 잡을 수 있습니다.</p>
-<p>반영을 진행할까요?</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:46</span><i>#38</i></header><div class="b"><p class="u">시험용 샘플데이터 수백개는 5분 이상등 장시간 통회 시작부터 종료까지의 화자분리된 음성파일 이다. 실제 CER 측정 시험용 데이터는 7분 내외 문장단위 수천 수만개의 음성파일이다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:46</span><i>#39</i></header><div class="b"><p>정리하면 입력 데이터가 두 종류이고, 이 때문에 앞서 확정한 내용 중 일부를 다시 확인해야 합니다.</p>
+<p>반영을 진행할까요?</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:46</span><i>#39</i></header><div class="b"><p class="u">시험용 샘플데이터 수백개는 5분 이상등 장시간 통회 시작부터 종료까지의 화자분리된 음성파일 이다. 실제 CER 측정 시험용 데이터는 7분 내외 문장단위 수천 수만개의 음성파일이다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:46</span><i>#40</i></header><div class="b"><p>정리하면 입력 데이터가 두 종류이고, 이 때문에 앞서 확정한 내용 중 일부를 다시 확인해야 합니다.</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -429,7 +429,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 - 응답 속도 측정을 문장 단위 시험 데이터에 한해 복원할지.<br />
 - 서버 동시 접속 허용 수(모르면 기본 4로 두고 GUI에서 조정).<br />
 - 문장 단위 파일의 이름 규칙(<code>.wav</code>/<code>.txt</code> 쌍이 같은 폴더에 수만 개 있는 형태인지, 하위 폴더 구조가 있는지).</p>
-<p>답을 주시면 요구사항·설계·화면 시안을 한 번에 갱신하고 P3 구현을 재개하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:52</span><i>#40</i></header><div class="b"><p class="u">그래 7초 내외이다. 응답 속도는 평균 7초 내외 문장단위 음성파일 시험일때에만 동작. CER 측정시 동시 접속 허용수 4. 문장 단위 시험여부는 시험시작전 option으로 선택 설정하게해주며 파일이름 구분 없음. 문장 단위파일 시험일때 음성시간이 30초 이상이면 해당 파일은 문장단위 속도 측정에서 제외.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 15:52</span><i>#41</i></header><div class="b"><p>요구사항, 설계, 화면 시안에 변경 내용을 반영했습니다. 변경이 커서 P1·P2 gate를 <code>reopened</code>로 돌려 두었고, 재승인이 필요합니다.</p>
+<p>답을 주시면 요구사항·설계·화면 시안을 한 번에 갱신하고 P3 구현을 재개하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:52</span><i>#41</i></header><div class="b"><p class="u">그래 7초 내외이다. 응답 속도는 평균 7초 내외 문장단위 음성파일 시험일때에만 동작. CER 측정시 동시 접속 허용수 4. 문장 단위 시험여부는 시험시작전 option으로 선택 설정하게해주며 파일이름 구분 없음. 문장 단위파일 시험일때 음성시간이 30초 이상이면 해당 파일은 문장단위 속도 측정에서 제외.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 15:52</span><i>#42</i></header><div class="b"><p>요구사항, 설계, 화면 시안에 변경 내용을 반영했습니다. 변경이 커서 P1·P2 gate를 <code>reopened</code>로 돌려 두었고, 재승인이 필요합니다.</p>
 <p><strong>반영 내용</strong></p>
 <div class="tw"><table>
 <thead>
@@ -481,7 +481,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p><strong>이전 작업 상태</strong><br />
 - 앞서 실패한 구현 명령은 <code>app/</code> 폴더에 아무 파일도 남기지 않았습니다. 구현 코드는 아직 없습니다.<br />
 - <code>websocket-client</code> 설치 여부는 확인하지 않았습니다.</p>
-<p>위 3건에 답해 주시고 P1·P2를 다시 승인해 주시면, 갱신한 설계로 P3 구현을 시작하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:59</span><i>#42</i></header><div class="b"><p class="u">1. 동시접속 1로, 2번은 제안데로, 3. 입력폴더는 최대 한단계 더 탐색하는 수준으로만한다.<br>그리고 수시간이상 측정하는 결과값은 최종종료시에만 보여주지말고 시험진행하는 중간에도 CER값 변화들이 보여줄수있게 시안해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:00</span><i>#43</i></header><div class="b"><p>요청하신 3건의 확정 사항과 진행 중 CER 변화 시안을 <code>requirements.md</code>, <code>design.md</code>, <code>ui_mockup.md</code>, <code>open_issues.md</code>에 반영했습니다.</p>
+<p>위 3건에 답해 주시고 P1·P2를 다시 승인해 주시면, 갱신한 설계로 P3 구현을 시작하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 15:59</span><i>#43</i></header><div class="b"><p class="u">1. 동시접속 1로, 2번은 제안데로, 3. 입력폴더는 최대 한단계 더 탐색하는 수준으로만한다.<br />그리고 수시간이상 측정하는 결과값은 최종종료시에만 보여주지말고 시험진행하는 중간에도 CER값 변화들이 보여줄수있게 시안해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:00</span><i>#44</i></header><div class="b"><p>요청하신 3건의 확정 사항과 진행 중 CER 변화 시안을 <code>requirements.md</code>, <code>design.md</code>, <code>ui_mockup.md</code>, <code>open_issues.md</code>에 반영했습니다.</p>
 <h2>확정 사항</h2>
 <div class="tw"><table>
 <thead>
@@ -533,7 +533,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <li><strong>소요 시간:</strong> 응답 속도 측정을 동시 접속 1로 하면 7초 × 1만 건이 약 19시간 이상 걸립니다(CER만 동시 4건이면 약 5시간). 이 부분은 <code>open_issues.md</code> 11번으로 남겼습니다.</li>
 <li><strong>표본 측정 옵션(제안):</strong> 응답 속도는 무작위 N건만 단독(동시 1)으로 측정하고, 나머지는 동시 4건으로 CER만 측정하는 방식입니다. 전체를 단독 측정할지, 표본 측정을 둘지 정해 주세요.</li>
 </ul>
-<p>그 결정과 함께 P1·P2 재승인을 해 주시면 P3 구현을 시작하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:01</span><i>#44</i></header><div class="b"><p class="u">최종 시안 다시 보여줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:01</span><i>#45</i></header><div class="b"><p>최종 시안은 메인 화면, 상세 화면, 진행 중 실시간 결과 화면의 세 가지입니다. 지금까지 확정한 내용(시험 모드, 동시 접속, 응답 속도, 이어서 하기, 대량 조회, 실시간 CER 변화)을 모두 합쳤습니다.</p>
+<p>그 결정과 함께 P1·P2 재승인을 해 주시면 P3 구현을 시작하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:01</span><i>#45</i></header><div class="b"><p class="u">최종 시안 다시 보여줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:01</span><i>#46</i></header><div class="b"><p>최종 시안은 메인 화면, 상세 화면, 진행 중 실시간 결과 화면의 세 가지입니다. 지금까지 확정한 내용(시험 모드, 동시 접속, 응답 속도, 이어서 하기, 대량 조회, 실시간 CER 변화)을 모두 합쳤습니다.</p>
 <h2>1. 메인 화면</h2>
 <pre><code>┌─ CER/WER 시험 프로그램 ───────────────────────────────────────────────────────────┐
 │ [설정]                                                                            │
@@ -589,7 +589,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <li><strong>대량 조회:</strong> 파일명 검색, 상태·화자 필터, CER 정렬, 분포, 오류율 상위 N개로 수천~수만 건을 다룹니다.</li>
 <li><strong>실패와 제외:</strong> 실패와 속도 제외(30초 이상)는 비고에 표시합니다.</li>
 </ul>
-<p>이 화면은 목업이고 숫자는 예시입니다. 지금 시안에서는 이 화면 구성이 맞는지, 그리고 응답 속도를 전체 단독으로 잴지 표본으로 잴지만 확정하면 P1·P2 재승인과 P3 구현을 시작할 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:04</span><i>#46</i></header><div class="b"><p class="u">파일갯수는 .wav이다. 메인 시안화면이 Web 한개의 화면에 나오는 것인가? 파일별 결과 부분은 수천개일텐데 어떻게 보여주는 방식인가?</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:05</span><i>#47</i></header><div class="b"><h2>1. 파일 개수</h2>
+<p>이 화면은 목업이고 숫자는 예시입니다. 지금 시안에서는 이 화면 구성이 맞는지, 그리고 응답 속도를 전체 단독으로 잴지 표본으로 잴지만 확정하면 P1·P2 재승인과 P3 구현을 시작할 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:04</span><i>#47</i></header><div class="b"><p class="u">파일갯수는 .wav이다. 메인 시안화면이 Web 한개의 화면에 나오는 것인가? 파일별 결과 부분은 수천개일텐데 어떻게 보여주는 방식인가?</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:05</span><i>#48</i></header><div class="b"><h2>1. 파일 개수</h2>
 <p>입력 파일 개수는 <code>.wav</code> 파일 수 기준입니다. 같은 이름의 <code>.txt</code>가 없는 <code>.wav</code>는 경고하고 제외합니다. 시안의 "발견 10,000건"은 시험에 사용할 수 있는 <code>.wav</code> 수입니다.</p>
 <h2>2. 한 화면인지, 웹인지</h2>
 <ul>
@@ -624,7 +624,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <li>수만 건을 더 가볍게 보려고 표를 <strong>페이지 방식</strong>(500건씩 이전/다음)으로 할지, 스크롤 방식으로 할지. 권장은 스크롤이며, 5만 건을 넘으면 페이지 방식으로 바꾸는 편이 안전합니다.</li>
 <li>데스크톱 프로그램이 아닌 <strong>웹 화면</strong>을 원하시는지. 여러 사람이 서버에서 결과를 함께 보려는 목적이라면 웹이 맞고, 설계를 바꿔야 합니다.</li>
 </ol>
-<p>답해 주시면 시안에 반영해 다시 보여드리겠습니다. 응답 속도를 전체 단독으로 잴지 표본으로 잴지도 함께 정해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:08</span><i>#48</i></header><div class="b"><p class="u">1. web 화면 탭 방식   2. 스크롤 방식   3. 응답속도는 문장단위 시험인 경우 전체 평균</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:10</span><i>#49</i></header><div class="b"><p>웹 화면 시안 파일을 만들고 요구사항·설계 문서에 반영하는 작업을 마쳤습니다. 브라우저에서 열도록 실행했습니다.</p>
+<p>답해 주시면 시안에 반영해 다시 보여드리겠습니다. 응답 속도를 전체 단독으로 잴지 표본으로 잴지도 함께 정해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:08</span><i>#49</i></header><div class="b"><p class="u">1. web 화면 탭 방식   2. 스크롤 방식   3. 응답속도는 문장단위 시험인 경우 전체 평균</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:10</span><i>#50</i></header><div class="b"><p>웹 화면 시안 파일을 만들고 요구사항·설계 문서에 반영하는 작업을 마쳤습니다. 브라우저에서 열도록 실행했습니다.</p>
 <p><strong>시안 파일:</strong> <code>docs/03_design/ui/mockup.html</code><br />
 - 샘플 데이터 1만 건이 들어 있고, 탭을 눌러 보면서 직접 확인할 수 있습니다.<br />
 - 다만 제가 화면을 직접 눈으로 확인하지는 못했습니다. 열었을 때 깨지는 곳이 있으면 알려주세요.</p>
@@ -667,7 +667,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p><strong>알아둘 점</strong><br />
 - 응답 속도를 전체 파일 단독(동시 1)으로 재면 1만 건에 약 19시간 이상 걸립니다.<br />
 - 앞서 중간에 실패한 명령 때문에 구현 파일은 아직 하나도 없습니다.</p>
-<p>시안이 괜찮으면 P1·P2 재승인을 해 주세요. 그러면 P3 구현을 시작하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:14</span><i>#50</i></header><div class="b"><p class="u">상세 리포 화면은 무슨 의도의 화면인지 설명해줘. 상세: a000123.wav / model_v2 한개만 sample로 보여주고 다운로드 받는 구조라는 의미인지?</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:14</span><i>#51</i></header><div class="b"><p>④ 탭의 상세/리포트는 한 파일만 보여주고 다운로드하는 구조가 아닙니다. 시안에 파일 하나가 보이는 것은 예시일 뿐이고, 실제로는 두 부분으로 나뉩니다.</p>
+<p>시안이 괜찮으면 P1·P2 재승인을 해 주세요. 그러면 P3 구현을 시작하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:14</span><i>#51</i></header><div class="b"><p class="u">상세 리포 화면은 무슨 의도의 화면인지 설명해줘. 상세: a000123.wav / model_v2 한개만 sample로 보여주고 다운로드 받는 구조라는 의미인지?</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:14</span><i>#52</i></header><div class="b"><p>④ 탭의 상세/리포트는 한 파일만 보여주고 다운로드하는 구조가 아닙니다. 시안에 파일 하나가 보이는 것은 예시일 뿐이고, 실제로는 두 부분으로 나뉩니다.</p>
 <h2>1. 상세 (파일 1건 분석)</h2>
 <p><strong>의도:</strong> 수천 건의 결과 중 오류율이 높은 파일을 골라서 왜 틀렸는지 눈으로 확인하는 화면입니다.</p>
 <ul>
@@ -708,7 +708,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p>리포트 카드가 상세 카드 바로 아래에 붙어 있어서, 방금 본 파일 하나의 리포트처럼 보입니다. 이렇게 고치는 것을 제안합니다.<br />
 - 상세 영역은 "③ 목록에서 파일을 선택하세요"라는 안내와 함께 표시하고, 선택한 파일명을 제목에 표시합니다.<br />
 - 리포트 영역은 별도 구분선과 "시험 전체 결과" 제목으로 나누고, 파일 수(완료 n건 / 실패 k건)를 함께 표시합니다.</p>
-<p>또는 상세와 리포트를 별도 탭으로 분리할 수도 있습니다(탭이 하나 늘어납니다). 어느 쪽이 좋을지 알려주시면 시안을 수정하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:16</span><i>#52</i></header><div class="b"><p class="u">상세와 리포트를 별도 탭으로 분리하고 구현시작해</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:17</span><i>#53</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:17</span><i>#54</i></header><div class="b"><p>알겠습니다, 여기서 멈춥니다. 더 이상 파일을 만들거나 명령을 실행하지 않겠습니다.</p>
+<p>또는 상세와 리포트를 별도 탭으로 분리할 수도 있습니다(탭이 하나 늘어납니다). 어느 쪽이 좋을지 알려주시면 시안을 수정하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:16</span><i>#53</i></header><div class="b"><p class="u">상세와 리포트를 별도 탭으로 분리하고 구현시작해</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:17</span><i>#54</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:17</span><i>#55</i></header><div class="b"><p>알겠습니다, 여기서 멈춥니다. 더 이상 파일을 만들거나 명령을 실행하지 않겠습니다.</p>
 <p><strong>지금까지 만든 것 (<code>D:\2. Team Source\CER App\app\</code>)</strong><br />
 - <code>__init__.py</code>, <code>config.py</code>, <code>inputs.py</code>, <code>normalize.py</code>, <code>metrics.py</code>, <code>stt_client.py</code>, <code>runner.py</code>, <code>report.py</code><br />
 - <code>websocket-client</code> 1.9.2 설치 완료</p>
@@ -719,7 +719,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p><strong>확인하지 않은 것</strong><br />
 - 작성한 모듈은 실행이나 테스트를 한 번도 하지 않았습니다. 동작 여부는 보장하지 못합니다.<br />
 - 실서버 호출은 하지 않았습니다.</p>
-<p>이어서 진행할지, 다른 방향으로 바꿀지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:19</span><i>#55</i></header><div class="b"><p class="u">web 화면으로 출력방식이 아니라, python 프로그램으로 window 출력 방식인가?</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:19</span><i>#56</i></header><div class="b"><p>웹 화면 방식입니다. Windows 프로그램 창(tkinter)이 아닙니다.</p>
+<p>이어서 진행할지, 다른 방향으로 바꿀지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:19</span><i>#56</i></header><div class="b"><p class="u">web 화면으로 출력방식이 아니라, python 프로그램으로 window 출력 방식인가?</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:19</span><i>#57</i></header><div class="b"><p>웹 화면 방식입니다. Windows 프로그램 창(tkinter)이 아닙니다.</p>
 <ul>
 <li><strong>실행 방법:</strong> Python 프로그램을 실행하면 내 PC에서 작은 웹 서버가 뜨고, 브라우저(Chrome, Edge)에서 <code>http://127.0.0.1:포트</code> 주소로 화면을 엽니다. 화면은 앞서 보여드린 <code>ui/mockup.html</code>처럼 탭으로 구성됩니다.</li>
 <li><strong>구조:</strong> Python이 인식 처리와 CER 계산을 하고, 브라우저가 화면을 담당합니다. 별도 프로그램 설치는 필요 없습니다.</li>
@@ -728,7 +728,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p>작업 내용 자체는 다음과 같이 정리됩니다.<br />
 - <strong>서버 쪽(Python):</strong> 이미 작성한 <code>app/</code> 모듈이 맡습니다. STT 호출, CER/WER 계산, 병렬 실행, 리포트가 여기에 있습니다.<br />
 - <strong>화면 쪽(웹):</strong> <code>index.html</code> 하나로 만들 예정이지만 아직 작성하지 못했습니다.</p>
-<p>Windows 프로그램 창(exe나 데스크톱 창)으로 보이는 형태를 원하셨다면 알려주세요. 그 경우 tkinter로 다시 설계하거나, 웹 화면을 앱 창처럼 띄우는 방식으로 바꿀 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:20</span><i>#57</i></header><div class="b"><p class="u">ok 진행해</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:22</span><i>#58</i></header><div class="b"><p>P3 구현 1차를 마쳤습니다. 단위 테스트와 서버 기동 확인까지만 했고, 실서버 연동은 아직 검증하지 못했습니다.</p>
+<p>Windows 프로그램 창(exe나 데스크톱 창)으로 보이는 형태를 원하셨다면 알려주세요. 그 경우 tkinter로 다시 설계하거나, 웹 화면을 앱 창처럼 띄우는 방식으로 바꿀 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:20</span><i>#58</i></header><div class="b"><p class="u">ok 진행해</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:22</span><i>#59</i></header><div class="b"><p>P3 구현 1차를 마쳤습니다. 단위 테스트와 서버 기동 확인까지만 했고, 실서버 연동은 아직 검증하지 못했습니다.</p>
 <p><strong>구현 내용</strong> (<code>app/</code>)<br />
 - 코어 모듈:<br />
   - <code>config</code>, <code>inputs</code>: 입력 폴더 + 한 단계 하위 폴더 탐색<br />
@@ -749,13 +749,13 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 - <strong>규모:</strong> 1만 건 부하 시험은 하지 않았습니다.</p>
 <p><strong>상태</strong><br />
 - <code>harness/state.json</code>은 P3로 갱신했고, P1·P2 gate는 승인으로 되돌렸습니다.</p>
-<p>다음으로는 서버 주소와 API 키를 입력해 샘플 2건으로 실제 호출을 시험하는 것을 권합니다. 화면의 "연결 확인"과 "실행"으로 하실 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:22</span><i>#59</i></header><div class="b"><p class="u">연결 확인과 실행해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:23</span><i>#60</i></header><div class="b"><p>연결 확인은 통과했고, 샘플 2건 실행을 시작했습니다.</p>
+<p>다음으로는 서버 주소와 API 키를 입력해 샘플 2건으로 실제 호출을 시험하는 것을 권합니다. 화면의 "연결 확인"과 "실행"으로 하실 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:22</span><i>#60</i></header><div class="b"><p class="u">연결 확인과 실행해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:23</span><i>#61</i></header><div class="b"><p>연결 확인은 통과했고, 샘플 2건 실행을 시작했습니다.</p>
 <ul>
 <li><strong>연결 확인:</strong> <code>192.168.0.246:8081</code>의 <code>/health</code>가 HTTP 200을 반환했습니다.</li>
 <li><strong>실행:</strong> <code>_rx</code>, <code>_tx</code> 샘플 2건을 <code>model_v2</code>, 일반(장시간) 모드, 동시 접속 2로 보내고 있습니다. 각 파일이 약 5.5분이고 실시간 페이싱을 지키므로 완료까지 약 6분 걸립니다.</li>
 <li><strong>API 키:</strong> 스펙 문서의 값을 <code>config.local.json</code>(저장소 제외)에만 저장했습니다. 문서나 로그에는 기록하지 않았습니다.</li>
 </ul>
-<p>완료되면 CER/WER 결과와 서버의 응답 방식(최종 결과를 어떻게 판정했는지)을 정리해서 알려드리겠습니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:24</span><i>#61</i></header><div class="b"><p>샘플 2건 실행은 둘 다 실패했습니다. 서버가 인증을 거부했습니다(401). 프로그램 오류는 아닌 것으로 보입니다.</p>
+<p>완료되면 CER/WER 결과와 서버의 응답 방식(최종 결과를 어떻게 판정했는지)을 정리해서 알려드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:23</span><i>#62</i></header><div class="b"><p class="u">&lt;task-****&gt;<br />&lt;task-id&gt;bm7oq89yn&lt;/task-id&gt;<br />&lt;tool-use-id&gt;toolu_01XeoP757jXGf4DuvcdWgsBC&lt;/tool-use-id&gt;<br />&lt;output-file&gt;C:\Users\imsrx\AppData\Local\Temp\claude\D--2--Team-Source-CER-App\19540ad3-017c-462b-a11c-bf9609d48449\tasks\bm7oq89yn.output&lt;/output-file&gt;<br />&lt;status&gt;completed&lt;/status&gt;<br />&lt;summary&gt;Background command &quot;Run the two sample files against the STT server&quot; completed (exit code 0)&lt;/summary&gt;<br />&lt;/task-****&gt;</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:24</span><i>#63</i></header><div class="b"><p>샘플 2건 실행은 둘 다 실패했습니다. 서버가 인증을 거부했습니다(401). 프로그램 오류는 아닌 것으로 보입니다.</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -787,14 +787,14 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p><strong>다음에 필요한 것</strong><br />
 1. 스펙 담당자(정훈, hchung@etri.re.kr)에게 이 서버용 유효한 API 키를 확인하거나 재발급받아 주세요.<br />
 2. 새 키를 받으면 화면의 "API 키" 칸에 입력하거나 <code>config.local.json</code>의 <code>api_key</code>를 바꿔 주세요. 그러면 같은 샘플로 다시 실행하겠습니다.</p>
-<p>참고로 실패한 실행의 결과 폴더(<code>data/results/20261014_162314</code>)가 생겨 있으니, 필요 없으면 지우셔도 됩니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:25</span><i>#62</i></header><div class="b"><p class="u">config.local.json 위치 알려줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:25</span><i>#63</i></header><div class="b"><p><code>config.local.json</code>은 프로젝트 루트에 있습니다.</p>
+<p>참고로 실패한 실행의 결과 폴더(<code>data/results/20261014_162314</code>)가 생겨 있으니, 필요 없으면 지우셔도 됩니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:25</span><i>#64</i></header><div class="b"><p class="u">config.local.json 위치 알려줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:25</span><i>#65</i></header><div class="b"><p><code>config.local.json</code>은 프로젝트 루트에 있습니다.</p>
 <p><code>D:\2. Team Source\CER App\config.local.json</code></p>
 <ul>
 <li><strong>키 위치:</strong> <code>api_key</code> 항목에 저장되어 있습니다. 같은 파일에 서버 주소(<code>server.host</code>, <code>server.port</code>)와 모델 설정도 있습니다.</li>
 <li><strong>수정 방법:</strong> 파일을 직접 고쳐도 되고, 웹 화면의 ① 설정·실행 탭에서 "API 키"에 새 값을 입력하고 실행하면 이 파일에 저장됩니다. 화면에는 값이 마스킹되어 표시됩니다.</li>
 <li><strong>Git:</strong> <code>.gitignore</code>에 등록해 두었기 때문에 저장소에는 올라가지 않습니다.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:29</span><i>#64</i></header><div class="b"><p class="u">다시 실행해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:29</span><i>#65</i></header><div class="b"><p>같은 샘플 2건(<code>_rx</code>, <code>_tx</code>)으로 다시 실행을 시작했습니다. <code>config.local.json</code>에 지금 들어 있는 키를 사용합니다.</p>
-<p>인증이 통과하면 실시간 페이싱 때문에 완료까지 약 6분이 걸립니다. 키가 여전히 거부되면 몇 초 안에 실패로 끝납니다. 끝나면 결과를 알려드리겠습니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:29</span><i>#66</i></header><div class="b"><p>다시 실행했지만 이번에도 서버가 인증을 거부했습니다(401).</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:29</span><i>#66</i></header><div class="b"><p class="u">다시 실행해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:29</span><i>#67</i></header><div class="b"><p>같은 샘플 2건(<code>_rx</code>, <code>_tx</code>)으로 다시 실행을 시작했습니다. <code>config.local.json</code>에 지금 들어 있는 키를 사용합니다.</p>
+<p>인증이 통과하면 실시간 페이싱 때문에 완료까지 약 6분이 걸립니다. 키가 여전히 거부되면 몇 초 안에 실패로 끝납니다. 끝나면 결과를 알려드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:29</span><i>#68</i></header><div class="b"><p class="u">&lt;task-****&gt;<br />&lt;task-id&gt;b3bd6ky3u&lt;/task-id&gt;<br />&lt;tool-use-id&gt;toolu_01JkhZibHGJTwzpb14RCia6J&lt;/tool-use-id&gt;<br />&lt;output-file&gt;C:\Users\imsrx\AppData\Local\Temp\claude\D--2--Team-Source-CER-App\19540ad3-017c-462b-a11c-bf9609d48449\tasks\b3bd6ky3u.output&lt;/output-file&gt;<br />&lt;status&gt;completed&lt;/status&gt;<br />&lt;summary&gt;Background command &quot;Re-run the two sample files against the STT server&quot; completed (exit code 0)&lt;/summary&gt;<br />&lt;/task-****&gt;</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:29</span><i>#69</i></header><div class="b"><p>다시 실행했지만 이번에도 서버가 인증을 거부했습니다(401).</p>
 <ul>
 <li><strong>결과:</strong> <code>20241119170140_1033_tx</code>(20.5초) 1건이 <code>서버 거부(401)</code>로 실패했고, CER/WER은 산출되지 않았습니다.</li>
 <li><strong>입력 파일이 바뀌어 있었습니다:</strong> 지난번 <code>data/input</code>에는 <code>20241119164515_1028_rx/tx</code> 2건이 있었는데, 이번에는 다른 파일이 들어 있었습니다. <code>20241119164738_1037_rx.wav</code>는 정답 TXT가 없어 제외됐습니다.</li>
@@ -803,7 +803,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 <p>접속과 인증 문제가 해결되지 않으면 이후 단계(인식 결과, CER)를 진행할 수 없습니다. 다음 중 하나가 필요합니다.<br />
 1. 서버 담당자(정훈)에게 이 서버(<code>192.168.0.246:8081</code>)용 유효한 키를 확인합니다.<br />
 2. 같은 키가 다른 접속 주소(스펙의 <code>wss://deepmodal.ai:8443</code>)용인지 확인합니다. 이 경우 주소를 알려주시면 그쪽으로 시험하겠습니다.</p>
-<p>참고로 실패한 시험 폴더 두 개(<code>data/results/20261014_162314</code>, <code>20261014_162913</code>)가 남아 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:35</span><i>#67</i></header><div class="b"><p class="u">D:\2. Team Source\CER App\docs\spec\zieum_client_pcm_ws_py는 정상 수행되는데 참고해서 수정해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:35</span><i>#68</i></header><div class="b"><p><code>zieum_client_pcm_ws_py</code>를 참고해 인증·전송 방식을 수정했고, 단위 테스트 11건은 통과했습니다. 이제 샘플로 다시 실행해 확인합니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:36</span><i>#69</i></header><div class="b"><p>수정 후 실행이 정상 동작했습니다. 이번에는 서버가 인증을 받아들여 인식 결과가 왔습니다.</p>
+<p>참고로 실패한 시험 폴더 두 개(<code>data/results/20261014_162314</code>, <code>20261014_162913</code>)가 남아 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:35</span><i>#70</i></header><div class="b"><p class="u">D:\2. Team Source\CER App\docs\spec\zieum_client_pcm_ws_py는 정상 수행되는데 참고해서 수정해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:35</span><i>#71</i></header><div class="b"><p><code>zieum_client_pcm_ws_py</code>를 참고해 인증·전송 방식을 수정했고, 단위 테스트 11건은 통과했습니다. 이제 샘플로 다시 실행해 확인합니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:36</span><i>#72</i></header><div class="b"><p>수정 후 실행이 정상 동작했습니다. 이번에는 서버가 인증을 받아들여 인식 결과가 왔습니다.</p>
 <p><strong>원인과 수정</strong> (<code>zieum_client_pcm_ws_py</code> 기준)<br />
 | 항목 | 이전 | 수정 |<br />
 |---|---|---|<br />
@@ -821,7 +821,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 - 현재 <code>data/input</code>에서 정답이 있는 쌍은 이 1건뿐이라, 5.5분짜리 긴 통화 파일과 7초 문장 단위 대량 시험은 돌려보지 못했습니다. <code>20241119164738_1037_rx.wav</code>는 정답 TXT가 없어 제외됩니다.<br />
 - 응답 속도는 <code>finished</code> 수신 시각 기준으로 계산하도록 했지만, 문장 단위 모드로는 아직 측정하지 않았습니다.<br />
 - 웹 화면은 브라우저에서 확인하지 못한 상태입니다.</p>
-<p>다음 단계는 웹 화면(<code>python -m app.main</code>)에서 같은 파일로 실행해 화면 동작을 확인하는 것입니다. 정답 TXT가 있는 파일을 더 넣어 주시면 연속 음성과 문장 단위 시험을 이어서 하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:40</span><i>#70</i></header><div class="b"><p class="u">실행 방법 알려줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-14 16:40</span><i>#71</i></header><div class="b"><h2>실행 방법</h2>
+<p>다음 단계는 웹 화면(<code>python -m app.main</code>)에서 같은 파일로 실행해 화면 동작을 확인하는 것입니다. 정답 TXT가 있는 파일을 더 넣어 주시면 연속 음성과 문장 단위 시험을 이어서 하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-14 16:40</span><i>#73</i></header><div class="b"><p class="u">실행 방법 알려줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 16:40</span><i>#74</i></header><div class="b"><h2>실행 방법</h2>
 <p><strong>1. 프로그램 시작</strong> (PowerShell 또는 명령 프롬프트)</p>
 <pre><code>cd &quot;D:\2. Team Source\CER App&quot;
 python -m app.main
@@ -852,7 +852,7 @@ python -m app.main
 <p><strong>참고</strong><br />
 - 처음 한 번만 <code>pip install websocket-client</code>가 필요하며, 이 PC에는 이미 설치되어 있습니다.<br />
 - 실시간 페이싱 때문에 5.5분 파일은 완료까지 약 5.5분이 걸립니다.<br />
-- 단위 테스트 실행은 <code>python -m unittest discover -s tests</code>입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 09:23</span><i>#72</i></header><div class="b"><p class="u">입력 wav file 위치와 전사 text file 위치를 각각 지정할수 있게 수정해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 09:24</span><i>#73</i></header><div class="b"><p>음성(.wav) 폴더와 정답 전사(.txt) 폴더를 각각 지정할 수 있게 수정했고, 단위 테스트 13건이 통과했습니다(신규 2건 포함).</p>
+- 단위 테스트 실행은 <code>python -m unittest discover -s tests</code>입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 09:23</span><i>#75</i></header><div class="b"><p class="u">입력 wav file 위치와 전사 text file 위치를 각각 지정할수 있게 수정해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 09:24</span><i>#76</i></header><div class="b"><p>음성(.wav) 폴더와 정답 전사(.txt) 폴더를 각각 지정할 수 있게 수정했고, 단위 테스트 13건이 통과했습니다(신규 2건 포함).</p>
 <p><strong>변경 내용</strong><br />
 - <strong>화면:</strong> ① 설정·실행 탭의 입력 카드에 "음성(.wav) 폴더"와 "정답 전사(.txt) 폴더" 입력칸을 따로 두었습니다. 전사 폴더를 비우면 지금처럼 음성 폴더와 같은 위치를 사용합니다.<br />
 - <strong>매칭 규칙:</strong><br />
@@ -866,7 +866,7 @@ python -m app.main
 <p><strong>주의할 점</strong><br />
 - 서로 다른 하위 폴더에 같은 이름의 <code>.txt</code>가 있으면 상위 폴더의 것이 우선됩니다. 의도와 다르면 전사 폴더를 음성 폴더와 같은 구조로 맞춰 주세요.<br />
 - 화면 동작은 브라우저에서 눈으로 확인하지 못했습니다. 코어 매칭 로직은 테스트로 확인했습니다.</p>
-<p>다음으로는 <code>python -m app.main</code>을 다시 실행한 뒤, 화면에서 두 폴더를 입력하고 [파일 검색]으로 건수를 확인해 보시면 됩니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 09:26</span><i>#74</i></header><div class="b"><p class="u">전사 파일에 있는 n/ 또는 , . ! 등 특수 문자는 음성인식 결과와 비교시 무시하게 수정해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 09:27</span><i>#75</i></header><div class="b"><p><code>n/</code> 같은 전사 태그와 <code>, . ! ?</code> 등 특수문자를 비교에서 무시하도록 수정했습니다. 단위 테스트 14건이 모두 통과했습니다(신규 1건 포함).</p>
+<p>다음으로는 <code>python -m app.main</code>을 다시 실행한 뒤, 화면에서 두 폴더를 입력하고 [파일 검색]으로 건수를 확인해 보시면 됩니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 09:26</span><i>#77</i></header><div class="b"><p class="u">전사 파일에 있는 n/ 또는 , . ! 등 특수 문자는 음성인식 결과와 비교시 무시하게 수정해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 09:27</span><i>#78</i></header><div class="b"><p><code>n/</code> 같은 전사 태그와 <code>, . ! ?</code> 등 특수문자를 비교에서 무시하도록 수정했습니다. 단위 테스트 14건이 모두 통과했습니다(신규 1건 포함).</p>
 <p><strong>변경 내용</strong> (<code>app/normalize.py</code>)<br />
 - <strong>전사 태그 제거:</strong> 영문 한 글자 뒤에 슬래시가 붙은 표기(<code>n/</code>, <code>b/</code>, <code>o/</code>, <code>l/</code>, <code>u/</code> 등)를 통째로 제거합니다. 이전에는 <code>n</code>만 남아 오류로 계산됐습니다.<br />
 - <strong>특수문자 제거:</strong> <code>, . ! ? ~ … ( )</code> 등 글자·숫자·공백이 아닌 기호는 모두 무시합니다.<br />
@@ -878,7 +878,7 @@ python -m app.main
 - <code>a/b</code>처럼 슬래시 앞뒤에 글자가 이어진 경우는 태그가 아니라 단어 쌍으로 보고 <code>a b</code>로 남깁니다.<br />
 - 괄호 안의 <code>(웃음)</code> 같은 표기는 기호만 지우고 내용 글자는 남깁니다. 이런 표기도 통째로 무시하길 원하시면 알려주세요.<br />
 - 태그 종류가 <code>n/</code> 외에 더 있다면(예: <code>+</code>, <code>*</code> 같은 기호나 <code>[잡음]</code>처럼 대괄호 안 문구) 샘플을 알려주세요. 규칙을 추가하겠습니다.</p>
-<p>화면을 다시 띄울 필요 없이 다음 실행부터 적용됩니다. 서버가 켜져 있다면 <code>python -m app.main</code>을 재시작해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 09:33</span><i>#76</i></header><div class="b"><p class="u">Web 화면 뒤로가기가 안된다 수정해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 09:33</span><i>#77</i></header><div class="b"><p>웹 화면에서 브라우저 뒤로가기가 되도록 수정했습니다. JS 문법 검사는 통과했지만, 브라우저에서 직접 눌러 보지는 못했습니다.</p>
+<p>화면을 다시 띄울 필요 없이 다음 실행부터 적용됩니다. 서버가 켜져 있다면 <code>python -m app.main</code>을 재시작해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 09:33</span><i>#79</i></header><div class="b"><p class="u">Web 화면 뒤로가기가 안된다 수정해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 09:33</span><i>#80</i></header><div class="b"><p>웹 화면에서 브라우저 뒤로가기가 되도록 수정했습니다. JS 문법 검사는 통과했지만, 브라우저에서 직접 눌러 보지는 못했습니다.</p>
 <p><strong>원인</strong><br />
 탭 전환이 화면 안에서만 이루어지고 브라우저 이동 기록에는 남지 않았습니다. 그래서 뒤로가기를 누르면 프로그램 밖으로 나가 버렸습니다.</p>
 <p><strong>수정 내용</strong> (<code>app/web/static/index.html</code>)<br />
@@ -889,7 +889,7 @@ python -m app.main
 서버를 다시 시작할 필요는 없고, 브라우저에서 <code>Ctrl+F5</code>로 새로고침하면 됩니다.</p>
 <p><strong>알아둘 점</strong><br />
 - 새로고침(F5)을 하면 화면 상태는 ① 설정·실행 탭부터 다시 시작합니다. 실행 중인 시험은 서버에서 계속 진행되고, ② 실시간 결과 탭에서 이어서 볼 수 있습니다.<br />
-- 뒤로가기가 여전히 이상하면 어느 탭에서 어떻게 눌렀을 때인지 알려주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 09:46</span><i>#78</i></header><div class="b"><p class="u">전사 파일의 (5살)/(다섯 살) (정도예요)/(정도에요) 처럼 둘중 하나가 음성인식 결과와 맞으면 맞는것으로 수정해</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 09:47</span><i>#79</i></header><div class="b"><p><code>(A)/(B)</code> 형태의 병기 표기는 둘 중 하나만 인식 결과와 맞으면 정답으로 처리하도록 수정했습니다. 단위 테스트 19건이 모두 통과했습니다(신규 5건 포함).</p>
+- 뒤로가기가 여전히 이상하면 어느 탭에서 어떻게 눌렀을 때인지 알려주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 09:46</span><i>#81</i></header><div class="b"><p class="u">전사 파일의 (5살)/(다섯 살) (정도예요)/(정도에요) 처럼 둘중 하나가 음성인식 결과와 맞으면 맞는것으로 수정해</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 09:47</span><i>#82</i></header><div class="b"><p><code>(A)/(B)</code> 형태의 병기 표기는 둘 중 하나만 인식 결과와 맞으면 정답으로 처리하도록 수정했습니다. 단위 테스트 19건이 모두 통과했습니다(신규 5건 포함).</p>
 <p><strong>동작 방식</strong><br />
 - <strong>병기 인식:</strong> 정답 전사에서 <code>(5살)/(다섯 살)</code>, <code>(정도예요)/(정도에요)</code>처럼 괄호 묶음이 <code>/</code>로 이어진 부분을 "둘 중 하나" 구간으로 읽습니다. <code>(A)/(B)/(C)</code>처럼 세 개 이상도 됩니다.<br />
 - <strong>대안 선택:</strong> 인식 결과와 가장 잘 맞는 대안 하나가 자동으로 선택됩니다. 선택된 쪽이 일치하면 오류는 0으로 계산됩니다.<br />
@@ -907,7 +907,7 @@ python -m app.main
 - ④ 상세 화면의 정답 칸에는 비교에 쓰인 쪽이 표시됩니다.<br />
 - 이미 끝난 시험 결과는 다시 계산되지 않습니다. 새로 실행해야 반영됩니다.<br />
 - 서버가 켜져 있다면 <code>python -m app.main</code>을 재시작해 주세요.</p>
-<p>혹시 <code>(A)/(B)</code>가 괄호 없이 <code>A/B</code>로 적힌 경우도 있다면 샘플을 알려주세요. 규칙에 추가하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:09</span><i>#80</i></header><div class="b"><p class="u">시험데이타가 수십시간 임으,로 중지 버튼추가해서 중지 기능도 만들어줘, 중지하면 그때까지의 결과로 CER 값을 판단함</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:10</span><i>#81</i></header><div class="b"><p>중지 동작을 테스트로 확인하는 중입니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:10</span><i>#82</i></header><div class="b"><p>중지 기능을 정리해 반영했고, 단위 테스트 20건이 모두 통과했습니다(중지 테스트 1건 포함).</p>
+<p>혹시 <code>(A)/(B)</code>가 괄호 없이 <code>A/B</code>로 적힌 경우도 있다면 샘플을 알려주세요. 규칙에 추가하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:09</span><i>#83</i></header><div class="b"><p class="u">시험데이타가 수십시간 임으,로 중지 버튼추가해서 중지 기능도 만들어줘, 중지하면 그때까지의 결과로 CER 값을 판단함</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:10</span><i>#84</i></header><div class="b"><p>중지 동작을 테스트로 확인하는 중입니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:10</span><i>#85</i></header><div class="b"><p>중지 기능을 정리해 반영했고, 단위 테스트 20건이 모두 통과했습니다(중지 테스트 1건 포함).</p>
 <p><strong>동작</strong><br />
 - <strong>중지 버튼:</strong> ① 설정·실행 탭에 있고, 실행 중일 때만 눌러집니다. 누르면 확인 창이 한 번 뜹니다.<br />
 - <strong>중지 후 처리:</strong> 진행 중이던 전송을 바로 끊고 새 파일은 시작하지 않습니다. 그때까지 <strong>완료된 파일만으로</strong> CER/WER을 산정하고 리포트를 자동 저장합니다.<br />
@@ -922,7 +922,7 @@ python -m app.main
 <p><strong>알아둘 점</strong><br />
 - 확인 창은 브라우저 기본 대화창입니다. 서버를 재시작한 뒤 <code>Ctrl+F5</code>로 새로고침해 주세요.<br />
 - 브라우저에서 눈으로 확인하지는 못했습니다. 중지 로직 자체는 테스트로 확인했습니다.<br />
-- 이어서 하기를 쓰려면 시험을 시작하기 전에 옵션을 체크해야 합니다. 체크하지 않고 시작한 시험은 시간 이름 폴더에 저장되어 이어서 하기 대상(<code>last_run</code>)이 아닙니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:25</span><i>#83</i></header><div class="b"><p class="u">claude code와 나와 대화 입출력내용 표형식 포함 깨지지않게 html file로 저장해주고, 사용방법 공지하게 아티팩트 형식의 매뉴얼 만들어줘</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:26</span><i>#84</i></header><div class="b"><p class="u">대화 내용은 처음 대화시부터야</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:27</span><i>#85</i></header><div class="b"><p>처음 대화부터 포함되는지 확인하고, 중복 제거 때문에 같은 내용의 메시지(예: "멈춰")가 빠진 부분을 고칩니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:28</span><i>#86</i></header><div class="b"><p>대화 기록은 첫 메시지(2026-10-14 13:49)부터 85개 메시지가 모두 들어갔습니다. 이제 매뉴얼을 아티팩트로 게시합니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:28</span><i>#87</i></header><div class="b"><p>대화 기록 HTML 파일과 사용 매뉴얼 아티팩트, 두 가지를 만들었습니다.</p>
+- 이어서 하기를 쓰려면 시험을 시작하기 전에 옵션을 체크해야 합니다. 체크하지 않고 시작한 시험은 시간 이름 폴더에 저장되어 이어서 하기 대상(<code>last_run</code>)이 아닙니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:25</span><i>#86</i></header><div class="b"><p class="u">claude code와 나와 대화 입출력내용 표형식 포함 깨지지않게 html file로 저장해주고, 사용방법 공지하게 아티팩트 형식의 매뉴얼 만들어줘</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:26</span><i>#87</i></header><div class="b"><p class="u">대화 내용은 처음 대화시부터야</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:27</span><i>#88</i></header><div class="b"><p>처음 대화부터 포함되는지 확인하고, 중복 제거 때문에 같은 내용의 메시지(예: "멈춰")가 빠진 부분을 고칩니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:28</span><i>#89</i></header><div class="b"><p>대화 기록은 첫 메시지(2026-10-14 13:49)부터 85개 메시지가 모두 들어갔습니다. 이제 매뉴얼을 아티팩트로 게시합니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:28</span><i>#90</i></header><div class="b"><p>대화 기록 HTML 파일과 사용 매뉴얼 아티팩트, 두 가지를 만들었습니다.</p>
 <h2>1. 대화 기록 HTML</h2>
 <p><strong>파일:</strong> <code>D:\2. Team Source\CER App\docs\대화기록_CER_App.html</code></p>
 <ul>
@@ -947,7 +947,7 @@ python -m app.main
 - 이 아티팩트는 비공개 상태입니다. 다른 분들께 공지하려면 페이지의 공유 메뉴에서 공유해 주셔야 하고, 공유 설정은 제가 바꿀 수 없습니다.<br />
 - 매뉴얼에는 API 키와 서버 IP를 넣지 않았습니다.<br />
 - 페이지를 미리 보기로 확인하지는 못했습니다. 깨지는 곳이 있으면 알려주세요.<br />
-- 앞으로 기능이 바뀌면 같은 파일을 다시 게시해서 이 주소를 유지하며 갱신할 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:38</span><i>#88</i></header><div class="b"><p class="u">git hub에 push 해줘 주소 https://github.com/yong-joo-kim/CER-App</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:38</span><i>#89</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+- 앞으로 기능이 바뀌면 같은 파일을 다시 게시해서 이 주소를 유지하며 갱신할 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:38</span><i>#91</i></header><div class="b"><p class="u">git hub에 push 해줘 주소 https://github.com/yong-joo-kim/CER-App</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:38</span><i>#92</i></header><div class="b"><p>GitHub에 push했습니다.</p>
 <ul>
 <li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App</li>
 <li><strong>브랜치:</strong> <code>main</code> (기존 <code>master</code>를 <code>main</code>으로 바꿔 올렸습니다)</li>
@@ -969,12 +969,12 @@ python -m app.main
 - 스펙 PDF와 클라이언트 스크립트가 저장소에 없으므로, 다른 PC에서 받을 때는 따로 전달해야 합니다. 저장소가 비공개이고 키 노출을 감수하신다면 알려주세요. 포함해서 다시 올려 드릴 수 있습니다.<br />
 - <code>.gitignore</code>에 위 항목을 추가해 두었기 때문에 앞으로도 실수로 올라가지 않습니다.<br />
 - 매뉴얼 아티팩트(claude.ai 링크)는 GitHub와 별개이며 저장소에는 들어 있지 않습니다.<br />
-- 푸시 대상 저장소가 공개인지는 확인하지 못했습니다. 공개 저장소라면 대화 기록에 포함된 내부 서버 IP(<code>192.168.0.246</code>)도 노출됩니다. 필요하면 해당 파일을 빼겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:39</span><i>#90</i></header><div class="b"><p class="u">샘플 데이터로 실서버 시험 다시 실행해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:40</span><i>#91</i></header><div class="b"><p>현재 설정에 지정된 데이터(문장 단위 5,270건, 음성 합계 약 580분)를 그대로 돌리면 동시 접속 1 기준 약 9.7시간이 걸립니다. 먼저 전체에서 고르게 고른 20건으로 실서버 시험을 시작했습니다(약 2~3분 예상).</p>
+- 푸시 대상 저장소가 공개인지는 확인하지 못했습니다. 공개 저장소라면 대화 기록에 포함된 내부 서버 IP(<code>192.168.0.246</code>)도 노출됩니다. 필요하면 해당 파일을 빼겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:39</span><i>#93</i></header><div class="b"><p class="u">샘플 데이터로 실서버 시험 다시 실행해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:40</span><i>#94</i></header><div class="b"><p>현재 설정에 지정된 데이터(문장 단위 5,270건, 음성 합계 약 580분)를 그대로 돌리면 동시 접속 1 기준 약 9.7시간이 걸립니다. 먼저 전체에서 고르게 고른 20건으로 실서버 시험을 시작했습니다(약 2~3분 예상).</p>
 <ul>
 <li>설정: 문장 단위 시험, 응답 속도 측정, 동시 접속 1, <code>model_v2</code></li>
 <li>완료되면 CER/WER과 응답 속도 결과를 알려드리겠습니다.</li>
 <li>전체 5,270건 실행은 이 결과를 보고 결정하시면 됩니다.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:42</span><i>#92</i></header><div class="b"><p class="u">이 기능을 음성인식 서버가 설치된 현장에서 폐쇄망구조에서 PC에서 CER 시험기능을 누구라도 pc에 설치해서 사용가능해야한다</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:42</span><i>#93</i></header><div class="b"><p class="u">어떻게 해야하나?</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:42</span><i>#94</i></header><div class="b"><p>폐쇄망 PC에는 인터넷이 없고 Python이 없을 수 있으므로, <strong>압축 파일 하나를 풀고 <code>start.bat</code>만 더블클릭</strong>하면 되는 휴대용(portable) 형태로 만드는 것을 권합니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:42</span><i>#95</i></header><div class="b"><p class="u">이 기능을 음성인식 서버가 설치된 현장에서 폐쇄망구조에서 PC에서 CER 시험기능을 누구라도 pc에 설치해서 사용가능해야한다</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:42</span><i>#96</i></header><div class="b"><p class="u">어떻게 해야하나?</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:42</span><i>#97</i></header><div class="b"><p>폐쇄망 PC에는 인터넷이 없고 Python이 없을 수 있으므로, <strong>압축 파일 하나를 풀고 <code>start.bat</code>만 더블클릭</strong>하면 되는 휴대용(portable) 형태로 만드는 것을 권합니다.</p>
 <h2>현재 상태</h2>
 <div class="tw"><table>
 <thead>
@@ -1031,7 +1031,7 @@ python -m app.main
 <li>한 PC에서 여러 사람이 쓸 때 결과를 <strong>같은 폴더에 쌓아도</strong> 되는지(사용자별 폴더 분리가 필요하면 알려주세요).</li>
 </ol>
 <p>세 가지가 모두 "예"라면 바로 만들겠습니다. 다르면 알려주세요.</p>
-<p>참고로 방금 시작한 표본 20건 실서버 시험은 백그라운드에서 계속 진행 중이며, 끝나면 결과를 알려드리겠습니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:42</span><i>#95</i></header><div class="b"><p>표본 20건 실서버 시험이 정상 완료됐습니다.</p>
+<p>참고로 방금 시작한 표본 20건 실서버 시험은 백그라운드에서 계속 진행 중이며, 끝나면 결과를 알려드리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:42</span><i>#98</i></header><div class="b"><p class="u">&lt;task-****&gt;<br />&lt;task-id&gt;bna0aadle&lt;/task-id&gt;<br />&lt;tool-use-id&gt;toolu_011oAjZmA8CSsz1vRB6bkLan&lt;/tool-use-id&gt;<br />&lt;output-file&gt;C:\Users\imsrx\AppData\Local\Temp\claude\D--2--Team-Source-CER-App\353719e9-72bd-4e0d-aab6-ba37899c990f\tasks\bna0aadle.output&lt;/output-file&gt;<br />&lt;status&gt;completed&lt;/status&gt;<br />&lt;summary&gt;Background command &quot;Run 20-file sample of configured dataset against real server&quot; completed (exit code 0)&lt;/summary&gt;<br />&lt;/task-****&gt;</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:42</span><i>#99</i></header><div class="b"><p>표본 20건 실서버 시험이 정상 완료됐습니다.</p>
 <div class="tw"><table>
 <thead>
 <tr>
@@ -1072,7 +1072,7 @@ python -m app.main
 <li>응답 속도는 서버가 음성 입력 종료 직후 결과를 주는 구조라 0.15초 수준으로 나왔습니다. 이는 서버의 <code>finished</code> 신호 기준 값입니다.</li>
 <li>전체 5,270건 실행은 동시 접속 1 기준 약 9.7시간 걸립니다. 필요하면 화면에서 시작하시면 됩니다(이어서 하기와 중지 기능으로 나눠서 진행할 수 있습니다).</li>
 </ul>
-<p>폐쇄망용 휴대용 패키지는 앞서 드린 세 가지 확인(Windows 10/11 64bit 여부, Edge/Chrome 사용 가능 여부, 결과 폴더 공유 가능 여부)에 답해 주시면 바로 만들겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:46</span><i>#96</i></header><div class="b"><p class="u">휴대용 패키지 만들어줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:47</span><i>#97</i></header><div class="b"><p><code>import site</code> 제거가 적용되지 않아 직접 고쳐서 다시 빌드합니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:47</span><i>#98</i></header><div class="b"><p>휴대용 패키지를 만들었습니다.</p>
+<p>폐쇄망용 휴대용 패키지는 앞서 드린 세 가지 확인(Windows 10/11 64bit 여부, Edge/Chrome 사용 가능 여부, 결과 폴더 공유 가능 여부)에 답해 주시면 바로 만들겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:46</span><i>#100</i></header><div class="b"><p class="u">휴대용 패키지 만들어줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:47</span><i>#101</i></header><div class="b"><p><code>import site</code> 제거가 적용되지 않아 직접 고쳐서 다시 빌드합니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:47</span><i>#102</i></header><div class="b"><p>휴대용 패키지를 만들었습니다.</p>
 <p><strong>파일:</strong> <code>D:\2. Team Source\CER App\dist\CER_App_portable.zip</code> (12.2 MB)</p>
 <p><strong>구성</strong></p>
 <pre><code>CER_App\
@@ -1099,7 +1099,7 @@ python -m app.main
 <p><strong>알아둘 점</strong><br />
 - 64bit Windows용입니다. 32bit PC나 Windows 7은 지원하지 않습니다.<br />
 - 일부 보안 소프트웨어가 내장 <code>python.exe</code> 실행을 막을 수 있습니다. 그런 경우 현장 보안 담당자와 예외 허용이 필요합니다.<br />
-- 프로그램을 수정한 뒤에는 <code>python tools/build_portable.py</code>로 다시 빌드하면 됩니다. <code>tools/</code>와 매뉴얼 원본은 아직 커밋하지 않았고, GitHub에도 올리지 않았습니다. 올릴지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:49</span><i>#99</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:49</span><i>#100</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+- 프로그램을 수정한 뒤에는 <code>python tools/build_portable.py</code>로 다시 빌드하면 됩니다. <code>tools/</code>와 매뉴얼 원본은 아직 커밋하지 않았고, GitHub에도 올리지 않았습니다. 올릴지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:49</span><i>#103</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:49</span><i>#104</i></header><div class="b"><p>GitHub에 push했습니다.</p>
 <ul>
 <li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App (<code>main</code> 브랜치)</li>
 <li><strong>커밋:</strong> <code>593f277</code>, 3개 파일 추가·변경</li>
@@ -1110,7 +1110,7 @@ python -m app.main
 - <code>.gitignore</code>: <code>build/</code>, <code>dist/</code> 제외 추가</p>
 <p><strong>올리지 않은 것</strong><br />
 - <code>dist/CER_App_portable.zip</code>(12 MB)은 빌드 결과물이라 올리지 않았습니다. 필요하면 <code>python tools/build_portable.py</code>로 다시 만들면 됩니다. GitHub Releases에 첨부하길 원하시면 말씀해 주세요.<br />
-- API 키가 담긴 파일, 스펙 PDF, 시험 데이터는 이전과 동일하게 제외했습니다. 커밋 내용에서 키 패턴은 0건이었습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:51</span><i>#101</i></header><div class="b"><p class="u">추가 대화 내용 html file에 추가해주고, 아티팩트 사용법 메뉴얼 폐쇄망 현장에서 일반 사용자가 설치 사용할수 있도록 갱신해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:52</span><i>#102</i></header><div class="b"><p>대화 기록 HTML과 매뉴얼을 갱신했습니다. 대화 기록과 매뉴얼 원본은 로컬에 있고 아직 GitHub에는 올리지 않았습니다.</p>
+- API 키가 담긴 파일, 스펙 PDF, 시험 데이터는 이전과 동일하게 제외했습니다. 커밋 내용에서 키 패턴은 0건이었습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:51</span><i>#105</i></header><div class="b"><p class="u">추가 대화 내용 html file에 추가해주고, 아티팩트 사용법 메뉴얼 폐쇄망 현장에서 일반 사용자가 설치 사용할수 있도록 갱신해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:52</span><i>#106</i></header><div class="b"><p>대화 기록 HTML과 매뉴얼을 갱신했습니다. 대화 기록과 매뉴얼 원본은 로컬에 있고 아직 GitHub에는 올리지 않았습니다.</p>
 <h2>1. 대화 기록 HTML</h2>
 <p><strong>파일:</strong> <code>D:\2. Team Source\CER App\docs\대화기록_CER_App.html</code><br />
 - 85개였던 메시지가 <strong>101개</strong>로 늘었고, 첫 대화부터 이 요청 직전까지 들어 있습니다.<br />
@@ -1157,7 +1157,7 @@ python -m app.main
 <li>매뉴얼 아티팩트는 비공개 상태입니다. 현장 담당자에게 보여주려면 페이지의 공유 메뉴에서 공유해 주셔야 하고, 폐쇄망 현장 PC에서는 claude.ai에 접속할 수 없으니 <strong>압축 파일 안의 <code>사용설명서.html</code>을 배포</strong>하는 것이 안전합니다.</li>
 <li>Windows 보호 화면과 보안 프로그램 차단 안내는 일반적인 경우를 가정해 적었습니다. 현장에 별도 정책이 있다면 알려주세요.</li>
 <li>GitHub 반영이 필요하면 말씀해 주세요. 매뉴얼 원본과 대화 기록이 아직 커밋되지 않았습니다.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:54</span><i>#103</i></header><div class="b"><p class="u">설정 입력 wav file과 전사 file 위치를 텍스트 입력방식인데 폴더 지정방식으로도 가능하게 기능 추가해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:55</span><i>#104</i></header><div class="b"><p>폴더 지정 방식을 추가했습니다. 단위 테스트 22건이 통과했고, 서버의 폴더 목록 API도 직접 호출해 확인했습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:54</span><i>#107</i></header><div class="b"><p class="u">설정 입력 wav file과 전사 file 위치를 텍스트 입력방식인데 폴더 지정방식으로도 가능하게 기능 추가해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:55</span><i>#108</i></header><div class="b"><p>폴더 지정 방식을 추가했습니다. 단위 테스트 22건이 통과했고, 서버의 폴더 목록 API도 직접 호출해 확인했습니다.</p>
 <p><strong>사용 방법</strong> (① 설정·실행 탭의 "입력" 카드)<br />
 - 음성(.wav) 폴더, 정답 전사(.txt) 폴더, 결과 저장 폴더 입력칸 오른쪽에 <strong>[폴더 선택]</strong> 버튼이 생겼습니다. 텍스트 입력도 그대로 쓸 수 있습니다.<br />
 - 버튼을 누르면 폴더 선택 창이 열립니다.<br />
@@ -1174,7 +1174,7 @@ python -m app.main
 <p><strong>함께 갱신한 것</strong><br />
 - 매뉴얼 아티팩트(버전 3, 같은 링크)와 패키지 안 <code>사용설명서.html</code>에 폴더 선택 안내를 추가했습니다.<br />
 - <code>CER_App_portable.zip</code>(12.2 MB)을 다시 빌드했습니다.<br />
-- GitHub에는 아직 반영하지 않았습니다. 필요하면 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:59</span><i>#105</i></header><div class="b"><p class="u">중지하였는데 계속 중지하는 중으로 표시됨</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 10:59</span><i>#106</i></header><div class="b"><p>중지 후에도 "중지하는 중..."이 계속 표시되던 문제를 수정했습니다.</p>
+- GitHub에는 아직 반영하지 않았습니다. 필요하면 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 10:59</span><i>#109</i></header><div class="b"><p class="u">중지하였는데 계속 중지하는 중으로 표시됨</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 10:59</span><i>#110</i></header><div class="b"><p>중지 후에도 "중지하는 중..."이 계속 표시되던 문제를 수정했습니다.</p>
 <p><strong>원인</strong><br />
 - [중지]를 누를 때 화면에 "중지하는 중..."이라고 써 놓고, 실제로 중지가 끝난 뒤에는 이 문구를 지우거나 바꾸지 않았습니다. 서버 쪽은 정상적으로 중지됐는데 화면 문구만 남아 있었습니다.</p>
 <p><strong>수정 내용</strong><br />
@@ -1187,7 +1187,7 @@ python -m app.main
 <p><strong>알아둘 점</strong><br />
 - 이 화면 갱신은 브라우저에서 직접 눌러 확인하지 못했습니다. 코드 문법 검사와 단위 테스트까지만 확인했습니다.<br />
 - 반영하려면 프로그램(<code>start.bat</code>)을 다시 실행하고 브라우저에서 <code>Ctrl+F5</code>로 새로고침해야 합니다.<br />
-- 그래도 계속 표시된다면, 그때 ② 실시간 결과 탭 상단에 "중지됨 — …" 안내가 나오는지 알려 주세요. 서버 상태가 실제로 멈춰 있는지 구분하는 데 필요합니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:02</span><i>#107</i></header><div class="b"><p class="u">일시 정지하여도 실시간 결의 경괴시간과 남은시간이 계속 변하는게 맞는지 아니면 그것도 일시 정지하여야하는지 사용자 관점에서는 무엇인 맞을까?</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:02</span><i>#108</i></header><div class="b"><p>사용자 관점에서는 <strong>일시정지하면 경과 시간도 멈추는 것이 맞고</strong>, 남은 시간은 그 값에서 고정되어 보이는 것이 맞습니다.</p>
+- 그래도 계속 표시된다면, 그때 ② 실시간 결과 탭 상단에 "중지됨 — …" 안내가 나오는지 알려 주세요. 서버 상태가 실제로 멈춰 있는지 구분하는 데 필요합니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:02</span><i>#111</i></header><div class="b"><p class="u">일시 정지하여도 실시간 결의 경괴시간과 남은시간이 계속 변하는게 맞는지 아니면 그것도 일시 정지하여야하는지 사용자 관점에서는 무엇인 맞을까?</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:02</span><i>#112</i></header><div class="b"><p>사용자 관점에서는 <strong>일시정지하면 경과 시간도 멈추는 것이 맞고</strong>, 남은 시간은 그 값에서 고정되어 보이는 것이 맞습니다.</p>
 <h2>이유</h2>
 <ul>
 <li>"경과 시간"은 "시험에 실제로 쓴 시간"으로 읽힙니다. 점심시간처럼 일시정지한 시간까지 올라가면 시험이 오래 걸렸다는 오해를 주고, 나중에 소요 시간을 보고할 때도 틀린 값이 됩니다.</li>
@@ -1233,7 +1233,7 @@ python -m app.main
 <li><strong>일시정지는 "새 파일 시작을 멈추는" 동작입니다.</strong> 이미 서버로 전송 중이던 파일은 끝까지 처리됩니다. 그래서 정지 직후에도 완료 건수가 1~2건 더 올라갈 수 있고, 이것은 정상입니다.</li>
 <li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
 <li>일시정지 중에는 시험을 며칠씩 열어 두지 마시길 권합니다. 서버 쪽 연결 제한 시간이 지난 뒤 재개하면 일부 파일이 실패로 기록될 수 있고, 이런 경우에는 이어서 하기로 다시 처리하면 됩니다.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:03</span><i>#109</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:04</span><i>#110</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:03</span><i>#113</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:04</span><i>#114</i></header><div class="b"><p>GitHub에 push했습니다.</p>
 <ul>
 <li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App (<code>main</code>)</li>
 <li><strong>커밋:</strong> <code>3f05d76</code>, 7개 파일 변경</li>
@@ -1247,7 +1247,7 @@ python -m app.main
 <p><strong>올리지 않은 것</strong><br />
 - API 키 설정(<code>config.local.json</code>), 스펙 PDF·클라이언트 스크립트, 시험 데이터, 빌드 결과 zip은 제외했습니다.<br />
 - 커밋 내용에서 API 키 패턴 검사는 0건이었습니다.</p>
-<p>대화 기록은 이 push 요청 직전까지만 들어 있습니다. 이후 대화는 다음 갱신 때 반영됩니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:07</span><i>#111</i></header><div class="b"><p class="u">요약 미리보기를 가독성 있게 좀더 개선시켜줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:09</span><i>#112</i></header><div class="b"><p>⑤ 리포트 탭의 요약 미리보기를 읽기 좋게 개선했습니다. 이전에는 <code>summary.txt</code>를 글자 그대로 한 덩어리로 보여줬고, 이제는 항목별로 나눠 보여줍니다.</p>
+<p>대화 기록은 이 push 요청 직전까지만 들어 있습니다. 이후 대화는 다음 갱신 때 반영됩니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:07</span><i>#115</i></header><div class="b"><p class="u">요약 미리보기를 가독성 있게 좀더 개선시켜줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:09</span><i>#116</i></header><div class="b"><p>⑤ 리포트 탭의 요약 미리보기를 읽기 좋게 개선했습니다. 이전에는 <code>summary.txt</code>를 글자 그대로 한 덩어리로 보여줬고, 이제는 항목별로 나눠 보여줍니다.</p>
 <p>실제 시험 결과(20건 표본)로 화면을 만들어 브라우저(Chrome)에서 렌더링해 직접 확인했습니다. 화자별 표는 rx/tx 예시값으로 채워 확인했습니다.</p>
 <p><strong>새 구성</strong><br />
 | 영역 | 내용 |<br />
@@ -1264,7 +1264,7 @@ python -m app.main
 <p><strong>알아둘 점</strong><br />
 - 반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.<br />
 - 휴대용 패키지를 다시 빌드했고, 단위 테스트 23건도 통과했습니다.<br />
-- GitHub에는 아직 올리지 않았습니다(<code>index.html</code> 1개 변경). 올리라고 하시면 바로 push하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:13</span><i>#113</i></header><div class="b"><p class="u">리포트 파일별 CER 분포 출력을 <br>75.9%(22건)           그래프     0%<br>17.2%(5건)            그래프    ~5%<br>식으로 변경해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:14</span><i>#114</i></header><div class="b"><p>파일별 CER 분포를 요청하신 형식(<code>비율(건수)  그래프  구간</code>)으로 바꿨습니다. 브라우저(Chrome)에서 렌더링해 직접 확인했고, 단위 테스트 23건도 통과했습니다.</p>
+- GitHub에는 아직 올리지 않았습니다(<code>index.html</code> 1개 변경). 올리라고 하시면 바로 push하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:13</span><i>#117</i></header><div class="b"><p class="u">리포트 파일별 CER 분포 출력을 <br />75.9%(22건)           그래프     0%<br />17.2%(5건)            그래프    ~5%<br />식으로 변경해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:14</span><i>#118</i></header><div class="b"><p>파일별 CER 분포를 요청하신 형식(<code>비율(건수)  그래프  구간</code>)으로 바꿨습니다. 브라우저(Chrome)에서 렌더링해 직접 확인했고, 단위 테스트 23건도 통과했습니다.</p>
 <p><strong>화면 (⑤ 리포트 탭 요약 미리보기)</strong></p>
 <pre><code>75.9%(22건)   ████████████████████████  0%
 17.2%(5건)    ██████                    ~5%
@@ -1289,7 +1289,7 @@ python -m app.main
 <p><strong>알아둘 점</strong><br />
 - 반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다. 이미 끝난 시험의 <code>summary.txt</code>는 옛 형식이라, ⑤ 탭을 열면 새로 생성됩니다.<br />
 - 휴대용 패키지를 다시 빌드했습니다.<br />
-- GitHub에는 아직 올리지 않았습니다(<code>report.py</code>, <code>index.html</code> 2개 변경).</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:17</span><i>#115</i></header><div class="b"><p class="u">75.9%(22건)   ████████████████████████  CER:0%<br>17.2%(5건)    ██████                    CER:~5%<br>로 문구 변경</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:17</span><i>#116</i></header><div class="b"><p>구간 이름 앞에 <code>CER:</code>를 붙이도록 바꿨습니다. 브라우저(Chrome)에서 렌더링해 확인했고, 단위 테스트 23건도 통과했습니다.</p>
+- GitHub에는 아직 올리지 않았습니다(<code>report.py</code>, <code>index.html</code> 2개 변경).</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:17</span><i>#119</i></header><div class="b"><p class="u">75.9%(22건)   ████████████████████████  CER:0%<br />17.2%(5건)    ██████                    CER:~5%<br />로 문구 변경</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:17</span><i>#120</i></header><div class="b"><p>구간 이름 앞에 <code>CER:</code>를 붙이도록 바꿨습니다. 브라우저(Chrome)에서 렌더링해 확인했고, 단위 테스트 23건도 통과했습니다.</p>
 <p><strong>화면 (⑤ 리포트 탭)</strong></p>
 <pre><code>75.9%(22건)   ████████████████████████  CER:0%
 17.2%(5건)    ██████                    CER:~5%
@@ -1304,15 +1304,15 @@ python -m app.main
   75.9%(22건)    ███████████████       CER:0%
   17.2%(5건)     ███                   CER:~5%
 </code></pre>
-<p>휴대용 패키지도 다시 빌드했습니다. 반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해 주세요. GitHub에는 아직 올리지 않았고, 수정된 파일은 <code>report.py</code>와 <code>index.html</code>입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:18</span><i>#117</i></header><div class="b"><p class="u">실시간 결과</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:18</span><i>#118</i></header><div class="b"><p>"실시간 결과"만 적어 주셔서 어떤 요청인지 확실하지 않습니다. 해당하는 것을 알려 주세요.</p>
+<p>휴대용 패키지도 다시 빌드했습니다. 반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해 주세요. GitHub에는 아직 올리지 않았고, 수정된 파일은 <code>report.py</code>와 <code>index.html</code>입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:18</span><i>#121</i></header><div class="b"><p class="u">실시간 결과</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:18</span><i>#122</i></header><div class="b"><p>"실시간 결과"만 적어 주셔서 어떤 요청인지 확실하지 않습니다. 해당하는 것을 알려 주세요.</p>
 <ol>
 <li><strong>② 실시간 결과 탭 화면을 수정</strong>하고 싶으신 경우 (예: 항목 추가·삭제, 표시 형식 변경, 그래프 변경)</li>
 <li><strong>지금 진행 중인 시험의 실시간 결과를 알려 달라</strong>는 경우. 이 세션에서 실행 중인 시험은 없습니다.</li>
 <li><strong>실시간 결과 탭이 이상하게 동작</strong>하는 경우 (값이 안 바뀐다, 그래프가 안 나온다 등)</li>
 <li><strong>다른 화면(⑤ 리포트)처럼 가독성을 개선</strong>해 달라는 경우</li>
 </ol>
-<p>원하시는 내용을 한 줄로만 알려 주시면 바로 진행하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:18</span><i>#119</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:18</span><i>#120</i></header><div class="b"><p>알겠습니다, 멈췄습니다. 실행 중인 작업이 없고, 마지막으로 변경한 내용(리포트 화면 문구)은 모두 저장·빌드된 상태입니다. GitHub에는 아직 올리지 않았습니다.</p>
-<p>다음 지시를 기다리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:22</span><i>#121</i></header><div class="b"><p class="u">실시간결과<br>CER분포/화자별<br>0%:61 ~5%:16 ~10%:11 10%+:1 출력을<br>0%:61건 ~5%:16건 ~10%:11건 10%+:1건 방식으로 변경해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:22</span><i>#122</i></header><div class="b"><p>② 실시간 결과 탭의 "CER 분포 / 화자별" 출력 방식을 바꿨습니다.</p>
+<p>원하시는 내용을 한 줄로만 알려 주시면 바로 진행하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:18</span><i>#123</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:18</span><i>#124</i></header><div class="b"><p>알겠습니다, 멈췄습니다. 실행 중인 작업이 없고, 마지막으로 변경한 내용(리포트 화면 문구)은 모두 저장·빌드된 상태입니다. GitHub에는 아직 올리지 않았습니다.</p>
+<p>다음 지시를 기다리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:22</span><i>#125</i></header><div class="b"><p class="u">실시간결과<br />CER분포/화자별<br />0%:61 ~5%:16 ~10%:11 10%+:1 출력을<br />0%:61건 ~5%:16건 ~10%:11건 10%+:1건 방식으로 변경해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:22</span><i>#126</i></header><div class="b"><p>② 실시간 결과 탭의 "CER 분포 / 화자별" 출력 방식을 바꿨습니다.</p>
 <p><strong>변경 전 → 후</strong><br />
 - <code>0%: 61 · ~5%: 16 · ~10%: 11 · 10%+: 1</code><br />
 - <code>0%:61건  ~5%:16건  ~10%:11건  10%+:1건</code></p>
@@ -1321,7 +1321,7 @@ python -m app.main
 <li>코드 문법 검사를 통과했고 휴대용 패키지도 다시 빌드했습니다. 화면에서 직접 확인하지는 못했습니다.</li>
 <li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해 주세요.</li>
 <li>GitHub에는 아직 올리지 않았습니다.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:24</span><i>#123</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:24</span><i>#124</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:24</span><i>#127</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:24</span><i>#128</i></header><div class="b"><p>GitHub에 push했습니다.</p>
 <ul>
 <li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App (<code>main</code>)</li>
 <li><strong>커밋:</strong> <code>b448202</code>, 3개 파일 변경</li>
@@ -1332,7 +1332,7 @@ python -m app.main
 - 대화 기록 HTML 갱신 (이 요청 직전까지)</p>
 <p><strong>확인한 것</strong><br />
 - 커밋 내용에서 API 키 패턴은 0건이었고, API 키 설정 파일·시험 데이터·빌드 zip 같은 민감 파일은 올라가지 않았습니다.<br />
-- 단위 테스트 23건이 통과한 상태에서 올렸습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:25</span><i>#125</i></header><div class="b"><p class="u">대화 html file에 추가 갱신하고, 현장 배포 파일 갱신해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:26</span><i>#126</i></header><div class="b"><p>대화 기록과 현장 배포 파일을 갱신했습니다.</p>
+- 단위 테스트 23건이 통과한 상태에서 올렸습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:25</span><i>#129</i></header><div class="b"><p class="u">대화 html file에 추가 갱신하고, 현장 배포 파일 갱신해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:26</span><i>#130</i></header><div class="b"><p>대화 기록과 현장 배포 파일을 갱신했습니다.</p>
 <h2>1. 대화 기록 HTML</h2>
 <p><strong>파일:</strong> <code>D:\2. Team Source\CER App\docs\대화기록_CER_App.html</code><br />
 - 메시지가 125개로 늘었고(이전 101개), 첫 대화부터 이 요청 직전까지 들어 있습니다.<br />
@@ -1354,7 +1354,7 @@ python -m app.main
 <li>현장 PC에서 이전 버전을 쓰고 있다면 새 zip을 다른 폴더에 풀고, 이전 폴더의 <code>config.local.json</code>(서버·키 설정)과 <code>data\results</code>를 복사해 옮기면 됩니다. 매뉴얼 10장 "관리"에 같은 안내가 있습니다.</li>
 <li>실제 Python이 없는 현장 PC에서 <code>start.bat</code> 더블클릭 시험은 아직 하지 못했습니다. 현장에서 처음 실행할 때 확인이 필요합니다.</li>
 <li>배포 파일(zip)과 대화 기록 갱신본은 GitHub에는 올리지 않았습니다. 필요하면 말씀해 주세요.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:26</span><i>#127</i></header><div class="b"><p class="u">메뉴얼도 갱신해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:27</span><i>#128</i></header><div class="b"><p>매뉴얼을 갱신했고, 아티팩트(버전 4)와 현장 배포 파일 안의 <code>사용설명서.html</code>을 모두 같은 내용으로 맞췄습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:26</span><i>#131</i></header><div class="b"><p class="u">메뉴얼도 갱신해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:27</span><i>#132</i></header><div class="b"><p>매뉴얼을 갱신했고, 아티팩트(버전 4)와 현장 배포 파일 안의 <code>사용설명서.html</code>을 모두 같은 내용으로 맞췄습니다.</p>
 <p><strong>링크(같은 주소):</strong> https://claude.ai/artifact/LFgexzLBsyVAoWVYpKFRmX</p>
 <p><strong>추가·수정한 내용</strong><br />
 | 위치 | 내용 |<br />
@@ -1371,7 +1371,7 @@ python -m app.main
 <p><strong>알아둘 점</strong><br />
 - 아티팩트는 비공개 상태이므로 현장 담당자에게는 압축 파일 안의 <code>사용설명서.html</code>을 배포하는 것이 안전합니다.<br />
 - GitHub에는 아직 올리지 않았습니다(매뉴얼 원본 1개 변경). 필요하면 말씀해 주세요.<br />
-- 매뉴얼 화면은 미리보기로 확인하지 못했습니다. 레이아웃이 깨지는 곳이 있으면 알려 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:29</span><i>#129</i></header><div class="b"><p class="u">설정 입력 폴더 선택 방식을 디렉토리 트리구조로 변경해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:31</span><i>#130</i></header><div class="b"><p>폴더 선택 창을 디렉터리 트리 방식으로 바꿨습니다. 실제 화면을 Chrome에서 띄워 트리가 경로까지 펼쳐지고 선택되는 것을 직접 확인했습니다.</p>
+- 매뉴얼 화면은 미리보기로 확인하지 못했습니다. 레이아웃이 깨지는 곳이 있으면 알려 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:29</span><i>#133</i></header><div class="b"><p class="u">설정 입력 폴더 선택 방식을 디렉토리 트리구조로 변경해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:31</span><i>#134</i></header><div class="b"><p>폴더 선택 창을 디렉터리 트리 방식으로 바꿨습니다. 실제 화면을 Chrome에서 띄워 트리가 경로까지 펼쳐지고 선택되는 것을 직접 확인했습니다.</p>
 <p><strong>동작 방식</strong><br />
 - ① 설정·실행 탭의 **[폴더 선택]**을 누르면 드라이브가 맨 위에 나오는 트리가 열립니다.<br />
 - <strong>▸ 를 누르거나 폴더를 더블클릭</strong>하면 하위 폴더가 펼쳐지고(▾), 다시 누르면 접힙니다. 하위 폴더가 없으면 <code>·</code>로 표시됩니다.<br />
@@ -1386,7 +1386,7 @@ python -m app.main
 <p><strong>알아둘 점</strong><br />
 - 하위 폴더 유무는 펼쳐 봐야 알 수 있어서, 하위 폴더가 없는 폴더에도 처음에는 ▸가 보이고 누르면 <code>·</code>로 바뀝니다.<br />
 - 반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.<br />
-- GitHub에는 아직 올리지 않았습니다(<code>index.html</code>, 매뉴얼 원본 변경). 올리라고 하시면 바로 push하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:32</span><i>#131</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:33</span><i>#132</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+- GitHub에는 아직 올리지 않았습니다(<code>index.html</code>, 매뉴얼 원본 변경). 올리라고 하시면 바로 push하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:32</span><i>#135</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:33</span><i>#136</i></header><div class="b"><p>GitHub에 push했습니다.</p>
 <ul>
 <li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App (<code>main</code>)</li>
 <li><strong>커밋:</strong> <code>25a0266</code>, 3개 파일 변경</li>
@@ -1398,7 +1398,7 @@ python -m app.main
 <p><strong>확인한 것</strong><br />
 - 커밋 내용에서 API 키 패턴은 0건이었고, 설정 파일·시험 데이터·빌드 zip 같은 민감 파일은 올라가지 않았습니다.<br />
 - 단위 테스트 23건이 통과한 상태에서 올렸습니다.</p>
-<p>배포용 <code>CER_App_portable.zip</code>은 용량과 빌드 결과물이라는 이유로 저장소에는 올리지 않았습니다. 최신 버전은 이미 <code>dist</code> 폴더에 빌드되어 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:33</span><i>#133</i></header><div class="b"><p class="u">대화 html 갱신, 배포 파일 갱신, 메뉴얼 갱신 해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:33</span><i>#134</i></header><div class="b"><p>대화 기록, 배포 파일, 매뉴얼을 모두 최신 상태로 갱신했습니다.</p>
+<p>배포용 <code>CER_App_portable.zip</code>은 용량과 빌드 결과물이라는 이유로 저장소에는 올리지 않았습니다. 최신 버전은 이미 <code>dist</code> 폴더에 빌드되어 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:33</span><i>#137</i></header><div class="b"><p class="u">대화 html 갱신, 배포 파일 갱신, 메뉴얼 갱신 해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:33</span><i>#138</i></header><div class="b"><p>대화 기록, 배포 파일, 매뉴얼을 모두 최신 상태로 갱신했습니다.</p>
 <p><strong>1. 대화 기록 HTML</strong><br />
 - 파일: <code>D:\2. Team Source\CER App\docs\대화기록_CER_App.html</code><br />
 - 메시지 133개(이전 125개), 표 16개, API 키 노출 0건. 이 요청 직전까지의 대화가 들어 있습니다.</p>
@@ -1419,7 +1419,7 @@ python -m app.main
 - 내용은 직전 갱신과 같습니다. 그 사이 매뉴얼 변경이 없었고, 패키지 안 매뉴얼·<code>docs</code> 원본·아티팩트가 모두 동일한 것을 확인했습니다.</p>
 <p><strong>알아둘 점</strong><br />
 - 대화 기록 갱신본은 아직 GitHub에 올리지 않았습니다. 필요하면 말씀해 주세요.<br />
-- 현장 PC에서 이전 버전을 쓰는 경우 새 zip을 다른 폴더에 풀고, 이전 폴더의 <code>config.local.json</code>과 <code>data\results</code>를 복사해 옮기면 됩니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:41</span><i>#135</i></header><div class="b"><p class="u">예상 소요 2h 25m(페이싱 기준) 에서 페이싱 기준은 무슨 의미야?</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:41</span><i>#136</i></header><div class="b"><p>"페이싱 기준"은 <strong>음성을 실제 재생 속도(실시간)로 서버에 보낸다고 가정해 계산한 시간</strong>이라는 뜻입니다.</p>
+- 현장 PC에서 이전 버전을 쓰는 경우 새 zip을 다른 폴더에 풀고, 이전 폴더의 <code>config.local.json</code>과 <code>data\results</code>를 복사해 옮기면 됩니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:41</span><i>#139</i></header><div class="b"><p class="u">예상 소요 2h 25m(페이싱 기준) 에서 페이싱 기준은 무슨 의미야?</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:41</span><i>#140</i></header><div class="b"><p>"페이싱 기준"은 <strong>음성을 실제 재생 속도(실시간)로 서버에 보낸다고 가정해 계산한 시간</strong>이라는 뜻입니다.</p>
 <h2>페이싱이란</h2>
 <ul>
 <li>이 프로그램은 음성 파일을 한 번에 몰아서 보내지 않고, <strong>실제 통화 속도처럼 조금씩 나눠서</strong> 보냅니다. 이것을 "실시간 페이싱"이라고 합니다.</li>
@@ -1457,7 +1457,7 @@ python -m app.main
 </table></div>
 <p>즉, <strong>CER만 보면 되는 대량 시험</strong>은 동시 접속을 4로 두거나 페이싱을 해제하면 시간이 크게 줄고, <strong>응답 속도까지 재야 하는 시험</strong>은 페이싱을 켜고 동시 접속 1로 해야 하므로 오래 걸립니다.</p>
 <h2>화면 문구</h2>
-<p>"(페이싱 기준)"이라는 표현이 일반 사용자에게는 어렵습니다. "(음성을 실제 속도로 보낼 때 기준)"처럼 풀어 쓰고 싶으시면 말씀해 주세요. 바로 바꾸겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:42</span><i>#137</i></header><div class="b"><p class="u">음성 합계 9h 40m · 예상 소요 2h 25m(페이싱 기준) 왜 예상 소요시간이 적어?</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:42</span><i>#138</i></header><div class="b"><p>예상 소요 시간은 음성 합계를 <strong>동시 접속 수로 나눈 값</strong>이기 때문에 음성 합계보다 짧게 나옵니다.</p>
+<p>"(페이싱 기준)"이라는 표현이 일반 사용자에게는 어렵습니다. "(음성을 실제 속도로 보낼 때 기준)"처럼 풀어 쓰고 싶으시면 말씀해 주세요. 바로 바꾸겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:42</span><i>#141</i></header><div class="b"><p class="u">음성 합계 9h 40m · 예상 소요 2h 25m(페이싱 기준) 왜 예상 소요시간이 적어?</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:42</span><i>#142</i></header><div class="b"><p>예상 소요 시간은 음성 합계를 <strong>동시 접속 수로 나눈 값</strong>이기 때문에 음성 합계보다 짧게 나옵니다.</p>
 <h2>계산</h2>
 <pre><code>음성 합계   9시간 40분 = 580분
 동시 접속   4
@@ -1477,7 +1477,7 @@ python -m app.main
 <li>동시 접속 수를 바꾸면 예상 시간도 같이 바뀌도록 합니다.</li>
 <li>응답 속도 측정(동시 1)일 때는 "9시간 40분"으로 표시됩니다.</li>
 </ul>
-<p>바꿀까요? 문구만 고치는 작은 수정입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:43</span><i>#139</i></header><div class="b"><p class="u">동시 접속자수 설정된값으로 실시간으로 같이 변경해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:44</span><i>#140</i></header><div class="b"><p>예상 소요 시간이 동시 접속 수에 맞춰 실시간으로 바뀌도록 수정했습니다. 실제 Chrome에서 값을 바꿔 가며 확인했습니다.</p>
+<p>바꿀까요? 문구만 고치는 작은 수정입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:43</span><i>#143</i></header><div class="b"><p class="u">동시 접속자수 설정된값으로 실시간으로 같이 변경해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:44</span><i>#144</i></header><div class="b"><p>예상 소요 시간이 동시 접속 수에 맞춰 실시간으로 바뀌도록 수정했습니다. 실제 Chrome에서 값을 바꿔 가며 확인했습니다.</p>
 <p><strong>표시 문구</strong></p>
 <pre><code>.wav 5,270건 (제외 0건) · 음성 합계 9h 40m · 예상 소요 2h 25m (동시 접속 4, 음성을 실제 재생 속도로 보낼 때 기준)
 </code></pre>
@@ -1496,7 +1496,7 @@ python -m app.main
 - 예상 시간은 음성 길이와 동시 접속 수만으로 계산한 <strong>대략적인 값</strong>입니다. 서버 응답 대기와 파일 읽기 시간은 포함하지 않아, 실제로는 조금 더 걸릴 수 있습니다.<br />
 - 반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.<br />
 - 현장 배포 파일(<code>dist\CER_App_portable.zip</code>)을 다시 빌드했습니다.<br />
-- GitHub에는 아직 올리지 않았습니다. 필요하면 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:47</span><i>#141</i></header><div class="b"><p class="u">중지 재개시 접속자수를 변경시 실시간 결과의 남은 시간은 동적으로 반영되지 않는다 변경해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 11:49</span><i>#142</i></header><div class="b"><p>시험 중에 동시 접속 수를 바꾸면 실제 처리 속도가 바뀌고, 남은 시간도 그 값으로 다시 계산되도록 수정했습니다. 단위 테스트 24건이 통과했습니다(신규 1건 포함).</p>
+- GitHub에는 아직 올리지 않았습니다. 필요하면 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 11:47</span><i>#145</i></header><div class="b"><p class="u">중지 재개시 접속자수를 변경시 실시간 결과의 남은 시간은 동적으로 반영되지 않는다 변경해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 11:49</span><i>#146</i></header><div class="b"><p>시험 중에 동시 접속 수를 바꾸면 실제 처리 속도가 바뀌고, 남은 시간도 그 값으로 다시 계산되도록 수정했습니다. 단위 테스트 24건이 통과했습니다(신규 1건 포함).</p>
 <h2>원인</h2>
 <ul>
 <li>남은 시간은 "지금까지의 평균"만으로 계산해서 동시 접속 값이 들어가지 않았습니다.</li>
@@ -1549,7 +1549,7 @@ python -m app.main
 <li>동시 접속을 크게 올려도 서버가 허용하는 수를 넘으면 오류가 나거나 느려질 수 있습니다. 서버 담당자에게 허용 수를 확인하세요.</li>
 <li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
 <li>현장 배포 파일(<code>dist\CER_App_portable.zip</code>)을 다시 빌드했습니다. GitHub에는 아직 올리지 않았습니다.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 12:44</span><i>#143</i></header><div class="b"><p class="u">6번 탭 추가 시험결과 요약 리포트를 추가해줘. 화면 캡처 검증결과 제출용 임으로 아래 형식으로 가독성 있게<br><br>음성파일 갯수   : .wav 5,270건 (제외 0건) <br>음성의 합계시간 : 9h 40m <br>시험 소요시간   : 36m 16s (동시 접속 16, 음성을 실제 재생 속도로 보낼 때 기준)<br>누적 CER        : 2.59%<br>누적 WER        : 14.38%<br>응답속도 평균   : 0.28s<br>완료/전체 건수  : 5,270/5,270<br><br>막대 그래프로 함계 표시<br>1-CER : 97.41%     1-WER : 85.62%</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 12:45</span><i>#144</i></header><div class="b"><p>⑥ 시험결과 요약 탭을 추가했습니다. 요청하신 형식 그대로이며, Chrome에서 예시 값으로 렌더링해 화면을 직접 확인했습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 12:44</span><i>#147</i></header><div class="b"><p class="u">6번 탭 추가 시험결과 요약 리포트를 추가해줘. 화면 캡처 검증결과 제출용 임으로 아래 형식으로 가독성 있게<br /><br />음성파일 갯수   : .wav 5,270건 (제외 0건) <br />음성의 합계시간 : 9h 40m <br />시험 소요시간   : 36m 16s (동시 접속 16, 음성을 실제 재생 속도로 보낼 때 기준)<br />누적 CER        : 2.59%<br />누적 WER        : 14.38%<br />응답속도 평균   : 0.28s<br />완료/전체 건수  : 5,270/5,270<br /><br />막대 그래프로 함계 표시<br />1-CER : 97.41%     1-WER : 85.62%</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 12:45</span><i>#148</i></header><div class="b"><p>⑥ 시험결과 요약 탭을 추가했습니다. 요청하신 형식 그대로이며, Chrome에서 예시 값으로 렌더링해 화면을 직접 확인했습니다.</p>
 <h2>화면 구성</h2>
 <pre><code>음성인식 시험결과 요약
 [시험 완료]  문장 단위 · model_v2
@@ -1616,7 +1616,7 @@ python -m app.main
 <li>"음성의 합계시간"은 파일 기준 합계라, 모델을 여러 개 비교해도 한 번만 계산합니다.</li>
 <li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
 <li>GitHub에는 아직 올리지 않았습니다. 필요하면 말씀해 주세요.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 12:57</span><i>#145</i></header><div class="b"><p class="u">추후 기존 시험한 내용의 파일별 결과 화면과 상세화면의 정답과 인식 결과 재확인할수 있는 방법은 어떻게 해야해?</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 12:57</span><i>#146</i></header><div class="b"><p>지금 버전에서는 <strong>프로그램을 껐다 켜면 ③ 파일별 결과와 ④ 상세 화면이 비어 있고, 이전 시험을 화면에서 다시 열 수 없습니다.</strong> 화면은 이번 실행의 결과만 메모리에 들고 있기 때문입니다. 다만 결과 데이터는 모두 파일로 남아 있어서, 지금도 다음 방법으로 확인할 수 있습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 12:57</span><i>#149</i></header><div class="b"><p class="u">추후 기존 시험한 내용의 파일별 결과 화면과 상세화면의 정답과 인식 결과 재확인할수 있는 방법은 어떻게 해야해?</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 12:57</span><i>#150</i></header><div class="b"><p>지금 버전에서는 <strong>프로그램을 껐다 켜면 ③ 파일별 결과와 ④ 상세 화면이 비어 있고, 이전 시험을 화면에서 다시 열 수 없습니다.</strong> 화면은 이번 실행의 결과만 메모리에 들고 있기 때문입니다. 다만 결과 데이터는 모두 파일로 남아 있어서, 지금도 다음 방법으로 확인할 수 있습니다.</p>
 <h2>지금 가능한 방법</h2>
 <div class="tw"><table>
 <thead>
@@ -1663,7 +1663,7 @@ python -m app.main
 <li>정답 원본 파일이 없어도 인식 결과만이라도 보여 줄까요? (정답은 "원본 없음"으로 표시)</li>
 <li>지금 시험이 진행 중일 때는 이전 시험을 열 수 없게 막아도 될까요? (화면이 섞이는 것을 방지하기 위함입니다)</li>
 </ol>
-<p>기본 안(추가, 정답 없으면 인식 결과만 표시, 진행 중에는 막음)으로 진행해도 된다고 하시면 바로 구현하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 12:59</span><i>#147</i></header><div class="b"><p class="u">기본 안으로 진행해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:01</span><i>#148</i></header><div class="b"><p>이전 시험 불러오기를 실제 과거 시험 폴더로 확인하는 중입니다.</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:02</span><i>#149</i></header><div class="b"><p>"이전 시험 결과 열기" 기능을 추가했습니다. 실제 시험 폴더(<code>last_run</code>, 5,270건)로 열어 보았고, CER 2.59%, WER 14.38%가 이전 시험 값과 같게 나왔습니다. 단위 테스트는 27건이 통과했습니다(신규 3건 포함).</p>
+<p>기본 안(추가, 정답 없으면 인식 결과만 표시, 진행 중에는 막음)으로 진행해도 된다고 하시면 바로 구현하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 12:59</span><i>#151</i></header><div class="b"><p class="u">기본 안으로 진행해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:01</span><i>#152</i></header><div class="b"><p>이전 시험 불러오기를 실제 과거 시험 폴더로 확인하는 중입니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:02</span><i>#153</i></header><div class="b"><p>"이전 시험 결과 열기" 기능을 추가했습니다. 실제 시험 폴더(<code>last_run</code>, 5,270건)로 열어 보았고, CER 2.59%, WER 14.38%가 이전 시험 값과 같게 나왔습니다. 단위 테스트는 27건이 통과했습니다(신규 3건 포함).</p>
 <h2>사용 방법</h2>
 <ol>
 <li>① 설정·실행 탭 맨 아래 <strong>"이전 시험 결과 열기"</strong> 카드에서 **[폴더 선택]**을 눌러 <code>data\results</code> 아래의 시험 폴더(예: <code>20261015_104007</code>, <code>last_run</code>)를 고르고 **[열기]**를 누릅니다.</li>
@@ -1711,7 +1711,7 @@ python -m app.main
 <li>화면 조작은 브라우저에서 직접 눌러 확인하지 못했습니다. 서버 동작과 코드 문법 검사까지만 확인했습니다.</li>
 <li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
 <li>매뉴얼(아티팩트 버전 7, 같은 링크)과 현장 배포 파일(<code>dist\CER_App_portable.zip</code>)을 갱신했습니다. GitHub에는 아직 올리지 않았습니다.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:03</span><i>#150</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:03</span><i>#151</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:03</span><i>#154</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:03</span><i>#155</i></header><div class="b"><p>GitHub에 push했습니다.</p>
 <ul>
 <li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App (<code>main</code>)</li>
 <li><strong>커밋:</strong> <code>d948d76</code>, 7개 파일 변경</li>
@@ -1724,7 +1724,7 @@ python -m app.main
 <p><strong>확인한 것</strong><br />
 - 커밋 내용에서 API 키 패턴은 0건이었고, 설정 파일·시험 데이터·결과 폴더·빌드 zip 같은 민감 파일은 올라가지 않았습니다.<br />
 - 단위 테스트 27건이 통과한 상태에서 올렸습니다.</p>
-<p>현장 배포 파일(<code>dist\CER_App_portable.zip</code>)은 이전과 같이 저장소에 올리지 않았고, 최신 버전이 <code>dist</code> 폴더에 빌드되어 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:12</span><i>#152</i></header><div class="b"><p class="u">시험결과가 저장 또는 이전 시험 결과 열기가 오류인지 기능 미동작, state.json이 없다고 함<br>설정화면에 결과저장폴더 지정과 동작이 정상인지 확인해</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:14</span><i>#153</i></header><div class="b"><p>원인을 확인했고, 저장 기능은 정상이었습니다. "state.jsonl이 없다"는 오류는 <strong>결과 저장 폴더 자체를 골랐을 때</strong> 나오던 안내 부족 문제여서 함께 고쳤습니다.</p>
+<p>현장 배포 파일(<code>dist\CER_App_portable.zip</code>)은 이전과 같이 저장소에 올리지 않았고, 최신 버전이 <code>dist</code> 폴더에 빌드되어 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:12</span><i>#156</i></header><div class="b"><p class="u">시험결과가 저장 또는 이전 시험 결과 열기가 오류인지 기능 미동작, state.json이 없다고 함<br />설정화면에 결과저장폴더 지정과 동작이 정상인지 확인해</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:14</span><i>#157</i></header><div class="b"><p>원인을 확인했고, 저장 기능은 정상이었습니다. "state.jsonl이 없다"는 오류는 <strong>결과 저장 폴더 자체를 골랐을 때</strong> 나오던 안내 부족 문제여서 함께 고쳤습니다.</p>
 <h2>원인</h2>
 <p>시험 결과는 결과 저장 폴더 <strong>바로 아래가 아니라 시험마다 만들어지는 하위 폴더</strong>에 저장됩니다.</p>
 <pre><code>D:\2. Team Source\CER App\data\results        ← 결과 저장 폴더 (설정에서 지정)
@@ -1755,10 +1755,10 @@ python -m app.main
 <li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
 <li>이 점검 중 만든 임시 결과 폴더는 삭제했고, 설정 파일은 원래 값으로 복원했습니다.</li>
 <li>GitHub에는 아직 올리지 않았습니다. 필요하면 말씀해 주세요.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:23</span><i>#154</i></header><div class="b"><p class="u">저장폴더는 지정하면 하위디렉토리를 년월일시분으로 자동생성해야 나중에 이전 시험결과 열기가 편리할것 같다</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:23</span><i>#155</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:23</span><i>#156</i></header><div class="b"><p>알겠습니다, 멈췄습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:23</span><i>#158</i></header><div class="b"><p class="u">저장폴더는 지정하면 하위디렉토리를 년월일시분으로 자동생성해야 나중에 이전 시험결과 열기가 편리할것 같다</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:23</span><i>#159</i></header><div class="b"><p class="u">멈춰</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:23</span><i>#160</i></header><div class="b"><p>알겠습니다, 멈췄습니다.</p>
 <p>방금까지는 코드 변경 없이 현재 상태만 읽어 확인했습니다. 저장 폴더 자동 생성 관련 수정은 아직 아무것도 적용하지 않았습니다.</p>
 <p>이전 요청의 결과는 그대로입니다. 이전 시험 목록 표시와 오류 안내 개선은 반영되어 있고, 현장 배포 파일과 매뉴얼(버전 9)도 최신입니다. GitHub에는 아직 올리지 않았습니다.</p>
-<p>어떻게 진행할지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:24</span><i>#157</i></header><div class="b"><p class="u">저장폴더 하위디렉토리 년월일시분 자동생성하고 관련된 기능과 메뉴얼, 배포파일 등에  적용해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:26</span><i>#158</i></header><div class="b"><p>결과 저장 폴더 아래에 시험마다 년월일시분 하위 폴더가 항상 자동으로 만들어지도록 바꾸고, 관련 기능·매뉴얼·배포 파일에 모두 반영했습니다. 단위 테스트 30건이 통과했고, 실서버로 폴더 생성과 이어서 하기까지 확인했습니다.</p>
+<p>어떻게 진행할지 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:24</span><i>#161</i></header><div class="b"><p class="u">저장폴더 하위디렉토리 년월일시분 자동생성하고 관련된 기능과 메뉴얼, 배포파일 등에  적용해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:26</span><i>#162</i></header><div class="b"><p>결과 저장 폴더 아래에 시험마다 년월일시분 하위 폴더가 항상 자동으로 만들어지도록 바꾸고, 관련 기능·매뉴얼·배포 파일에 모두 반영했습니다. 단위 테스트 30건이 통과했고, 실서버로 폴더 생성과 이어서 하기까지 확인했습니다.</p>
 <h2>동작</h2>
 <pre><code>결과 저장 폴더 (설정에서 지정)
  ├ 20261015_1030      ← 2026년 10월 15일 10시 30분에 시작한 시험
@@ -1812,7 +1812,7 @@ python -m app.main
 <li>입력 폴더를 바꿔 이어서 하기를 켜면 이전 시험을 이어가지 않고 새 폴더가 만들어집니다. 의도한 동작입니다.</li>
 <li>화면 조작은 브라우저에서 직접 확인하지 못했습니다. 서버 동작과 화면 코드 문법까지 확인했습니다.</li>
 <li>GitHub에는 아직 올리지 않았습니다. 필요하면 말씀해 주세요.</li>
-</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:27</span><i>#159</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude Code</b><span>2026-10-15 13:27</span><i>#160</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:27</span><i>#163</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:27</span><i>#164</i></header><div class="b"><p>GitHub에 push했습니다.</p>
 <ul>
 <li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App (<code>main</code>)</li>
 <li><strong>커밋:</strong> <code>95411a4</code>, 8개 파일 변경</li>
@@ -1825,5 +1825,221 @@ python -m app.main
 <p><strong>확인한 것</strong><br />
 - 커밋 내용에서 API 키 패턴은 0건이었고, 설정 파일·시험 데이터·결과 폴더·빌드 zip은 올라가지 않았습니다.<br />
 - 단위 테스트 30건이 통과한 상태에서 올렸습니다.</p>
-<p>현장 배포 파일(<code>dist\CER_App_portable.zip</code>)은 이전과 같이 저장소에는 올리지 않았고, 최신 버전이 <code>dist</code> 폴더에 빌드되어 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:28</span><i>#161</i></header><div class="b"><p class="u">대화 기록 html 갱신, 배포 파일 갱신, 메뉴얼 갱신 해줘</p></div></article>
+<p>현장 배포 파일(<code>dist\CER_App_portable.zip</code>)은 이전과 같이 저장소에는 올리지 않았고, 최신 버전이 <code>dist</code> 폴더에 빌드되어 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:28</span><i>#165</i></header><div class="b"><p class="u">대화 기록 html 갱신, 배포 파일 갱신, 메뉴얼 갱신 해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:28</span><i>#166</i></header><div class="b"><p>대화 기록, 배포 파일, 매뉴얼을 모두 최신 상태로 갱신했습니다.</p>
+<h2>1. 대화 기록 HTML</h2>
+<p><strong>파일:</strong> <code>D:\2. Team Source\CER App\docs\대화기록_CER_App.html</code><br />
+- 메시지 161개(이전 133개), 표 22개를 형식 그대로 유지했고 API 키 노출은 0건입니다.<br />
+- 첫 대화부터 이 요청 직전까지 들어 있습니다.</p>
+<h2>2. 현장 배포 파일</h2>
+<p><strong>파일:</strong> <code>D:\2. Team Source\CER App\dist\CER_App_portable.zip</code> (12.2 MB, 69개 파일)</p>
+<p><strong>이번 버전에 들어 있는 기능</strong><br />
+- 년월일시분 결과 폴더 자동 생성과 이어서 하기(같은 입력의 최근 시험)<br />
+- 이전 시험 결과 열기와 시험 목록 표시<br />
+- ⑥ 시험결과 요약 탭<br />
+- 시험 중 동시 접속 변경과 남은 시간 재계산<br />
+- 폴더 선택 트리, 중지·일시정지 표시 개선, 리포트 요약 미리보기</p>
+<p><strong>출고 전 확인</strong><br />
+- 압축 파일 안에 API 키 설정, 음성 파일, 스펙 문서, 시험 결과가 없고 키 패턴 파일도 0개입니다.<br />
+- 포함된 매뉴얼에 <code>last_run</code> 설명이 남아 있지 않습니다.<br />
+- 위 기능 코드가 모두 들어 있음을 확인했습니다.<br />
+- 단위 테스트 30건이 통과한 상태입니다.</p>
+<h2>3. 매뉴얼</h2>
+<p><strong>링크(같은 주소, 버전 10):</strong> https://claude.ai/artifact/LFgexzLBsyVAoWVYpKFRmX<br />
+- 직전 갱신 이후 매뉴얼 내용 변경이 없어, 아티팩트·<code>docs/05_release</code> 원본·패키지 안 <code>사용설명서.html</code>이 모두 같은 내용임을 확인했습니다.</p>
+<h2>알아둘 점</h2>
+<ul>
+<li>대화 기록 갱신본은 아직 GitHub에 올리지 않았습니다. 필요하면 말씀해 주세요.</li>
+<li>현장에서 이전 버전을 쓰던 PC는 새 zip을 다른 폴더에 풀고, 이전 폴더의 <code>config.local.json</code>과 <code>data\results</code>를 복사해 옮기면 됩니다.</li>
+<li>현장 PC에서 <code>start.bat</code>을 처음 실행하는 시험은 아직 직접 하지 못했습니다. 현장에서 처음 실행할 때 확인이 필요합니다.</li>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:28</span><i>#167</i></header><div class="b"><p class="u">GitHub에 push해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:28</span><i>#168</i></header><div class="b"><p>GitHub에 push했습니다.</p>
+<ul>
+<li><strong>저장소:</strong> https://github.com/yong-joo-kim/CER-App (<code>main</code>)</li>
+<li><strong>커밋:</strong> <code>f96aef5</code>, 대화 기록 HTML 1개 변경</li>
+</ul>
+<p>이번에는 대화 기록만 바뀌어서 해당 파일만 올렸습니다. 코드, 매뉴얼 원본, 문서는 직전 커밋(<code>95411a4</code>)에 이미 올라가 있습니다. 커밋 내용에서 API 키 패턴은 0건이었고, 설정 파일·시험 데이터·결과 폴더·빌드 zip 같은 민감 파일은 올라가지 않았습니다.</p>
+<p>현장 배포 파일(<code>dist\CER_App_portable.zip</code>)은 저장소에 올리지 않았고 로컬 <code>dist</code> 폴더에 최신으로 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 13:29</span><i>#169</i></header><div class="b"><p class="u">작업 중단하고 나중에 계속할께</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 13:29</span><i>#170</i></header><div class="b"><p>알겠습니다. 실행 중인 작업은 없고, 모든 변경 사항은 저장·반영된 상태입니다.</p>
+<p><strong>현재 상태</strong><br />
+- <strong>코드와 문서:</strong> GitHub(<code>main</code>, 커밋 <code>f96aef5</code>)에 모두 올라가 있습니다.<br />
+- <strong>현장 배포 파일:</strong> <code>D:\2. Team Source\CER App\dist\CER_App_portable.zip</code>에 최신으로 빌드되어 있습니다(저장소에는 포함되지 않음).<br />
+- <strong>매뉴얼:</strong> 아티팩트 버전 10(https://claude.ai/artifact/LFgexzLBsyVAoWVYpKFRmX)과 패키지 안 <code>사용설명서.html</code>이 같은 내용입니다.<br />
+- <strong>대화 기록:</strong> <code>docs\대화기록_CER_App.html</code>에 이 요청 직전까지 포함되어 있습니다.</p>
+<p><strong>나중에 이어서 할 때 참고</strong><br />
+- 프로그램은 <code>start.bat</code>(또는 <code>python -m app.main</code>)으로 실행하고, 화면 변경 후에는 <code>Ctrl+F5</code>로 새로고침합니다.<br />
+- 화면 조작 중 브라우저에서 직접 눌러 확인하지 못한 부분(폴더 선택 트리, 동시 접속 변경, 이전 시험 열기, ⑥ 요약 탭)이 있으니, 사용해 보시고 이상한 점이 있으면 알려 주세요.<br />
+- 현장 PC에서의 <code>start.bat</code> 첫 실행은 아직 시험하지 못했습니다.<br />
+- <code>config.local.json</code>에는 서버 주소와 API 키가 들어 있으므로 저장소나 다른 사람에게 공유하지 마세요.</p>
+<p>편하실 때 이어서 말씀해 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 15:26</span><i>#171</i></header><div class="b"><p class="u">이어가</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 15:26</span><i>#172</i></header><div class="b"><p>이전 작업은 모두 끝나 있고, 남은 작업은 없습니다. 작업 트리도 깨끗합니다.</p>
+<p><strong>마지막 상태 (main, 커밋 f96aef5)</strong><br />
+- 결과 저장 폴더 아래에 시험마다 <code>YYYYMMDD_HHMM</code> 하위 폴더가 자동 생성됩니다.<br />
+- 이어서 하기는 같은 음성 폴더로 실행한 가장 최근 시험 폴더에 이어 저장합니다.<br />
+- 이전 시험 결과 열기는 시험 목록을 표시합니다.<br />
+- 요구사항, 설계, 매뉴얼, 대화 기록을 갱신했고 단위 테스트 30건이 통과했습니다.<br />
+- GitHub(yong-joo-kim/CER-App)에는 95411a4까지 push했고, 그 뒤의 "대화 기록 갱신" 커밋 f96aef5는 아직 push하지 않았습니다.</p>
+<p>이어서 무엇을 할까요? 예를 들면 다음과 같습니다.<br />
+1. f96aef5를 GitHub에 push<br />
+2. 새 기능이나 수정 요청<br />
+3. 화면 동작을 브라우저로 직접 확인</p>
+<p>원하시는 작업을 알려 주세요.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-15 15:59</span><i>#173</i></header><div class="b"><p class="u">배포 파일 위치 알려줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-15 15:59</span><i>#174</i></header><div class="b"><p>배포 파일은 아래 위치에 있습니다.</p>
+<ul>
+<li><strong>배포 zip</strong>: <code>D:\2. Team Source\CER App\dist\CER_App_portable.zip</code> (약 12.2MB, 2026-10-15 13:28 생성, 최신 코드 반영)</li>
+<li><strong>압축 전 원본 폴더</strong>: <code>D:\2. Team Source\CER App\build\portable</code></li>
+</ul>
+<p>zip은 API 키 파일과 개인 데이터가 빠진 상태로 확인했습니다. GitHub 저장소에는 올라가 있지 않아서, 전달하려면 이 파일을 직접 보내셔야 합니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-20 08:12</span><i>#175</i></header><div class="b"><p class="u">4. 상세  항목의 음성인식 원래 정답 문구가 &quot;(17살)/(열 일곱 살)이랑 (14살)/(열 네 살)이에요&quot;인데<br />&quot;일칠살 이랑 일사살 이에요&quot;로 이상하게 나온다 수정해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-20 08:15</span><i>#176</i></header><div class="b"><p>④ 상세 화면에서 "일칠살 이랑 일사살 이에요"로 나오던 문제를 고쳤습니다. 실제 화면을 Chrome에서 열어 확인했고, 단위 테스트 35건이 통과했습니다(신규 5건 포함).</p>
+<h2>원인</h2>
+<ol>
+<li><strong>숫자 표시:</strong> 비교할 때 숫자를 한글 독음으로 바꾸는데(<code>17</code> → <code>일칠</code>), 화면에 그 변환된 값을 그대로 보여주고 있었습니다.</li>
+<li><strong>조사 분리:</strong> <code>(17살)/(열 일곱 살)이랑</code>처럼 병기 바로 뒤에 붙은 <code>이랑</code>이 따로 떨어진 단어로 처리되어 <code>일칠살 이랑</code>처럼 띄어져 보였고, 인식 결과가 <code>17살이랑</code>이면 단어 비교(WER)에서 틀린 것으로 계산됐습니다.</li>
+<li><strong>"네" 삭제:</strong> <code>(열 네 살)</code>의 "네"가 추임새 목록("네")에 걸려 지워져서 <code>열 살이에요</code>로 보였습니다.</li>
+</ol>
+<h2>수정 내용</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>수정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>숫자 표시</td>
+<td>비교는 이전처럼 독음으로 하되, 화면에는 <strong>원래 표기</strong>(<code>17살</code>, <code>14살</code>)를 보여줍니다</td>
+</tr>
+<tr>
+<td>조사 붙은 병기</td>
+<td>병기 앞뒤에 공백 없이 붙은 글자는 각 대안에 붙여서 <code>17살이랑</code> / <code>열 일곱 살이랑</code>으로 비교합니다. 이제 인식 결과가 <code>17살이랑</code>이든 <code>열 일곱 살이랑</code>이든 정답으로 인정됩니다</td>
+</tr>
+<tr>
+<td>"네" 보호</td>
+<td><code>열/스물/서른…</code> 뒤에 오는 "네"는 숫자(넷)로 보고 추임새로 지우지 않습니다. 맞장구 "네"는 이전처럼 제외됩니다</td>
+</tr>
+<tr>
+<td>정답 원문</td>
+<td>④ 상세 맨 위에 <code>정답 원문: (17살)/(열 일곱 살)이랑 (14살)/(열 네 살)이에요</code>처럼 <strong>전사 파일 그대로</strong>를 한 줄 표시합니다</td>
+</tr>
+</tbody>
+</table></div>
+<h2>확인 결과</h2>
+<p>정답 <code>(17살)/(열 일곱 살)이랑 (14살)/(열 네 살)이에요</code>에 대해:<br />
+| 인식 결과 | CER 오류 | WER 오류 |<br />
+|---|---|---|<br />
+| 열 일곱 살이랑 열 네 살이에요 | 0 / 12 | 0 / 6 |<br />
+| 17살이랑 14살이에요 | 0 / 11 | 0 / 2 |<br />
+| 17살이랑 열 네 살이에요 | 0 / 11 | 0 / 4 |<br />
+| 열 일곱 살이랑 열 다섯 살이에요 | 2 / 12 | 1 / 6 |</p>
+<p>④ 상세 화면에서는 정답이 <code>저희 아이가 17살이랑 열 네 살이에요</code>처럼 원래 숫자 표기로 나오고, 틀린 부분(네 → 다섯)만 강조됩니다.</p>
+<h2>알아둘 점</h2>
+<ul>
+<li>인식 결과가 <code>열 일곱 살 이랑</code>처럼 조사를 띄어 써서 나오면, 글자 오류율(CER)은 0이지만 단어 오류율(WER)은 틀린 것으로 계산됩니다. 서버의 띄어쓰기 차이로 인한 것으로, WER의 일반적인 성격입니다.</li>
+<li>이미 끝난 시험의 CER/WER 값은 다시 계산되지 않습니다. 이 수정은 화면 표시와 <strong>새로 하는 시험</strong>부터 적용됩니다. 이전 시험을 열어 ④ 상세를 보면 표시는 새 방식으로 보이지만, 저장된 CER 숫자는 그 시험 당시 값입니다.</li>
+<li>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.</li>
+<li>매뉴얼(아티팩트 버전 11, 같은 링크)과 현장 배포 파일(<code>dist\CER_App_portable.zip</code>)을 갱신했습니다. GitHub에는 아직 올리지 않았습니다.</li>
+</ul></div></article><article class="m user"><header><b>나</b><span>2026-10-20 08:25</span><i>#177</i></header><div class="b"><p class="u">상세 결과에 오류부분 표시한 색깔 의미 알려줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-20 08:25</span><i>#178</i></header><div class="b"><p>④ 상세 화면의 색은 <strong>정답과 인식 결과를 비교했을 때 어떤 종류의 오류인지</strong>를 나타냅니다.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>색</th>
+<th>의미</th>
+<th>표시되는 위치</th>
+<th>예</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>주황색</strong></td>
+<td>치환(S): 같은 자리의 단어가 다르게 인식됨</td>
+<td>정답과 인식 결과 양쪽에 같은 위치로 표시</td>
+<td>정답 <code>네</code> ↔ 인식 <code>다섯</code></td>
+</tr>
+<tr>
+<td><strong>초록색</strong></td>
+<td>삽입(I): 정답에 없는 단어가 인식 결과에 추가됨</td>
+<td>인식 결과 쪽에만 표시</td>
+<td>인식에 <code>좀</code>이 더 들어감</td>
+</tr>
+<tr>
+<td><strong>빨간색(취소선)</strong></td>
+<td>삭제(D): 정답에 있는데 인식 결과에서 빠짐</td>
+<td>정답 쪽에만 표시</td>
+<td>정답 <code>확인</code>이 인식에서 빠짐</td>
+</tr>
+<tr>
+<td>색 없음</td>
+<td>일치</td>
+<td>양쪽</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>읽는 방법</strong><br />
+- 정답 칸에서 빨간 취소선이 있으면 "인식이 놓친 단어", 인식 결과 칸에서 초록이 있으면 "인식이 잘못 덧붙인 단어"입니다.<br />
+- 주황은 양쪽에서 짝으로 표시되므로, 같은 위치의 두 단어를 비교하면 무엇이 무엇으로 바뀌었는지 알 수 있습니다.<br />
+- 이 세 가지의 개수가 그 파일의 치환·삽입·삭제 건수이고, CER/WER은 이 합계를 정답 길이로 나눈 값입니다.</p>
+<p><strong>알아둘 점</strong><br />
+- 화면의 색은 <strong>단어(어절) 단위</strong> 비교 결과입니다. 아래쪽 <code>CER 12.50% · S/I/D/N 1/1/0/16</code>의 숫자는 <strong>글자 단위</strong> 값이라, 같은 오류라도 개수가 다를 수 있습니다. 예를 들어 <code>네</code> → <code>다섯</code>은 화면에서는 주황 단어 1개이지만 글자 기준으로는 치환 1건, 삽입 1건으로 셉니다.<br />
+- 정답에서 <code>(17살)/(열 일곱 살)</code>처럼 병기된 부분은 인식 결과와 맞는 쪽 하나만 표시됩니다.<br />
+- 추임새, 특수문자 같은 비교에서 제외한 부분은 화면에 나타나지 않습니다. 원래 문구는 위쪽 "정답 원문"에서 확인합니다.</p>
+<p>색 범례(주황=치환, 초록=삽입, 빨강=삭제)가 화면에 직접 표시되지 않아 불편하시면 ④ 상세 아래쪽에 범례를 추가해 드릴 수 있습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-20 08:27</span><i>#179</i></header><div class="b"><p class="u">상세 아래쪽에 범례를 추가해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-20 08:27</span><i>#180</i></header><div class="b"><p>④ 상세 화면 아래쪽에 범례를 추가했습니다. 실제 화면을 Chrome에서 열어 확인했습니다.</p>
+<p><strong>표시되는 범례</strong></p>
+<pre><code>범례  [치환] 같은 자리의 단어가 다르게 인식됨
+      [삽입] 정답에 없는 단어가 추가됨 (인식 결과 쪽)
+      [삭제] 정답에 있는 단어가 빠짐 (정답 쪽)
+      색이 없으면 일치 · 단어(어절) 단위 비교
+</code></pre>
+<ul>
+<li><strong>색:</strong> 각 이름 칸이 상세 화면에서 쓰는 색 그대로라 어떤 색이 무엇인지 바로 대응됩니다(치환=주황, 삽입=초록, 삭제=빨강 취소선).</li>
+<li><strong>위치:</strong> CER/WER 숫자 줄 바로 아래에 있고, 화면이 좁으면 줄바꿈됩니다.</li>
+<li><strong>정답 원본이 없는 경우:</strong> 비교 자체가 없으므로 범례를 숨깁니다.</li>
+</ul>
+<p><strong>함께 갱신한 것</strong><br />
+- 매뉴얼의 ④ 상세 설명에 색의 의미를 추가했습니다(아티팩트 버전 12, 같은 링크).<br />
+- 현장 배포 파일(<code>dist\CER_App_portable.zip</code>)을 다시 빌드했습니다. 단위 테스트는 35건이 통과합니다.</p>
+<p><strong>알아둘 점</strong><br />
+- 반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침해야 합니다.<br />
+- 숫자 표기·조사 붙은 병기 수정 등 이전 작업분과 이번 변경은 아직 GitHub에 올리지 않았습니다. 올리라고 하시면 바로 push하겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-20 09:22</span><i>#181</i></header><div class="b"><p class="u">This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.<br /><br />Summary:<br />1. Primary Request and Intent:<br />   Build and maintain a &quot;CER App&quot;: a speech-recognition (ZIEUM STT, DeepModal) CER/WER test program that sends .wav files to a streaming STT server, compares results with ground-truth .txt, and reports CER/WER (plus latency for 7-second sentence-unit tests). It runs as a local web UI (browser tabs) via Python, must be installable/usable by anyone on closed-network (air-gapped) on-site Windows PCs via a portable package. User also wants: an HTML export of the whole Claude Code conversation (from the very first message, tables preserved), an artifact-format user manual (updated for closed-network general users), GitHub pushes to https://github.com/yong-joo-kim/CER-App (branch `main`) when asked, and continuous refinement of UI/behavior. Latest completed request: add a color legend under the ④ 상세 (detail) view (주황=치환, 초록=삽입, 빨강 취소선=삭제, 색 없음=일치). Immediately before that, fixed the detail view showing &quot;일칠살 이랑 일사살 이에요&quot; for ground truth &quot;(17살)/(열 일곱 살)이랑 (14살)/(열 네 살)이에요&quot;.<br /><br />2. Key Technical Concepts:<br />   - Python 3.14 app; stdlib `http.server` local web server (127.0.0.1:8765) + vanilla JS single-page UI (`app/web/static/index.html`), tabs ①설정·실행 ②실시간 결과 ③파일별 결과 ④상세 ⑤리포트 ⑥시험결과 요약; history/popstate back-button support; virtual-scroll list with server-side paging (`/api/results`).<br />   - STT protocol (from working reference client `docs/spec/zieum_client_pcm_ws_py`): WebSocket `/v1/streaming?model=...`, header `X-API-Key` (NOT Bearer), `ready` JSON incl. call_info, 640-byte PCM16 chunks paced at len/16000 s, `finalize`, server sends `recognize` messages then `{&quot;cmd&quot;:&quot;finished&quot;}`; `websocket-client` library; GET /health.<br />   - Metrics: Levenshtein with S/I/D/N; lattice scoring (`score_lattice`) for `(A)/(B)` alternatives; CER = char level (spaces removed), WER = word level; overall = sum errors / sum N. Normalization: blank lines removed, `n/`-style tags (`[A-Za-z]/` not adjacent to alnum) removed, punctuation removed, fillers removed (default 음,어,으음,아,네,예,응,어어,에 — except &quot;네&quot; after 열/스물/서른… tens words), digits→hangul reading for comparison (display keeps original digits via `Tok(cmp, disp)`), adjacent particles attached to alternatives.<br />   - Runner: ThreadPoolExecutor(16 workers) + dynamic concurrency limit (Condition-based `_acquire/_release`, `set_concurrency`), pause/stop events, &quot;stopping/stopped/done&quot; states, paused-time-excluded clock, remaining time = (sum proc time / sum audio) × remaining audio / current concurrency, resume via `state.jsonl`, `live_snapshot.json` every 100 files, result folder `&lt;output_dir&gt;/YYYYMMDD_HHMM` (collision → `_HHMMSS`, `_n`), resume picks latest run of same `wav_dir` (`find_resume_dir`), read-only &quot;이전 시험 열기&quot; (`Run.from_folder`, `list_runs`, `/api/runs`, `/api/view`, `/api/view_close`), latency measured finalize→`finished` (files ≥30 s excluded; only sentence mode with pacing on).<br />   - Folder picker: server-side `/api/browse` (loopback only) + JS directory tree (lazy expand, reveal path).<br />   - Portable package: `tools/build_portable.py` builds `dist/CER_App_portable.zip` (embedded Python 3.14.7 amd64 `_pth` with `..` and `..\lib`, vendored websocket package, app, start.bat, README.txt, 사용설명서.html offline manual, data/input|results); no keys/data included.<br />   - Artifact manual published at https://claude.ai/artifact/LFgexzLBsyVAoWVYpKFRmX (currently version 12; private; must be shared by user; closed-network PCs should use the in-zip `사용설명서.html`).<br />   - Chat export: `scratchpad/export_chat.py` parses `C:\Users\imsrx\.claude\projects\D--2--Team-Source-CER-App\*.jsonl` (two sessions: fadf90f1…, 19540ad3…), includes `queued_command` attachments, dedupes by uuid, redacts `sk-` keys, markdown→HTML with tables; output `docs/대화기록_CER_App.html`.<br /><br />3. Files and Code Sections (repo root `D:\2. Team Source\CER App`):<br />   - `app/normalize.py` (rewritten latest): `Tok(str)` with `.disp`; `_TENS` set; `normalize2(text, fillers)` → (cmp, disp) with filler removal except `c == &quot;네&quot; and cmp[-1] in _TENS`; `normalize`, `to_chars`, `to_words`, `to_words_disp`, `normalize_ref2` (returns segments of alternatives as (cmp, disp) tuples; attaches prefix/suffix text glued to a `(A)/(B)` group to each alternative), `normalize_ref` (cmp-only compat), `lattice(segs, unit)`, `ref_text(segs)`.<br />   - `app/metrics.py`: `Score`, `align`, `score`, `score_lattice` (unchanged logic).<br />   - `app/runner.py`: `Run` class (state, records, snapshot incl. `files`, `realtime_pacing`, `mode`, `view`, `concurrency_seen`; `set_concurrency`; `_process`; `detail()` returns `ref`, `ref_raw`, `hyp`, `ref_missing`, `ops` mapped to `.disp`; `resolve_txt`; `from_folder`), `list_runs(base)`, `find_resume_dir`, `new_out_dir(cfg, now=None)`, `MAX_CONCURRENCY=16`.<br />   - `app/stt_client.py`: `transcribe()` with `X-API-Key` (config `auth_header`), `finished` detection, latency, `ws.close(timeout=1)`; `merge_messages`.<br />   - `app/config.py`: DEFAULT incl. `wav_dir`, `txt_dir`, `output_dir`, `sentence_mode`, `measure_latency`, `latency_max_audio_s=30`, `concurrency`, `realtime_pacing`, `resume`, `window_size`, `auth_header`, `chunk_bytes=640`, `call_info`, fillers, retry; legacy `input_dir` migrates to `wav_dir`; `public_snapshot` masks key.<br />   - `app/inputs.py` (scan wav/txt pairs, separate txt folder, 1-level subfolders), `app/report.py` (detail.csv, summary.json incl. `files`, summary.txt with CER distribution `  75.9%(22건)  ███  CER:0%`), `app/web/server.py` (APIs: config, status, results, detail, report, runs, browse, scan, health, run, stop, pause, concurrency, view, view_close, open_folder), `app/main.py`.<br />   - `app/web/static/index.html`: whole UI; latest edits: `#dLegend` legend block after `#dInfo` (CSS `.legend2`, `.lg`), `$(&#x27;dLegend&#x27;).style.display=d.ref_missing?&#x27;none&#x27;:&#x27;&#x27;`; `#dRaw` &quot;정답 원문&quot; line; ⑥ tab (`renderCap`, `capRows`, copy button); folder tree dialog (`openPick`, `reveal`, `expand`); run/concurrency controls (`conc2`, `applyConc`, `showScan`, `showResume`); previous-run card (`runList`, `openRun`, `renderRuns`, `loadRuns`); summary preview (`renderSummary`).<br />   - `tests/test_core.py`: 35 passing tests (normalize, metrics, alternatives incl. attached particles/numeral 네, runner stop/resume/dynamic concurrency/pause clock, folder browse, view past run, list_runs, out dir).<br />   - `tools/build_portable.py`, `docs/05_release/manual_body.html` (manual source; copy of scratchpad `manual.html`), docs: `docs/02_requirements/{requirements,open_issues,interface_summary}.md`, `docs/03_design/{design.md,ui_mockup.md,ui/mockup.html}`, `harness/state.json` (phase P3, gates P1/P2 approved), `.gitignore` (config.local.json, docs/spec client+pdf, data/input/*, data/results/, build/, dist/).<br />   - Scratchpad (`C:\Users\imsrx\AppData\Local\Temp\claude\D--2--Team-Source-CER-App\19540ad3-017c-462b-a11c-bf9609d48449\scratchpad\`): `manual.html` (artifact source), `export_chat.py`, patch scripts, screenshot/e2e helpers (`detail_shot.py`, `save_e2e.py`, etc.).<br /><br />4. Errors and fixes:<br />   - Bash heredoc/quote failures (multi-line Python with backslashes, `\n` turned into real newlines inside JS strings): switched to Write-tool patch scripts or file-based scripts; fixed broken JS confirm string by editing index.html directly.<br />   - 401 &quot;서버 거부&quot;: auth header must be `X-API-Key`; added call_info, chunk size, `finished` handling.<br />   - Stop UI stuck on &quot;중지하는 중...&quot;: added `stopping` state and status messages; shortened `ws.close` timeout; in-flight stopped files no longer counted as failures.<br />   - Pause kept elapsed/remaining counting: added `paused_total/paused_since`.<br />   - Remaining time ignored concurrency: new rate-based formula + dynamic concurrency gate.<br />   - &quot;state.jsonl이 없다&quot;: user selected base results folder; added run listing/auto-open and clearer messages; later result folders became `YYYYMMDD_HHMM`.<br />   - `import site` removal in embedded `_pth` initially not applied (sed failed); fixed via Edit and rebuild.<br />   - Digit display bug in ④ (일칠살) + attached particle WER mismatch + &quot;네&quot; stripped inside &quot;(열 네 살)&quot;: fixed as described (Tok/disp, normalize_ref2 attach, `_TENS`).<br />   - Test harness issues (cp949 console garble is display-only; Chrome headless used for screenshots).<br />   - Earlier, subfolders under data/results disappeared (only `last_run` remained) — noted, no action.<br /><br />5. Problem Solving:<br />   Ongoing/solved: real-server tests succeeded (20-file sample CER 2.55%/WER 13.97%, latency mean 0.15 s; full 5,270-file run yielded CER 2.59%, WER 14.38%, latency mean 0.28 s, concurrency 16, 36m16s per user&#x27;s example). Portable zip verified to start with embedded Python and serve UI; first run on a real Python-less on-site PC not yet tested. No active troubleshooting at the moment.<br /><br />6. All user messages: (see list in the analysis section above — all non-tool user messages in order; security-relevant constraints: user shared API key in spec only; I must not copy it into docs/commits/logs; push only non-sensitive files.)<br /><br />7. Pending Tasks:<br />   - Nothing explicitly pending. Not yet done: GitHub push of latest changes (digit-display fix, legend, manual v11/v12, rebuilt zip is not in repo), refresh of `docs/대화기록_CER_App.html` with the newest turns, and the final reply to the user for the legend request (changes already made and verified).<br /><br />8. Current Work:<br />   Just finished adding the legend to ④ 상세: patched `app/web/static/index.html` via `patch_legend.py` (added `&lt;div id=&quot;dLegend&quot; class=&quot;legend2&quot;&gt;&lt;b&gt;범례&lt;/b&gt;… 치환/삽입/삭제 chips … &lt;span class=&quot;mut&quot;&gt;색이 없으면 일치 · 단어(어절) 단위 비교&lt;/span&gt;&lt;/div&gt;` after `#dInfo`, CSS `.legend2/.lg`, hide when `d.ref_missing`), screenshot verified legend renders, updated manual&#x27;s ④ row with color meanings (`fix_m4.py`), copied to `docs/05_release/manual_body.html`, tests OK (35), rebuilt `dist/CER_App_portable.zip`, and republished the manual artifact (version 12). The last tool result was the successful artifact publish; the user-facing report for this step was not yet written.<br /><br />9. Optional Next Step:<br />   Report completion of the legend request to the user (legend under ④ 상세 shown/verified, manual v12 and portable zip updated; reminder: restart `start.bat` and Ctrl+F5; not pushed to GitHub yet). Only if the user asks: commit/push to GitHub (check key-pattern scan, no `config.local.json`/data/zip), re-export `docs/대화기록_CER_App.html`. Most recent user request verbatim: &quot;상세 아래쪽에 범례를 추가해줘&quot;.<br /><br />If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: C:\Users\imsrx\.claude\projects\D--2--Team-Source-CER-App\19540ad3-017c-462b-a11c-bf9609d48449.jsonl<br />Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with &quot;I&#x27;ll continue&quot; or similar. Pick up the last task as if the break never happened.<br /><br />The messages after this summary are the most recent messages from before compaction, kept verbatim. The summary was written without seeing them, so something it says has not happened yet may already have happened in them.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-23 08:42</span><i>#182</i></header><div class="b"><p class="u">실행 결과 D:\2. Team Source\CER App\data\results\20261019_1111 참조하여 CER 0%이아닌 에러 발생한 WAV 파일과 원본 text 파일을 에러율에 따라서 <br /> WAV File을 5%이하는 D:\2. Team Source\CER App\data\input\20261019_1111\WAV\CER5DOWN,  10%이하는 D:\2. Team Source\CER App\data\input\20261019_1111\WAV\CER10DOWN,<br /> 10%이상은 D:\2. Team Source\CER App\data\input\20261019_1111\WAV\CER10UP에 복사하고 <br /> 원본 텍스트 File도 동일한 개념으로 D:\2. Team Source\CER App\data\input\20261019_1111\TEXT\CER5DOWN,  D:\2. Team Source\CER App\data\input\20261019_1111\TEXT\CER10DOWN, <br />D:\2. Team Source\CER App\data\input\20261019_1111\TEXT\CER10UP에 각각 복사해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 08:44</span><i>#183</i></header><div class="b"><p>원본 WAV/TXT 경로는 summary.json에 있어서, 먼저 복사 대상을 계산하는 예행 점검부터 합니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 08:44</span><i>#184</i></header><div class="b"><p>CSV 첫 컬럼에 BOM이 있어 <code>encoding="utf-8-sig"</code>로 바꿉니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 08:44</span><i>#185</i></header><div class="b"><p>예행 점검에서 오류율이 0%가 아닌 28,196건과 같은 수가 나왔고, 누락된 파일은 없습니다. 이제 실제로 복사합니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 08:47</span><i>#186</i></header><div class="b"><p>CER이 0%가 아닌 28,196건을 오류율별로 나눠 WAV와 TEXT를 같은 구성으로 복사했습니다. 폴더별 파일 수는 WAV와 TEXT가 서로 같고, 누락된 파일은 없습니다.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>구분</th>
+<th>건수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CER5DOWN (5% 이하)</td>
+<td>16,736</td>
+</tr>
+<tr>
+<td>CER10DOWN (5% 초과~10% 이하)</td>
+<td>8,034</td>
+</tr>
+<tr>
+<td>CER10UP (10% 초과)</td>
+<td>3,426</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>원본 파일:</strong> 결과 폴더(<code>data\results\20261019_1111</code>)의 <code>detail.csv</code>에서 CER &gt; 0인 파일을 골랐습니다. 원본 WAV/TXT는 <code>summary.json</code>에 적힌 시험 당시의 <code>wav_dir</code>/<code>txt_dir</code>에서 가져왔습니다.</li>
+<li><strong>복사 위치:</strong> <code>data\input\20261019_1111\WAV\&lt;구분&gt;\</code> 및 <code>data\input\20261019_1111\TEXT\&lt;구분&gt;\</code>에 복사했고, 원본 폴더 구조(<code>S00008279\0001.wav</code> 등)를 그대로 유지했습니다. 원본은 건드리지 않았습니다.</li>
+<li><strong>경계값:</strong> CER이 정확히 5%인 파일은 CER5DOWN에, 정확히 10%인 파일은 CER10DOWN에 넣었습니다. "10% 이상"을 10% 포함으로 보려면 알려 주세요. 해당 파일만 옮기겠습니다.</li>
+</ul>
+<p>복사에 쓴 스크립트는 <code>C:\Users\imsrx\AppData\Local\Temp\claude\D--2--Team-Source-CER-App\19540ad3-017c-462b-a11c-bf9609d48449\scratchpad\split_cer.py</code>입니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-23 08:54</span><i>#187</i></header><div class="b"><p class="u">4번 상사 출력 기능에서 원본텍스트 내용이 &quot;(17살)/(열 일곱 살)이랑 (14살)/(열 네 살)이에요&quot; 인데 &quot;17살이랑 14살이에&quot;요로 출력된다 원본데로 출력하게 수정해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 08:55</span><i>#188</i></header><div class="b"><p>④ 상세의 정답 줄이 병기 표기를 원본 그대로 모두 보여 주도록 고쳤습니다. 테스트 35건은 통과했지만, 상세 화면을 브라우저에서 직접 확인하지는 못했습니다.</p>
+<p>정답 줄은 인식 결과와 맞는 쪽 대안만 골라 보여 주고 있었습니다. 그래서 "(17살)/(열 일곱 살)이랑 (14살)/(열 네 살)이에요"가 "17살이랑 14살이에요"로 나왔습니다.</p>
+<ul>
+<li><strong>표시 방식:</strong> 이제 정답 줄은 <code>(17살이랑)/(열 일곱 살이랑) (14살이에요)/(열 네 살이에요)</code>로 나옵니다. 인식 결과와 맞은 쪽은 색과 함께 앞에 오고, 다른 대안은 회색으로 뒤에 붙습니다.</li>
+<li><strong>표기 차이:</strong> 조사가 붙은 어절은 대안마다 조사를 붙여서 <code>(17살이랑)</code>처럼 보입니다. 원문의 <code>(17살)/(열 일곱 살)이랑</code>과 괄호 위치가 조금 다릅니다.</li>
+<li><strong>원문 줄:</strong> 정답 줄 위의 "정답 원문:" 줄에는 원본 텍스트가 그대로 나옵니다.</li>
+</ul>
+<p>반영하려면 <code>start.bat</code>을 다시 실행하고 <code>Ctrl+F5</code>로 새로고침하세요. 현장 배포용 <code>dist\CER_App_portable.zip</code>도 다시 만들었습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-23 08:55</span><i>#189</i></header><div class="b"><p class="u">GitHub에 push 해줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 08:55</span><i>#190</i></header><div class="b"><p>GitHub <code>main</code> 브랜치에 push했습니다(<code>f96aef5..c13e346</code>). 올린 내용은 아래 변경입니다.<br />
+- 상세 화면에서 숫자를 원문 그대로 표시<br />
+- 병기 정답 전체 표시<br />
+- 범례 추가<br />
+- 조사가 붙은 병기 처리<br />
+- 위 변경에 대한 테스트<br />
+- 매뉴얼 원본 갱신</p>
+<p>올린 파일에서 API 키 패턴(<code>sk-…</code>)은 검색해서 나오지 않았습니다.</p>
+<p>아래 두 항목은 올리지 않았습니다.<br />
+- <strong><code>data/20261015_1550/</code>:</strong> 시험 결과 데이터(15MB)라 뺐습니다.<br />
+- <strong><code>docs/06_menual/CER App 사용 매뉴얼.pdf</code>:</strong> 직접 넣으신 파일인지 확실하지 않아 뺐습니다. 올리길 원하시면 말씀해 주세요.</p>
+<p><code>docs/대화기록_CER_App.html</code>은 이번 대화를 반영해서 다시 만들지 않았습니다. 필요하면 다시 만들어 올리겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-23 08:57</span><i>#191</i></header><div class="b"><p class="u">docs/대화기록_CER_App.html은 이번 대화를 반영</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 08:59</span><i>#192</i></header><div class="b"><p>대화 기록 내보내기 스크립트가 없어져서 새로 만듭니다. 기존 HTML의 스타일을 그대로 쓰고, 세 세션 전체를 다시 변환합니다.</p></div></article>
 </div></body></html>
