@@ -31,7 +31,7 @@ blockquote{margin:.6em 0;padding:.2em 12px;border-left:3px solid var(--line);col
 @media print{body{background:#fff}.m{break-inside:avoid}}
 </style></head><body><div class="wrap">
 <h1 class="t">CER App 대화 기록</h1>
-<p class="sub">Claude Code와 나눈 대화(사용자 입력 / Claude 응답) · 총 207개 메시지 · 표와 코드는 원문 형식을 유지했습니다 · 도구 실행 로그와 시스템 알림은 제외했고 API 키 값은 가렸습니다</p>
+<p class="sub">Claude Code와 나눈 대화(사용자 입력 / Claude 응답) · 총 211개 메시지 · 표와 코드는 원문 형식을 유지했습니다 · 도구 실행 로그와 시스템 알림은 제외했고 API 키 값은 가렸습니다</p>
 <article class="m user"><header><b>나</b><span>2026-10-14 13:49</span><i>#1</i></header><div class="b"><p class="u">음성인식 장비의 CER WER 을 측정하는 테스트 프로그램을 만든다. 입력은 시험용 음석녹음 WAVE 파일과 음성을 전사한 텍스트 파일 쌍으로 이루어진 다수의 파일을 특정 디렉토리에 저장하고, 실행을 시키면 음성인식 실시간 측정을 진행한다. 진행시에도 CER WER 대략적인 누적 점수를 시계열 그래프상으로 실시간으로 볼수 있게 화면을 구성한다. 음성인식 시험용 파일로 시험을 종료한 경우 최종 결과는 막대 그래프로 CER WER 시험 데이터 갯수를 볼 수 있는 화면을 구성한다. 음성인식 장비는 내부 망에있는 장비로 연동 Spec을 참조하여 음성녹취 Wave 파일의 음성을 연동 spec에 따라서 API를 사용하여 음성인식을 요청하고 음성인식 결과를 수신하여 전사된 원본 음성텍스트과 비교하여 시험 결과에 반영한다. 필요한 디렉토리 만들어주고 연동 spec 문서 저장 위치 알려줘.<br />개발 단계별 절차를 준수하여 분석과 계획수립부터 구현 검증 Git 배포까지 문서화 포함하여 PM,요구분석,UI시안,구현,검증,자동시험,버전관리,배포 등 기능별 에이전트 구성하여 하네스 방식으로 자동 개발하도록 Plan 만들어줘.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 13:51</span><i>#2</i></header><div class="b"><p>Plan 승인됨. 디렉토리와 하네스 골격을 생성합니다.</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-14 13:51</span><i>#3</i></header><div class="b"><p>디렉토리 구조 생성과 <code>git init</code>은 완료됐습니다. (exit code 255는 <code>git init</code>의 출력 처리 때문에 나온 것으로, 디렉토리와 파일은 정상 생성됨.)</p>
 <h2>연동 Spec 문서 저장 위치</h2>
 <p><strong><code>D:\2. Team Source\CER App\docs\spec\</code></strong> — 연동 Spec(PDF/DOCX/MD 등)을 이 폴더에 넣어 주세요.</p>
@@ -2074,5 +2074,47 @@ python -m app.main
 <p><strong>push한 내용</strong><br />
 - ③ 오류 파일 복사 기능과 단위 테스트<br />
 - 매뉴얼 원본, 매뉴얼 PDF, 대화 기록(200개 메시지)</p>
-<p><code>sk-…</code> API 키 패턴은 검색해서 나오지 않았습니다. <code>data/20261015_1550/</code>(시험 결과 데이터)는 올리지 않았습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-23 09:20</span><i>#207</i></header><div class="b"><p class="u">대화 기록 html 갱신</p></div></article>
+<p><code>sk-…</code> API 키 패턴은 검색해서 나오지 않았습니다. <code>data/20261015_1550/</code>(시험 결과 데이터)는 올리지 않았습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-23 09:20</span><i>#207</i></header><div class="b"><p class="u">대화 기록 html 갱신</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 09:21</span><i>#208</i></header><div class="b"><p><code>docs/대화기록_CER_App.html</code>을 이번 대화까지 반영해 다시 만들었습니다(207개 메시지). API 키 패턴(<code>sk-…</code>)은 검색해서 나오지 않았습니다. 이전에 "GitHub에 push 해줘"라고 하신 흐름대로, commit한 뒤 <code>main</code>에 push했습니다(<code>afa0623..7be0fe8</code>).</p></div></article><article class="m user"><header><b>나</b><span>2026-10-23 09:21</span><i>#209</i></header><div class="b"><p class="u">배포 zip 현장 PC 테스트 방법 알려줘</p></div></article><article class="m assistant"><header><b>Claude</b><span>2026-10-23 09:21</span><i>#210</i></header><div class="b"><p>현장 PC에서 <code>dist\CER_App_portable.zip</code>을 검증하는 순서입니다. 앞의 1~5단계는 STT 서버 없이도 되고, 6~8단계에서 서버와 실제 파일을 씁니다.</p>
+<p><strong>0. 사전 준비</strong><br />
+- Python이 없는 Windows PC가 가장 좋은 시험 대상입니다. 같은 PC에 Python이 설치돼 있으면 그 Python이 아니라 zip 안의 파이썬이 쓰였는지 확인이 안 됩니다.<br />
+- 시험 환경은 최대한 현장과 같게 합니다. 인터넷 차단, 일반 계정, 회사 보안 프로그램이 켜진 상태를 말합니다.<br />
+- USB 등으로 zip을 옮깁니다. 회사 보안 정책으로 <code>.zip</code>이나 <code>.bat</code>이 막히면 그 자체가 시험 결과가 됩니다.</p>
+<p><strong>1. 압축 풀기</strong><br />
+- 경로에 한글이나 공백이 없고 쓰기 권한이 있는 곳에 풉니다. 예: <code>D:\CER_App</code>.<br />
+- <code>C:\Program Files</code> 같은 곳은 결과 저장이 막힐 수 있어서 피합니다.<br />
+- 인터넷에서 내려받은 zip이면 풀기 전에 우클릭 → 속성 → "차단 해제"를 한 번 확인합니다.</p>
+<p><strong>2. 실행</strong><br />
+- <code>start.bat</code>을 더블클릭합니다.<br />
+- 검은 창이 뜨고, 브라우저가 열리면서 <code>http://127.0.0.1:8765/</code>가 나와야 합니다.<br />
+- 브라우저가 자동으로 안 열리면 주소를 직접 입력합니다.<br />
+- Windows Defender나 방화벽 경고가 뜨면 허용합니다. 이 프로그램은 자기 PC 안에서만 통신합니다.</p>
+<p><strong>3. 화면 확인</strong><br />
+- ①~⑥ 탭이 모두 보이는지 봅니다.<br />
+- 오프라인 <code>사용설명서.html</code>이 열리는지 봅니다.<br />
+- 설정은 코드 수정 없이 화면에서 입력할 수 있어야 합니다.</p>
+<p><strong>4. STT 서버 연결 (현장 서버가 보이는 PC에서)</strong><br />
+- ①에서 서버 주소, API 키, 모델을 입력합니다.<br />
+- "연결 확인"을 눌러 <code>/health</code> 응답이 정상인지 봅니다.</p>
+<p><strong>5. 폴더 지정</strong><br />
+- "폴더 선택"으로 WAV 폴더, TXT 폴더, 결과 폴더를 고릅니다.<br />
+- "파일 검색"을 눌러 파일 수와 짝이 맞는지 확인합니다.</p>
+<p><strong>6. 소규모 시험 (20~50건 권장)</strong><br />
+- 먼저 적은 수로 실행해 ②의 CER/WER 그래프가 움직이는지 봅니다.<br />
+- 끝나면 결과 폴더(<code>YYYYMMDD_HHMM</code>)에 <code>detail.csv</code>, <code>summary.json</code>, <code>summary.txt</code>가 생기는지 확인합니다.<br />
+- ④ 상세에서 정답과 인식 결과 비교, 범례가 보이는지 확인합니다.<br />
+- 숫자 표기와 <code>(A)/(B)</code> 병기가 있는 파일을 하나 골라 확인합니다.</p>
+<p><strong>7. 동작 시험</strong><br />
+- 일시정지 → 재개, 중지 → 같은 입력 폴더로 다시 실행해서 이어서 하기가 되는지 봅니다.<br />
+- 동시 접속 수를 실행 중에 바꿔 봅니다.<br />
+- ③ 맨 아래 "오류 파일 복사"로 <code>WAV\CER5DOWN</code> 등 폴더가 만들어지는지 봅니다.<br />
+- "이전 시험 열기"가 되는지 봅니다.</p>
+<p><strong>8. 본 시험</strong><br />
+- 실제 건수로 돌리기 전에 파일 수에 따른 속도와 남은 시간 표시를 확인합니다. 지난 시험은 5,270건에 약 36분이 걸렸습니다.</p>
+<p><strong>문제가 생겼을 때 확인할 것</strong><br />
+- 검은 창에 보이는 오류 메시지를 그대로 기록합니다.<br />
+- 흔한 원인은 쓰기 권한 부족, 8765 포트를 다른 프로그램이 이미 사용 중인 경우, 보안 프로그램이 파이썬 실행을 차단한 경우입니다.<br />
+- 서버 연결이 안 되면 같은 PC 브라우저로 <code>http://서버IP:8081/health</code>가 열리는지 먼저 봅니다.</p>
+<p><strong>알아둘 점</strong><br />
+- 이 zip은 Python 없는 실제 PC에서 아직 시험한 적이 없습니다. 이 개발 PC에서 zip의 파이썬으로 UI가 뜨는 것까지만 확인했습니다.<br />
+- 첫 현장 시험에서 막힌 단계를 알려 주시면 그에 맞춰 고치겠습니다.</p></div></article><article class="m user"><header><b>나</b><span>2026-10-23 09:23</span><i>#211</i></header><div class="b"><p class="u">대화 기록 html 갱신</p></div></article>
 </div></body></html>
