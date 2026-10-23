@@ -127,6 +127,27 @@ class AttachedParticleTest(unittest.TestCase):
         self.assertEqual(segs[0], [("저는오살입니다", "저는5살입니다"), ("저는다섯 살입니다", "저는다섯 살입니다")])
 
 
+class ExportErrorsTest(unittest.TestCase):
+    def test_split_by_cer(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "w" / "S1").mkdir(parents=True)
+            recs = {}
+            for n, cer in (("a", 0.0), ("b", 3.0), ("c", 5.0), ("d", 7.5), ("e", 12.0)):
+                (d / "w" / "S1" / (n + ".wav")).write_bytes(b"x")
+                (d / "w" / "S1" / (n + ".txt")).write_text("t", encoding="utf-8")
+                recs[("S1/" + n, "m")] = {"status": "완료", "cer": cer}
+            run = runner.Run(dict(config.DEFAULT, wav_dir=str(d / "w")), [], d / "out")
+            run.records = recs
+            res = run.export_errors(d / "dst")
+            self.assertEqual(res["counts"], {"CER5DOWN": 2, "CER10DOWN": 1, "CER10UP": 1})
+            for kind, ext in (("WAV", ".wav"), ("TEXT", ".txt")):
+                self.assertTrue((d / "dst" / kind / "CER10UP" / "S1" / ("e" + ext)).exists())
+                self.assertFalse((d / "dst" / kind / "CER5DOWN" / "S1" / ("a" + ext)).exists())
+
+
 class MergeTest(unittest.TestCase):
     def test_segments_dedup_and_partial(self):
         msgs = [{"partial": True, "transcript": "안"},

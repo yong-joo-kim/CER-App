@@ -275,6 +275,17 @@ class Handler(BaseHTTPRequestHandler):
             if APP.run:
                 APP.run.pause(bool(b.get("on", True)))
             self._json({"ok": True})
+        elif p == "/api/export_errors":
+            run = APP.run
+            if not run:
+                return self._json({"ok": False, "message": "시험 결과가 없습니다."})
+            dest = (b.get("dest") or "").strip() or str(run.out_dir / "오류파일")
+            try:
+                res = run.export_errors(dest)
+            except OSError as ex:
+                return self._json({"ok": False, "message": "복사 실패: %s" % ex})
+            res["ok"] = True
+            self._json(res)
         elif p == "/api/open_folder":
             run = APP.run
             if run and os.name == "nt":

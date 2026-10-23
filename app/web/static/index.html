@@ -158,6 +158,10 @@ details.raw pre{white-space:pre-wrap;margin:8px 0 0;background:var(--bg);border:
  <div class="tbl"><div class="th"><span data-k="name">파일 ↕</span><span data-k="status">상태</span><span class="num" data-k="cer">CER ↕</span><span class="num" data-k="wer">WER ↕</span><span class="num">S/I/D/N</span><span class="num" data-k="latency">응답속도 ↕</span><span class="num" data-k="duration_s">길이</span><span>비고</span></div>
  <div id="vs"><div id="vsInner"></div></div></div>
  <div class="note">스크롤 방식 · 화면에 보이는 행만 그림 · 헤더 클릭으로 정렬 · 행 클릭 → ④ 상세</div>
+ <div class="card" style="margin-top:12px"><h2>오류 파일 복사</h2>
+  <div class="note" style="margin:0 0 8px">CER이 0%가 아닌 파일의 WAV와 정답 TXT를 오류율별 폴더(CER5DOWN: 5% 이하 · CER10DOWN: 5% 초과~10% 이하 · CER10UP: 10% 초과)로 복사합니다. 원본은 그대로 두고, <b>WAV\구간</b>과 <b>TEXT\구간</b> 폴더가 자동으로 만들어집니다.</div>
+  <div class="pick"><input id="expdir" placeholder="비우면 시험 결과 폴더 아래 '오류파일'에 만듭니다"><button class="b" type="button" data-pick="expdir">폴더 선택</button></div>
+  <div class="row" style="margin-top:6px"><button class="b p" id="bExport" type="button">CER 오류 파일 복사</button><span id="expMsg" class="note" style="margin:0"></span></div></div>
 </section>
 <section id="t4">
  <div class="card"><h2 id="dTitle">상세</h2>
@@ -472,6 +476,10 @@ $('bCopy').onclick=function(){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(capText).then(function(){done('복사했습니다')},function(){done('복사하지 못했습니다. 화면을 캡처해 주세요')})}
   else done('복사하지 못했습니다. 화면을 캡처해 주세요')};
 document.querySelectorAll('#t5 button[data-f]').forEach(function(b){b.onclick=function(){window.location='/api/report?file='+b.dataset.f}});
+$('bExport').onclick=function(){var m=$('expMsg');m.textContent='복사하는 중... (파일이 많으면 시간이 걸립니다)';$('bExport').disabled=true;
+  post('/api/export_errors',{dest:$('expdir').value.trim()}).then(function(r){$('bExport').disabled=false;
+    if(!r.ok){m.textContent=r.message||'실패';return}
+    var c=r.counts;m.textContent='완료: 총 '+r.total+'건 (5% 이하 '+c.CER5DOWN+' · 10% 이하 '+c.CER10DOWN+' · 10% 초과 '+c.CER10UP+')'+(r.missing?' · 원본을 못 찾은 파일 '+r.missing+'건':'')+' → '+r.dest}).catch(function(){$('bExport').disabled=false;m.textContent='요청 실패'})};
 $('bOpen').onclick=function(){post('/api/open_folder',{})};
 /* ---- 폴더 선택 창 (디렉터리 트리) ---- */
 var dlgTarget=null,dlgCur='',dlgRoots=[];

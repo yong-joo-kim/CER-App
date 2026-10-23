@@ -36,7 +36,7 @@ class Run:
         self.view_only = False       # 이전 시험을 읽기 전용으로 연 경우
         self.view_info = None
         self.files_count = None
-        self.txt_search_dirs = []
+        self.txt_search_dirs = [cfg.get("txt_dir") or cfg.get("wav_dir"), cfg.get("wav_dir")]
         self._stem_cache = {}
         self.out_dir = Path(out_dir)
         self.transcribe = transcribe_fn or stt_client.transcribe
@@ -358,6 +358,51 @@ class Run:
         else:
             rows.sort(key=lambda r: r["name"])
         return len(rows), rows[offset:offset + limit]
+
+    GROUPS = (("CER5DOWN", 5.0), ("CER10DOWN", 10.0), ("CER10UP", None))
+
+    def export_errors(self, dest):
+        """CER이 0%가 아닌 파일의 WAV·정답 TXT를 오류율 구간별 폴더로 복사한다.
+        dest/WAV/<구간>/, dest/TEXT/<구간>/ 아래에 원래의 하위 폴더 구조를 유지한다."""
+        import shutil
+        dest = Path(dest)
+        worst = {}
+        for (name, _m), r in self.records.items():
+            if r.get("status") == "완료" and r.get("cer") and r["cer"] > 0:
+                worst[name] = max(worst.get(name, 0), r["cer"])
+        items = {it.name: it for it in self.items}
+        wav_dirs = [self.cfg.get("wav_dir")]
+        wav_idx = {}
+        counts = {g: 0 for g, _ in self.GROUPS}
+        missing = []
+        for name, cer in sorted(worst.items()):
+            grp = next(g for g, hi in self.GROUPS if hi is None or cer <= hi)
+            it = items.get(name)
+            wav = Path(it.wav) if it else None
+            if not wav or not wav.exists():
+                wav = next((Path(d) / (name + ".wav") for d in wav_dirs
+                            if d and (Path(d) / (name + ".wav")).exists()), None)
+            if not wav:
+                for d in wav_dirs:
+                    if d and Path(d).is_dir():
+                        idx = wav_idx.get(d)
+                        if idx is None:
+                            idx = wav_idx[d] = {w.stem: w for w in inputs._wavs(Path(d), 1)}
+                        if Path(name).name in idx:
+                            wav = idx[Path(name).name]
+                            break
+            txt = Path(it.txt) if it and it.txt and Path(it.txt).exists() else self.resolve_txt(name)
+            if not wav or not txt:
+                missing.append(name)
+                continue
+            sub = Path(name).parent
+            for src, kind in ((wav, "WAV"), (txt, "TEXT")):
+                d = dest / kind / grp / sub
+                d.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, d / src.name)
+            counts[grp] += 1
+        return {"counts": counts, "total": sum(counts.values()), "missing": len(missing),
+                "missing_sample": missing[:5], "dest": str(dest)}
 
     def resolve_txt(self, name):
         """이전 시험을 열 때 정답 원본(.txt) 경로를 찾는다. 없으면 None."""
