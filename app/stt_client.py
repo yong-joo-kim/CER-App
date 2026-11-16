@@ -122,6 +122,7 @@ def transcribe(wav_path, cfg, model, tr_id, on_progress=None, stop=None):
     th = threading.Thread(target=reader, daemon=True)
     th.start()
     t_end = None
+    t_audio = None   # 오디오 전송 시작 시각(메시지 수신 시각 _rx_s의 기준)
     try:
         ws.send(json.dumps(build_ready(tr_id, cfg)))
         with wave.open(str(wav_path), "rb") as w:
@@ -134,6 +135,8 @@ def transcribe(wav_path, cfg, model, tr_id, on_progress=None, stop=None):
                 data = w.readframes(chunk // 2)
                 if not data:
                     break
+                if t_audio is None:
+                    t_audio = time.perf_counter()
                 ws.send(data, opcode=websocket.ABNF.OPCODE_BINARY)
                 sent += len(data)
                 if on_progress:
@@ -164,7 +167,11 @@ def transcribe(wav_path, cfg, model, tr_id, on_progress=None, stop=None):
             ws.close(timeout=1)
         except Exception:
             pass
-    objs = [m for _, m in msgs]
+    objs = []
+    for t, m in msgs:
+        if isinstance(m, dict) and t_audio is not None:
+            m = dict(m, _rx_s=round(max(0.0, t - t_audio), 3))   # 오디오 전송 시작부터 수신까지(초)
+        objs.append(m)
     for m in objs:
         if isinstance(m, dict) and m.get("status") in (400, 401, 404, 500):
             raise SttError(f"서버 오류 {m.get('status')}", retry=m.get("status") == 500)

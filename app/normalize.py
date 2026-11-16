@@ -38,13 +38,27 @@ def _tokens(text):
     return t.split()
 
 
+# "네 개", "네 명"처럼 뒤에 세는 말이 오면 "네"는 숫자(넷)다
+_COUNTERS = ("개", "명", "분", "살", "시", "시간", "번", "번째", "장", "권", "마리", "가지", "달", "군데",
+             "대", "병", "잔", "곳", "사람", "통", "건", "배", "채", "벌", "켤레", "줄", "칸", "주", "개월", "자리")
+_PARTICLES = ("", "이", "가", "을", "를", "은", "는", "에", "에요", "예요", "요", "씩", "도", "만", "째",
+              "이요", "밖에", "정도", "까지", "짜리", "이나", "나", "쯤", "이에요", "입니다", "이고", "로", "으로")
+
+
+def _is_counter(word):
+    return any(word.startswith(c) and word[len(c):] in _PARTICLES for c in _COUNTERS)
+
+
 def normalize2(text, fillers=()):
     """(비교용, 표시용) 문자열 쌍. 두 문자열의 어절 수는 같다."""
     fl = set(fillers)
     cmp, disp = [], []
-    for w in _tokens(text):
+    toks = _tokens(text)
+    for k, w in enumerate(toks):
         c = digits_to_hangul(w)
-        if c in fl and not (c == "네" and cmp and cmp[-1] in _TENS):   # "열 네 살"의 네는 숫자라 추임새가 아님
+        nxt = toks[k + 1] if k + 1 < len(toks) else ""
+        if c in fl and not (c == "네" and ((cmp and cmp[-1] in _TENS) or _is_counter(nxt))):
+            # "열 네 살", "네 개"의 네는 숫자라 추임새가 아님
             continue
         cmp.append(c)
         disp.append(w)

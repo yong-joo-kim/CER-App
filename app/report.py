@@ -56,7 +56,8 @@ def write_all(run):
         f"전체(가중) CER {_pct(snap['cer'])}   WER {_pct(snap['wer'])}",
     ]
     c = snap["cer_counts"]
-    lines.append(f"  S/I/D/N = {c[0]}/{c[1]}/{c[2]}/{c[3]}")
+    lines.append(f"  누적 정확도 {_pct(None if snap['cer'] is None else max(0.0, 100 - snap['cer']))}"
+                 f"   대체 {c[0]} · 삭제 {c[2]} · 삽입 {c[1]} / 정답 {c[3]}자")
     for sp, v in snap["speakers"].items():
         lines.append(f"  화자 {sp}: CER {_pct(None if v['cer'] is None else v['cer'] * 100)}"
                      f"  WER {_pct(None if v['wer'] is None else v['wer'] * 100)}  (N={v['n']})")

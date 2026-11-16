@@ -4,10 +4,10 @@ import os
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, quote, urlparse
 
 from .. import config as cfgmod
-from .. import inputs, report, runner, stt_client
+from .. import inputs, report, runner, stt_client, xlsx
 
 STATIC = Path(__file__).resolve().parent / "static"
 
@@ -122,6 +122,45 @@ def _int(q, k, d):
         return d
 
 
+def _filters(q):
+    mc = q.get("min_cer", [""])[0]
+    try:
+        mc = float(mc) if mc else None
+    except ValueError:
+        mc = None
+    return {"q": q.get("q", [""])[0], "status": q.get("status", [""])[0],
+            "sort": q.get("sort", [""])[0], "asc": q.get("asc", ["1"])[0] != "0", "min_cer": mc}
+
+
+XLSX_HEADERS = ["파일명", "상태", "정확도(%)", "CER(%)", "WER(%)", "대체", "삭제", "삽입", "총 글자 수",
+                "응답속도(s)", "길이(s)"]
+
+
+def results_xlsx(run, q):
+    """③ 파일별 결과 화면과 같은 조건(검색·상태·CER 최소·정렬)의 전체 행을 Excel로 만든다."""
+    total, rows, tot = run.query(offset=0, limit=10 ** 9, with_totals=True, **_filters(q))
+    multi = len(run.models) > 1
+    heads = list(XLSX_HEADERS)
+    if multi:
+        heads.insert(1, "모델")
+    body = []
+    for r in rows:
+        ok = r.get("status") == "완료"
+        st = "제외" if r.get("lat_excluded") and ok else r.get("status")
+        v = [r["name"], st, runner.accuracy(r.get("cer")), r.get("cer"), r.get("wer"),
+             r.get("cs") if ok else None, r.get("cd") if ok else None, r.get("ci") if ok else None,
+             r.get("cn") if ok else None, r.get("latency"), r.get("duration_s")]
+        if multi:
+            v.insert(1, r.get("model"))
+        body.append(v)
+    foot = ["요약 (총 %d개, 완료 %d개)" % (tot["count"], tot["ok"]), "", tot["acc"], tot["cer"], tot["wer"],
+            tot["cs"], tot["cd"], tot["ci"], tot["cn"], None, None]
+    if multi:
+        foot.insert(1, "")
+    off = 1 if multi else 0
+    return xlsx.build("파일별결과", heads, body, foot, decimals=[2 + off, 3 + off, 4 + off, 9 + off, 10 + off])
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "CERApp/1.0"
 
@@ -146,6 +185,52 @@ class Handler(BaseHTTPRequestHandler):
         except ValueError:
             return {}
 
+    def _audio(self, run, name):
+        """④ 상세 재생용 WAV. 시험 결과에 있는 이름만 허용하고 Range(부분 요청)를 지원한다."""
+        if not run or not name or not any(n == name for n, _ in list(run.records)):
+            return self._json({"error": "결과 없음"}, 404)
+        wav = run.resolve_wav(name)
+        if not wav:
+            return self._json({"error": "음성 파일을 찾을 수 없습니다"}, 404)
+        size = wav.stat().st_size
+        start, end, code = 0, size - 1, 200
+        rng = self.headers.get("Range") or ""
+        if rng.startswith("bytes="):
+            a, _, b = rng[6:].split(",")[0].strip().partition("-")
+            try:
+                if a:
+                    start = int(a)
+                    end = min(int(b), size - 1) if b else size - 1
+                elif b:
+                    start = max(0, size - int(b))
+                code = 206
+            except ValueError:
+                start, end, code = 0, size - 1, 200
+            if start > end or start >= size:
+                self.send_response(416)
+                self.send_header("Content-Range", f"bytes */{size}")
+                self.end_headers()
+                return
+        self.send_response(code)
+        self.send_header("Content-Type", "audio/wav")
+        self.send_header("Accept-Ranges", "bytes")
+        self.send_header("Content-Length", str(end - start + 1))
+        if code == 206:
+            self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
+        self.end_headers()
+        try:
+            with open(wav, "rb") as f:
+                f.seek(start)
+                left = end - start + 1
+                while left > 0:
+                    chunk = f.read(min(65536, left))
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    left -= len(chunk)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            pass   # 브라우저가 탐색하며 요청을 끊은 경우
+
     def do_GET(self):
         u = urlparse(self.path)
         q = parse_qs(u.query)
@@ -167,14 +252,26 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(run.snapshot())
         elif p == "/api/results":
             if not run:
-                return self._json({"total": 0, "rows": []})
-            mc = q.get("min_cer", [""])[0]
-            total, rows = run.query(
-                offset=_int(q, "offset", 0), limit=min(_int(q, "limit", 100), 500),
-                q=q.get("q", [""])[0], status=q.get("status", [""])[0],
-                sort=q.get("sort", [""])[0], asc=q.get("asc", ["1"])[0] != "0",
-                min_cer=float(mc) if mc else None)
-            self._json({"total": total, "rows": rows})
+                return self._json({"total": 0, "rows": [], "totals": runner.totals([])})
+            total, rows, tot = run.query(offset=_int(q, "offset", 0), limit=min(_int(q, "limit", 100), 500),
+                                         with_totals=True, **_filters(q))
+            rows = [dict(r, acc=runner.accuracy(r.get("cer"))) for r in rows]   # 저장된 기록은 바꾸지 않는다
+            self._json({"total": total, "rows": rows, "totals": tot})
+        elif p == "/api/results.xlsx":
+            if not run:
+                return self._json({"error": "실행 결과 없음"}, 404)
+            data = results_xlsx(run, q)
+            fname = "파일별결과_%s.xlsx" % run.out_dir.name
+            self.send_response(200)
+            self.send_header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            self.send_header("Content-Disposition",
+                             "attachment; filename=\"results.xlsx\"; filename*=UTF-8''" + quote(fname))
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(data)
+        elif p == "/api/audio":
+            self._audio(run, q.get("name", [""])[0])
         elif p == "/api/browse":
             if self.client_address[0] not in ("127.0.0.1", "::1", "::ffff:127.0.0.1"):
                 return self._json({"error": "이 PC에서만 폴더를 선택할 수 있습니다"}, 403)

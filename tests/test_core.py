@@ -449,7 +449,7 @@ class ViewPastRunTest(unittest.TestCase):
             self.assertEqual(rows[0]["name"], "b")                  # CER 가장 높은 파일이 맨 위
             det = v.detail("b", "model_v2")
             self.assertFalse(det["ref_missing"])
-            self.assertTrue(det["ops"])                              # 정답·인식 비교 가능
+            self.assertTrue(det["view"]["ref"])                      # 정답·인식 비교 가능
             self.assertEqual((d / "out" / "summary.txt").read_bytes(), before)  # 읽기 전용: 파일 변경 없음
 
     def test_missing_reference_shows_hypothesis_only(self):
@@ -462,12 +462,164 @@ class ViewPastRunTest(unittest.TestCase):
             det = v.detail("b", "model_v2")
             self.assertTrue(det["ref_missing"])
             self.assertEqual(det["hyp"], "마바사자")                  # 인식 결과는 표시
-            self.assertEqual(det["ops"], [])
+            self.assertIsNone(det["view"])
 
     def test_not_a_result_folder(self):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(ValueError):
                 runner.Run.from_folder(d, config.load(Path("none.json")))
+
+
+class ResultOutputTest(unittest.TestCase):
+    """③ 정확도·합계·Excel, ④ 요약·음성·재생 시점 정답."""
+
+    def _run(self, d, hyp, msgs=None, pacing=True):
+        (d / "in").mkdir()
+        refs = {"a": "가나다 라마바", "b": "사아자 차카타"}
+        for n, ref in refs.items():
+            make_wav(d / "in" / f"{n}.wav", 4.0)
+            (d / "in" / f"{n}.txt").write_text(ref, encoding="utf-8")
+
+        def fake(wav, cfg, model, tr_id, on_progress=None, stop=None):
+            n = Path(wav).stem
+            return {"transcript": hyp[n], "messages": (msgs or {}).get(n, []), "latency": 0.1}
+
+        cfg = config.load(d / "none.json")
+        cfg.update(concurrency=2, wav_dir=str(d / "in"), txt_dir="", realtime_pacing=pacing)
+        items, _ = inputs.scan(d / "in")
+        run = runner.Run(cfg, items, d / "out", transcribe_fn=fake)
+        run.start()
+        run.thread.join(10)
+        return run
+
+    def test_accuracy_totals_and_sort(self):
+        with tempfile.TemporaryDirectory() as d:
+            run = self._run(Path(d), {"a": "가나다 라마바", "b": "사아 차카타파"})
+            total, rows, tot = run.query(sort="acc", asc=False, with_totals=True)
+            self.assertEqual([r["name"] for r in rows], ["a", "b"])      # 정확도 높은 순
+            b = rows[1]
+            self.assertEqual((b["cs"], b["cd"], b["ci"], b["cn"]), (0, 1, 1, 6))
+            self.assertEqual(runner.accuracy(b["cer"]), round(100 - b["cer"], 2))
+            self.assertEqual((tot["count"], tot["cs"], tot["cd"], tot["ci"], tot["cn"]), (2, 0, 1, 1, 12))
+            self.assertAlmostEqual(tot["cer"], 2 / 12 * 100, places=2)
+            self.assertAlmostEqual(tot["acc"], 100 - tot["cer"], places=2)
+            self.assertEqual(runner.accuracy(150.0), 0.0)               # 삽입이 많아도 0 미만은 없음
+
+    def test_xlsx(self):
+        import io
+        import zipfile
+        from app.web import server
+        with tempfile.TemporaryDirectory() as d:
+            run = self._run(Path(d), {"a": "가나다 라마바", "b": "사아 차카타파"})
+            data = server.results_xlsx(run, {"sort": ["name"]})
+            z = zipfile.ZipFile(io.BytesIO(data))
+            self.assertIn("xl/worksheets/sheet1.xml", z.namelist())
+            sheet = z.read("xl/worksheets/sheet1.xml").decode("utf-8")
+            self.assertIn("정확도(%)", sheet)
+            self.assertIn("요약 (총 2개", sheet)
+            self.assertIn('<c r="A3" s="0" t="inlineStr"><is><t xml:space="preserve">b</t>', sheet)
+            self.assertIn('<c r="I3" s="0"><v>6</v></c>', sheet)          # 총 글자 수는 숫자 셀
+            self.assertIn('name="파일별결과"', z.read("xl/workbook.xml").decode("utf-8"))
+
+    def test_cues_from_receive_time(self):
+        msgs = {n: [{"cmd": "recognize", "transcript": t1, "final": True, "_rx_s": 1.8},
+                    {"cmd": "recognize", "transcript": t2, "final": True, "_rx_s": 3.9},
+                    {"cmd": "finished", "_rx_s": 4.2}]
+                for n, t1, t2 in (("a", "가나다", "라마바"), ("b", "사아자", "차카타"))}
+        with tempfile.TemporaryDirectory() as d:
+            run = self._run(Path(d), {"a": "가나다 라마바", "b": "사아자 차카타"}, msgs)
+            det = run.detail("a", "model_v2")
+            v = det["view"]
+            self.assertEqual(v["time_mode"], "rx")
+            self.assertEqual([w["t"] for w in v["ref"]], [0.0, 1.8])          # 어절별 시작 시각
+            self.assertEqual([w["t"] for w in v["hyp"]], [0.0, 1.8])
+            self.assertTrue(det["audio"])
+
+    def test_cues_estimated_without_timing(self):
+        with tempfile.TemporaryDirectory() as d:
+            run = self._run(Path(d), {"a": "가나다 라마바", "b": "사아자 차카타"}, pacing=False)
+            det = run.detail("a", "model_v2")
+            v = det["view"]
+            self.assertEqual(v["time_mode"], "estimate")
+            self.assertEqual([w["t"] for w in v["ref"]], [0.0, 2.0])          # 글자 위치 비례
+
+    def test_audio_range(self):
+        import http.client
+        from http.server import ThreadingHTTPServer
+        from app.web import server
+        with tempfile.TemporaryDirectory() as d:
+            run = self._run(Path(d), {"a": "가나다 라마바", "b": "사아자 차카타"})
+            server.APP = server.App(Path(d) / "none.json")
+            server.APP.run = run
+            httpd = ThreadingHTTPServer(("127.0.0.1", 0), server.Handler)
+            threading.Thread(target=httpd.serve_forever, daemon=True).start()
+            try:
+                port = httpd.server_address[1]
+                c = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+                c.request("GET", "/api/audio?name=a&model=model_v2", headers={"Range": "bytes=0-99"})
+                r = c.getresponse()
+                body = r.read()
+                self.assertEqual(r.status, 206)
+                self.assertEqual(len(body), 100)
+                self.assertTrue(body.startswith(b"RIFF"))
+                size = (Path(d) / "in" / "a.wav").stat().st_size
+                self.assertEqual(r.getheader("Content-Range"), f"bytes 0-99/{size}")
+                c.request("GET", "/api/audio?name=..%5C..%5Cx&model=model_v2")   # 결과에 없는 이름은 거부
+                r = c.getresponse()
+                r.read()
+                self.assertEqual(r.status, 404)
+                c.request("GET", "/api/results?limit=10")
+                r = c.getresponse()
+                j = json.loads(r.read())
+                self.assertEqual(j["totals"]["count"], 2)
+                self.assertIn("acc", j["rows"][0])
+                self.assertNotIn("acc", run.records[("a", "model_v2")])     # 저장된 기록은 그대로
+            finally:
+                httpd.shutdown()
+                httpd.server_close()
+
+
+class CharViewTest(unittest.TestCase):
+    """④ 비교 화면은 CER과 같은 글자 단위로 정렬한다."""
+
+    def _view(self, ref, hyp):
+        from app import diffview
+        segs = normalize.normalize_ref2(ref, config.DEFAULT.get("filler_words", []))
+        c, dsp = normalize.normalize2(hyp, config.DEFAULT.get("filler_words", []))
+        return diffview.build(segs, c, dsp)
+
+    def test_spacing_only_and_one_insertion(self):
+        # S00008279/0006: 띄어쓰기만 다른 "입금받을"/"입금 받을"은 오류가 아니고, "제→제일"은 삽입 1개
+        v = self._view("통장 사본, 입금받을 (제2통장)/(제 이 통장) 사본이랑",
+                       "통장 사본 입금 받을 제일 이 통장 사본이랑")
+        self.assertEqual(v["counts"], {"s": 0, "d": 0, "i": 1, "n": 16})
+        marks = [r for w in v["ref"] + v["hyp"] for r in w["runs"] if r[0]]
+        self.assertEqual(marks, [["I", "", "일"]])
+        self.assertEqual([w["runs"] for w in v["ref"]][2], [["", "입금받을", ""]])
+
+    def test_substitution_and_deletion_marks(self):
+        v = self._view("가나다 라마바", "가너다 라바")
+        ref = [r for w in v["ref"] for r in w["runs"]]
+        hyp = [r for w in v["hyp"] for r in w["runs"]]
+        self.assertIn(["S", "나", "너"], ref)
+        self.assertIn(["D", "마", ""], ref)
+        self.assertIn(["D", "마", ""], hyp)                              # 인식 쪽에도 빠진 자리 표시
+        self.assertEqual(v["counts"], {"s": 1, "d": 1, "i": 0, "n": 6})
+
+    def test_digit_display(self):
+        v = self._view("(4개)/(네 개) 맞나요", "네 개 맞나요")
+        self.assertEqual(v["counts"]["s"] + v["counts"]["d"] + v["counts"]["i"], 0)
+
+
+class CounterNeTest(unittest.TestCase):
+    def test_ne_before_counter_is_number(self):
+        f = config.DEFAULT.get("filler_words", [])
+        self.assertIn("네", f)
+        self.assertEqual(normalize.normalize("이렇게 총 네 개 맞나요", f), "이렇게 총 네 개 맞나요")
+        self.assertEqual(normalize.normalize("네 명이요", f), "네 명이요")
+        self.assertEqual(normalize.normalize("네 시간이 걸려요", f), "네 시간이 걸려요")
+        self.assertEqual(normalize.normalize("네 알겠습니다", f), "알겠습니다")        # 대답 "네"는 추임새
+        self.assertEqual(normalize.normalize("네 번호요", f), "번호요")
 
 
 class ListRunsTest(unittest.TestCase):

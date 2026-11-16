@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 from . import config as cfgmod
-from . import inputs, metrics, normalize, stt_client
+from . import diffview, inputs, metrics, normalize, stt_client
 
 
 def safe_name(name):
@@ -27,6 +27,56 @@ def percentile(sorted_vals, p):
 MAX_CONCURRENCY = 16
 
 
+def accuracy(cer):
+    """정확도(%) = 100 - CER(%). 삽입이 많아 CER이 100%를 넘으면 0."""
+    return None if cer is None else round(max(0.0, 100.0 - cer), 2)
+
+
+def totals(rows):
+    """파일별 결과 목록의 합계: 완료 건만 더하고 CER·WER은 글자/어절 수 가중."""
+    ok = [r for r in rows if r.get("status") == "완료"]
+    s = sum(r.get("cs") or 0 for r in ok)
+    d = sum(r.get("cd") or 0 for r in ok)
+    i = sum(r.get("ci") or 0 for r in ok)
+    n = sum(r.get("cn") or 0 for r in ok)
+    we = sum((r.get("ws") or 0) + (r.get("wd") or 0) + (r.get("wi") or 0) for r in ok)
+    wn = sum(r.get("wn") or 0 for r in ok)
+    cer = None if n == 0 else round((s + d + i) / n * 100, 2)
+    return {"count": len(rows), "ok": len(ok), "cs": s, "cd": d, "ci": i, "cn": n,
+            "cer": cer, "acc": accuracy(cer), "wer": None if wn == 0 else round(we / wn * 100, 2)}
+
+
+def _utterances(messages, duration, pacing):
+    """인식 메시지 → [(시작초, 끝초, 텍스트)], 방식("server"|"rx"). 쓸 수 없으면 (None, None).
+    서버가 segments[].start/end를 주면 그 값을, 아니면 문장 결과 수신 시각(_rx_s)을 끝 시각으로 쓴다."""
+    finals = [m for m in messages if isinstance(m, dict) and not m.get("partial")
+              and m.get("is_final", True) is not False]
+    segs = {}
+    for m in finals:
+        for sg in m.get("segments") or []:
+            if isinstance(sg, dict) and sg.get("transcript") and sg.get("start") is not None \
+                    and sg.get("end") is not None:
+                segs[(sg["start"], sg["end"])] = sg
+    if segs:
+        ordered = sorted(segs.values(), key=lambda x: (x["start"], x["end"]))
+        scale = 1000.0 if duration and max(float(x["end"]) for x in ordered) > duration * 10 else 1.0  # ms 단위면 초로
+        return [(float(x["start"]) / scale, float(x["end"]) / scale, x["transcript"]) for x in ordered], "server"
+    texts = [m for m in finals if m.get("transcript")]
+    if not pacing or not texts or any(m.get("_rx_s") is None for m in texts):
+        return None, None
+    # 누적형(앞 결과를 포함해서 다시 보내는) 서버는 문장 단위로 나눌 수 없다
+    for a, b in zip(texts, texts[1:]):
+        if b["transcript"].strip().startswith(a["transcript"].strip()):
+            return None, None
+    out, prev = [], 0.0
+    for m in texts:
+        end = min(float(m["_rx_s"]), duration) if duration else float(m["_rx_s"])
+        end = max(end, prev)
+        out.append((prev, end, m["transcript"]))
+        prev = end
+    return out, "rx"
+
+
 class Run:
     """시험 1회의 상태. 스레드 안전."""
 
@@ -38,6 +88,7 @@ class Run:
         self.files_count = None
         self.txt_search_dirs = [cfg.get("txt_dir") or cfg.get("wav_dir"), cfg.get("wav_dir")]
         self._stem_cache = {}
+        self._wav_cache = {}
         self.out_dir = Path(out_dir)
         self.transcribe = transcribe_fn or stt_client.transcribe
         self.stop_ev = threading.Event()
@@ -337,7 +388,7 @@ class Run:
                 "models": self.models, "out_dir": str(self.out_dir),
             }
 
-    def query(self, offset=0, limit=100, q="", status="", sort="", asc=True, min_cer=None):
+    def query(self, offset=0, limit=100, q="", status="", sort="", asc=True, min_cer=None, with_totals=False):
         with self.lock:
             rows = list(self.records.values())
         q = (q or "").strip().lower()
@@ -350,13 +401,17 @@ class Run:
                 rows = [r for r in rows if r["status"] == status]
         if min_cer is not None:
             rows = [r for r in rows if r["cer"] is not None and r["cer"] >= min_cer]
-        if sort in ("name", "cer", "wer", "latency", "status", "model", "duration_s"):
+        if sort == "acc":                  # 정확도 = 100 - CER: CER 역순 정렬과 같다
+            sort, asc = "cer", not asc
+        if sort in ("name", "cer", "wer", "latency", "status", "model", "duration_s", "cs", "cd", "ci", "cn"):
             nn = [r for r in rows if r.get(sort) is not None]
             nl = [r for r in rows if r.get(sort) is None]
             nn.sort(key=lambda r: r[sort], reverse=not asc)
             rows = nn + nl
         else:
             rows.sort(key=lambda r: r["name"])
+        if with_totals:
+            return len(rows), rows[offset:offset + limit], totals(rows)
         return len(rows), rows[offset:offset + limit]
 
     GROUPS = (("CER5DOWN", 5.0), ("CER10DOWN", 10.0), ("CER10UP", None))
@@ -371,26 +426,12 @@ class Run:
             if r.get("status") == "완료" and r.get("cer") and r["cer"] > 0:
                 worst[name] = max(worst.get(name, 0), r["cer"])
         items = {it.name: it for it in self.items}
-        wav_dirs = [self.cfg.get("wav_dir")]
-        wav_idx = {}
         counts = {g: 0 for g, _ in self.GROUPS}
         missing = []
         for name, cer in sorted(worst.items()):
             grp = next(g for g, hi in self.GROUPS if hi is None or cer <= hi)
             it = items.get(name)
-            wav = Path(it.wav) if it else None
-            if not wav or not wav.exists():
-                wav = next((Path(d) / (name + ".wav") for d in wav_dirs
-                            if d and (Path(d) / (name + ".wav")).exists()), None)
-            if not wav:
-                for d in wav_dirs:
-                    if d and Path(d).is_dir():
-                        idx = wav_idx.get(d)
-                        if idx is None:
-                            idx = wav_idx[d] = {w.stem: w for w in inputs._wavs(Path(d), 1)}
-                        if Path(name).name in idx:
-                            wav = idx[Path(name).name]
-                            break
+            wav = self.resolve_wav(name)
             txt = Path(it.txt) if it and it.txt and Path(it.txt).exists() else self.resolve_txt(name)
             if not wav or not txt:
                 missing.append(name)
@@ -403,6 +444,25 @@ class Run:
             counts[grp] += 1
         return {"counts": counts, "total": sum(counts.values()), "missing": len(missing),
                 "missing_sample": missing[:5], "dest": str(dest)}
+
+    def resolve_wav(self, name):
+        """시험한 음성(.wav) 경로를 찾는다(이전 시험 열기 포함). 없으면 None."""
+        it = next((i for i in self.items if i.name == name), None)
+        if it is not None and Path(it.wav).exists():
+            return Path(it.wav)
+        for d in (self.cfg.get("wav_dir"),):
+            if not d:
+                continue
+            c = Path(d) / (name + ".wav")
+            if c.exists():
+                return c
+            if Path(d).is_dir():
+                idx = self._wav_cache.get(d)
+                if idx is None:
+                    idx = self._wav_cache[d] = {w.stem: w for w in inputs._wavs(Path(d), 1)}
+                if Path(name).name in idx:
+                    return idx[Path(name).name]
+        return None
 
     def resolve_txt(self, name):
         """이전 시험을 열 때 정답 원본(.txt) 경로를 찾는다. 없으면 None."""
@@ -444,21 +504,32 @@ class Run:
             except Exception:
                 ref_missing = True
         p = self.result_path(name, model)
+        view = None
         try:
             if p.exists():
                 hyp_c, hyp_d = normalize.normalize2(p.read_text(encoding="utf-8"), fill)
                 hyp_n = hyp_d
                 if ref_segs is not None:
-                    _, ops = metrics.score_lattice(normalize.lattice(ref_segs, "word"),
-                                                   normalize.to_words_disp(hyp_c, hyp_d))
+                    msgs = []
+                    mp = p.parent / (p.name[:-len("_result.txt")] + "_messages.jsonl")
+                    try:
+                        for line in mp.read_text(encoding="utf-8").splitlines():
+                            try:
+                                msgs.append(json.loads(line))
+                            except ValueError:
+                                pass
+                    except OSError:
+                        pass
+                    dur = float(rec.get("duration_s") or 0)
+                    utts, umode = _utterances(msgs, dur, bool(self.cfg.get("realtime_pacing", True)))
+                    view = diffview.build(ref_segs, hyp_c, hyp_d, utts, umode, dur, fill)
         except Exception:
-            pass
-        def disp(x):
-            return getattr(x, "disp", x)
-
+            view = None
+        wav = self.resolve_wav(name)
         return {"record": rec, "ref": ref_n, "ref_raw": ref_raw, "hyp": hyp_n, "ref_missing": ref_missing,
-                "ops": [[o[0], disp(o[1]), disp(o[2]), getattr(o[1], "seg", None)] for o in ops],
+                "view": view,
                 "alts": [[a[1] if isinstance(a, tuple) else a for a in alts] for alts in ref_segs] if ref_segs else [],
+                "audio": wav is not None, "acc": accuracy(rec.get("cer")),
                 "result_file": str(p)}
 
     @classmethod
