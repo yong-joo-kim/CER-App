@@ -21,6 +21,8 @@ app/
   normalize.py       # 추임새 제외, 숫자 표기 통일, 빈 줄 처리
   metrics.py         # CER/WER, S/I/D/N (FR-06, FR-07)
   report.py          # CSV/JSON/요약 출력 (FR-08)
+  diffview.py        # ④ 상세: 글자 단위 비교 표시·어절 묶음·재생 시각 (FR-19)
+  xlsx.py            # ③ 파일별 결과 Excel(.xlsx) 생성, 표준 라이브러리 zipfile만 사용 (FR-18)
   runner.py          # 배치 실행·모델 비교, 진행 콜백 (FR-09, FR-10)
   web/server.py      # 로컬 웹 서버, JSON API, 진행 이벤트(SSE) (FR-11)
   web/static/        # index.html, app.js, style.css (탭 UI, 가상 스크롤 목록)
@@ -108,3 +110,16 @@ FR-01,02→inputs / FR-03→config / FR-04,05→stt_client / FR-06,07→normaliz
 - 앞선 7장(GUI/tkinter) 서술은 본 13장으로 대체한다
 - 입력 경로: 설정 `wav_dir`(음성), `txt_dir`(정답 전사, 비우면 `wav_dir`). 기존 `input_dir`는 `wav_dir`로 자동 인식
 - 결과 폴더: `<결과 저장 폴더>/<YYYYMMDD_HHMM>/`(같은 분 충돌 시 `_HHMMSS`, 번호). 이어서 하기는 `find_resume_dir`로 같은 `wav_dir`의 최근 시험 폴더를 선택. 이전 시험은 `/api/runs`로 목록, `/api/view`로 읽기 전용 열기
+
+## 14. 개정: 결과 출력 보완 (FR-18, FR-19)
+| 항목 | 설계 |
+|---|---|
+| 정확도 | `runner.accuracy(cer)` = max(0, 100 − CER). ② 실시간(누적 정확도), ③ 파일별, ④ 상세, ⑤ 리포트 요약 미리보기, ⑥ 시험결과 요약(누적 정확도 1-CER), summary.txt에 CER 앞에 표시 |
+| 용어 | 화면·Excel은 S/I/D/N 대신 대체·삭제·삽입·총 글자 수로 표시(용어 "대체"로 통일). `detail.csv` 열 이름은 호환을 위해 S/I/D/N 유지 |
+| ③ 파일별 결과 | 열: 파일·상태·정확도·CER·WER·대체·삭제·삽입·글자 수·응답속도·길이·비고. `Run.query(..., with_totals=True)`가 현재 조건 전체 합계(`runner.totals`: 글자·어절 수 가중 CER/WER, 정확도)를 돌려주고 표 위 요약 줄에 표시. 정렬 키 `acc`(=CER 역순), `cs/cd/ci/cn` |
+| Excel | `GET /api/results.xlsx?<③과 같은 필터>` → 시트 `파일별결과`, 파일명 `파일별결과_<시험폴더>.xlsx`. 열: 파일명·(모델: 2개 이상일 때)·상태·정확도(%)·CER(%)·WER(%)·대체·삭제·삽입·총 글자 수·응답속도(s)·길이(s). 생성일시·비고 열은 두지 않는다. 마지막 행 `요약 (총 n개, 완료 m개)`. 머리글 굵게·첫 행 고정·자동 필터·열 너비 |
+| ④ 요약 표 | 정확도·CER·대체·삭제·삽입·총 글자 수·WER(어절 대체/삭제/삽입)·응답속도·음성 길이·결과 파일 |
+| 음성 재생 | `GET /api/audio?name=&model=`: `run.records`에 있는 이름만 허용(경로 조작 차단), `Run.resolve_wav`로 WAV 탐색, HTTP Range(206/416) 지원. 화면 ▶ 재생, ◀ 2초 / 2초 ▶, 단축키 ESC 재생/정지·F1 2초 뒤로·F4 2초 앞으로 |
+| 재생 위치 | 우선순위: 서버 `segments[].start/end` → `stt_client`가 메시지별로 기록한 `_rx_s`(오디오 전송 시작 기준 수신 시각, 실시간 페이싱일 때만) → 음성 길이 비례 추정. 구간 안에서는 글자 위치 비례. 정답·인식 결과의 해당 어절에 테두리 표시, 어절 클릭 시 그 위치부터 재생 |
+| 비교 표시 | `diffview.build`: CER과 같은 글자 단위(공백 제외) lattice 정렬 결과를 어절로 묶어 `runs[[표시, 정답, 인식]]`로 반환. 표시는 대체/삭제/삽입만(삭제는 인식 쪽에 빠진 글자 자리 표시), 띄어쓰기 차이는 오류 아님. 표시 개수 = 요약 표의 대체·삭제·삽입 수 |
+| 정규화 | "네"는 추임새지만 앞이 열·스물 등이거나 뒤에 세는 말(개·명·시간 등)이 오면 숫자로 보고 남긴다 |
